@@ -19,7 +19,7 @@ from flask_cors import CORS
 from urllib.parse import unquote
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*")
 
 # ── Config ────────────────────────────────────────────────────────
 LEAGUE_ID = "152693"
