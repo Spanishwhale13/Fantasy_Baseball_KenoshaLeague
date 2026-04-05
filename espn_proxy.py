@@ -13,6 +13,7 @@ Debug: http://localhost:5001/api/debug/2026
 """
 
 import requests
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from urllib.parse import unquote
@@ -139,4 +140,4 @@ if __name__ == "__main__":
     print(f"   League ID  : {LEAGUE_ID}")
     print(f"   Cookies    : {list(COOKIES.keys())[:6]}")
     print("   Debug      : http://localhost:5001/api/debug/2026\n")
-    app.run(port=5001, debug=False)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5001)))
