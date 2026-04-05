@@ -139,4 +139,5 @@ if __name__ == "__main__":
     print(f"   League ID  : {LEAGUE_ID}")
     print(f"   Cookies    : {list(COOKIES.keys())[:6]}")
     print("   Debug      : http://localhost:5001/api/debug/2026\n")
-    app.run(port=5001, debug=False)
+    import os
+app.run(port=int(os.environ.get("PORT", 5001)))
