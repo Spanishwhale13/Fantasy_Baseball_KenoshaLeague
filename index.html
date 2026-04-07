@@ -132,7 +132,7 @@
     .team-score  { font-family: 'DM Serif Display', serif; font-size: 30px; color: var(--ink); min-width: 70px; text-align: right; line-height: 1; }
     .team-score.winning { color: var(--dark-red); }
     .team-score.losing  { color: var(--muted); }
-    .matchup-divider { display: flex; align-items: center; padding: 2px 0; }
+    .matchup-divider { display: flex; align-items: center; padding: 2px 0; gap: 8px; }
     .vs-badge { font-family: 'Special Elite', cursive; font-size: 12px; color: var(--muted); letter-spacing: 1px; background: var(--tan); padding: 1px 6px; border-radius: 3px; }
     .matchup-status-badge {
       font-size: 11px; font-weight: 700; letter-spacing: 1px;
@@ -141,9 +141,6 @@
     }
     .badge-final { background: #e8f5e9; color: var(--green); border: 1px solid #a5d6a7; }
     .badge-live  { background: #fdecea; color: var(--dark-red); border: 1px solid #f5c6c3; }
-    .matchup-badge-row {
-      display: flex; align-items: center; gap: 8px; padding: 4px 0 2px;
-    }
 
     /* ── SHARED TABLE STYLES ── */
     .section-block { padding: 16px; }
@@ -152,11 +149,6 @@
       letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px;
       padding-bottom: 6px; border-bottom: 1px solid var(--tan);
       display: flex; align-items: center; gap: 8px;
-    }
-    .section-title-badge {
-      font-size: 11px; font-weight: 700; letter-spacing: 1px; padding: 3px 9px;
-      border-radius: 10px; text-transform: uppercase;
-      background: var(--gold); color: var(--dark-brown);
     }
     .data-table { width: 100%; border-collapse: collapse; }
     .data-table th {
@@ -183,7 +175,6 @@
     .diff { font-size: 14px; font-family: 'Special Elite', cursive; }
     .pos  { color: var(--green); }
     .neg  { color: var(--dark-red); }
-
     .table-divider td { background: var(--tan); height: 2px; padding: 0; border: none; }
 
     /* ── SEGMENT BLOCKS ── */
@@ -194,23 +185,11 @@
       background: var(--navy); padding: 8px 16px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .segment-label {
-      font-family: 'Special Elite', cursive; font-size: 14px;
-      color: var(--gold); letter-spacing: 2px;
-    }
-    .segment-weeks {
-      font-size: 12px; color: rgba(255,255,255,0.45);
-      font-family: 'Special Elite', cursive; letter-spacing: 1px;
-    }
-    .segment-winner-crown {
-      font-size: 12px; color: var(--gold); letter-spacing: 1px;
-      font-family: 'Special Elite', cursive;
-    }
+    .segment-label { font-family: 'Special Elite', cursive; font-size: 14px; color: var(--gold); letter-spacing: 2px; }
+    .segment-weeks { font-size: 12px; color: rgba(255,255,255,0.45); font-family: 'Special Elite', cursive; letter-spacing: 1px; }
+    .segment-winner-crown { font-size: 12px; color: var(--gold); letter-spacing: 1px; font-family: 'Special Elite', cursive; }
     .segment-table-wrap { padding: 0 16px 12px; }
-    .segment-incomplete {
-      font-family: 'Special Elite', cursive; font-size: 14px;
-      color: var(--muted); padding: 12px 0; text-align: center;
-    }
+    .segment-incomplete { font-family: 'Special Elite', cursive; font-size: 14px; color: var(--muted); padding: 12px 0; text-align: center; }
 
     /* ── BOTTOM STRIP ── */
     .bottom-strip {
@@ -223,7 +202,7 @@
     .strip-name   { font-size: 12px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-align: center; margin-top: 2px; font-family: 'Special Elite', cursive; }
     .strip-record { font-size: 12px; color: rgba(255,255,255,0.4); font-family: 'Special Elite', cursive; }
 
-    /* ── MLB LIVE ── */
+    /* ── MLB GAME CARDS ── */
     .mlb-game-card {
       background: #fff; border: 1.5px solid var(--tan); border-radius: 6px;
       position: relative;
@@ -232,7 +211,7 @@
       content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
       background: var(--red); border-radius: 6px 0 0 6px;
     }
-    .mlb-game-card.live-game::before { background: var(--green); }
+    .mlb-game-card.live-game::before  { background: var(--green); }
     .mlb-game-card.final-game::before { background: var(--muted); }
 
     .mlb-game-header {
@@ -242,37 +221,34 @@
     }
     .mlb-game-header:hover { background: rgba(212,160,23,0.04); }
     .mlb-teams { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
-    .mlb-team-row {
-      display: grid; grid-template-columns: 1fr auto;
-      align-items: center; gap: 6px;
-    }
+    .mlb-team-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; }
     .mlb-team-name {
-      font-size: 15px; font-weight: 700; color: var(--navy); letter-spacing: 0.2px;
+      font-size: 13px; font-weight: 700; color: var(--navy); letter-spacing: 0.2px;
       display: flex; align-items: center; gap: 4px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .mlb-team-name .arrow { font-size: 12px; color: var(--red); flex-shrink: 0; }
+    .mlb-team-name .arrow { font-size: 11px; color: var(--red); flex-shrink: 0; }
     .mlb-team-score {
-      font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--ink);
-      min-width: 32px; text-align: right; line-height: 1;
+      font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink);
+      min-width: 26px; text-align: right; line-height: 1;
     }
     .mlb-team-score.winning { color: var(--dark-red); }
     .mlb-team-score.losing  { color: var(--muted); }
     .mlb-divider { height: 1px; background: var(--tan); margin: 2px 0; }
 
     .mlb-status-area {
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-      padding-left: 8px; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding-left: 6px; flex-shrink: 0;
     }
     .mlb-inning-badge {
-      font-family: 'Special Elite', cursive; font-size: 12px; color: var(--muted);
+      font-family: 'Special Elite', cursive; font-size: 11px; color: var(--muted);
       letter-spacing: 1px; text-align: center; white-space: nowrap;
     }
     .mlb-inning-badge.live { color: var(--green); font-weight: bold; }
 
-    /* Diamond */
-    .mlb-diamond { position: relative; width: 34px; height: 34px; flex-shrink: 0; }
-    .mlb-diamond svg { width: 34px; height: 34px; }
+    /* Diamond — slightly smaller for 4-col */
+    .mlb-diamond { position: relative; width: 28px; height: 28px; flex-shrink: 0; }
+    .mlb-diamond svg { width: 28px; height: 28px; }
 
     /* Count + Outs */
     .mlb-count-outs {
@@ -281,30 +257,28 @@
     }
     .mlb-count-row { display: flex; gap: 2px; align-items: center; }
     .mlb-dot {
-      width: 9px; height: 9px; border-radius: 50%;
-      border: 1.5px solid var(--muted); background: transparent;
-      display: inline-block;
+      width: 7px; height: 7px; border-radius: 50%;
+      border: 1.5px solid var(--muted); background: transparent; display: inline-block;
     }
-    .mlb-dot.on { background: var(--gold); border-color: var(--gold); }
-    .mlb-dot.out-on { background: var(--dark-red); border-color: var(--dark-red); }
-    .mlb-count-label { font-size: 10px; margin-right: 2px; }
+    .mlb-dot.on     { background: var(--gold);     border-color: var(--gold); }
+    .mlb-dot.out-on { background: var(--dark-red);  border-color: var(--dark-red); }
+    .mlb-count-label { font-size: 9px; margin-right: 1px; }
 
-    /* At-bat / pitcher-batter strip */
+    /* At-bat strip */
     .mlb-atbat-strip {
-      padding: 4px 10px 4px 14px;
+      padding: 3px 8px 3px 14px;
       background: #fafaf6; border-top: 1px solid var(--tan);
-      display: flex; flex-direction: column; gap: 3px;
+      display: flex; flex-direction: column; gap: 2px;
     }
-    .mlb-atbat-row { display: flex; align-items: baseline; gap: 5px; }
-    .mlb-player-label { font-size: 11px; color: var(--muted); font-family: 'Special Elite', cursive; letter-spacing: 1px; flex-shrink: 0; }
-    .mlb-player-name  { font-size: 14px; font-weight: 700; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mlb-atbat-row { display: flex; align-items: baseline; gap: 4px; }
+    .mlb-player-label { font-size: 10px; color: var(--muted); font-family: 'Special Elite', cursive; letter-spacing: 1px; flex-shrink: 0; }
+    .mlb-player-name  { font-size: 12px; font-weight: 700; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    /* Fantasy roster badge on pitcher/batter */
     .mlb-roster-tag {
-      display: inline-block; font-size: 10px; font-family: 'Special Elite', cursive;
+      display: inline-block; font-size: 9px; font-family: 'Special Elite', cursive;
       letter-spacing: 0.5px; background: var(--navy); color: var(--gold);
       border: 1px solid var(--gold); border-radius: 3px;
-      padding: 1px 4px; margin-left: 4px; white-space: nowrap;
+      padding: 1px 3px; margin-left: 3px; white-space: nowrap;
       vertical-align: middle; flex-shrink: 0;
     }
 
@@ -312,48 +286,46 @@
     .mlb-pitch-log-wrap { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
     .mlb-pitch-log-wrap.open { max-height: 1200px; }
     .mlb-pitch-log {
-      padding: 8px 14px 12px 18px; border-top: 1px solid var(--tan);
-      display: flex; flex-direction: column; gap: 3px;
+      padding: 6px 10px 10px 14px; border-top: 1px solid var(--tan);
+      display: flex; flex-direction: column; gap: 2px;
     }
     .mlb-pitch-log-title {
-      font-family: 'Special Elite', cursive; font-size: 12px; color: var(--muted);
-      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px;
-      border-bottom: 1px solid var(--tan); padding-bottom: 4px;
+      font-family: 'Special Elite', cursive; font-size: 11px; color: var(--muted);
+      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
+      border-bottom: 1px solid var(--tan); padding-bottom: 3px;
     }
     .mlb-pitch-entry {
-      display: grid; grid-template-columns: 28px 1fr auto auto;
-      gap: 4px 8px; align-items: center; font-size: 13px; padding: 3px 0;
+      display: grid; grid-template-columns: 22px 1fr auto auto;
+      gap: 3px 6px; align-items: center; font-size: 12px; padding: 2px 0;
       border-bottom: 1px dashed rgba(139,105,20,0.1);
     }
     .mlb-pitch-entry:last-child { border-bottom: none; }
-    .mlb-pitch-num   { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--gold); text-align: center; }
+    .mlb-pitch-num   { font-family: 'DM Serif Display', serif; font-size: 14px; color: var(--gold); text-align: center; }
     .mlb-pitch-desc  { color: var(--ink); }
-    .mlb-pitch-count { font-family: 'Special Elite', cursive; font-size: 12px; color: var(--muted); text-align: right; }
-    .mlb-pitch-speed { font-size: 12px; color: var(--muted); text-align: right; font-family: 'Special Elite', cursive; }
+    .mlb-pitch-count { font-family: 'Special Elite', cursive; font-size: 11px; color: var(--muted); text-align: right; }
+    .mlb-pitch-speed { font-size: 11px; color: var(--muted); text-align: right; font-family: 'Special Elite', cursive; }
     .tag-strike { color: var(--dark-red); font-weight: bold; }
-    .tag-ball   { color: var(--green); font-weight: bold; }
-    .tag-hit    { color: var(--brown); font-weight: bold; }
+    .tag-ball   { color: var(--green);    font-weight: bold; }
+    .tag-hit    { color: var(--brown);    font-weight: bold; }
     .tag-out    { color: var(--muted); }
 
     .mlb-no-games {
-      grid-column: 1 / -1;
-      text-align: center; padding: 32px;
+      grid-column: 1 / -1; text-align: center; padding: 32px;
       font-family: 'Special Elite', cursive; color: var(--muted); font-size: 14px;
     }
     .mlb-expand-hint {
-      font-size: 11px; color: var(--muted); font-family: 'Special Elite', cursive;
-      letter-spacing: 1px; text-align: right; padding: 0 10px 4px;
-      cursor: pointer;
+      font-size: 10px; color: var(--muted); font-family: 'Special Elite', cursive;
+      letter-spacing: 1px; text-align: right; padding: 0 8px 3px; cursor: pointer;
     }
 
-    /* ── MLB LIVE LAYOUT — games left, matchup right ── */
+    /* ── MLB LIVE PAGE LAYOUT: 4-col games | wide matchup panel ── */
     .mlb-live-layout {
       display: grid;
-      grid-template-columns: 1fr 420px;
+      grid-template-columns: 1fr 480px;
       gap: 0;
       align-items: start;
     }
-    .mlb-live-left { min-width: 0; }
+    .mlb-live-left  { min-width: 0; }
     .mlb-live-right {
       border-left: 2px solid var(--gold);
       background: var(--cream);
@@ -361,142 +333,120 @@
       position: sticky;
       top: 0;
       overflow-y: auto;
-      max-height: 90vh;
+      max-height: 92vh;
     }
 
-    /* ── MATCHUP PANEL — two columns (my team | opp team) ── */
+    /* ── MATCHUP PANEL HEADER ── */
+    .fmatch-header {
+      background: var(--navy);
+      padding: 10px 16px 12px;
+      border-bottom: 2px solid var(--gold);
+      text-align: center;
+    }
+    .fmatch-title {
+      font-family: 'Special Elite', cursive;
+      font-size: 11px; color: var(--gold);
+      letter-spacing: 3px; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    /* Score bar — centered with team name above score */
+    .fmatch-score-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+    .fmatch-score-team {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .fmatch-team-name {
+      font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700;
+      color: rgba(255,255,255,0.7); letter-spacing: 1px; text-transform: uppercase;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;
+      text-align: center;
+    }
+    .fmatch-score {
+      font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1;
+    }
+    .fmatch-score.winning { color: var(--gold); }
+    .fmatch-score.losing  { color: rgba(255,255,255,0.35); }
+    .fmatch-score.tied    { color: rgba(255,255,255,0.7); }
+    .fmatch-vs {
+      font-family: 'Special Elite', cursive; font-size: 14px;
+      color: rgba(255,255,255,0.3); padding: 0 2px;
+    }
+
+    /* ── MATCHUP TWO-COL ROSTER ── */
     .fmatch-two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0;
-      border-top: 1px solid var(--tan);
     }
-    .fmatch-col {
-      padding: 0 0 8px;
-    }
-    .fmatch-col + .fmatch-col {
-      border-left: 1px solid var(--tan);
-    }
+    .fmatch-col { padding: 0 0 8px; }
+    .fmatch-col + .fmatch-col { border-left: 1px solid var(--tan); }
+
     .fmatch-col-header {
       font-family: 'Special Elite', cursive; font-size: 11px;
       letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
-      padding: 6px 8px 4px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--tan);
-      background: rgba(212,160,23,0.05);
+      padding: 6px 8px 5px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      border-bottom: 2px solid var(--tan);
+      background: rgba(212,160,23,0.06);
+      text-align: center;
     }
-    .fmatch-col-header span { color: var(--green); font-size: 10px; font-weight: 700; }
+    .fmatch-col-today {
+      color: var(--green); font-size: 10px; font-weight: 700;
+      font-family: 'Oswald', sans-serif; letter-spacing: 0;
+    }
+
     .fmatch-player-row-2col {
       display: grid;
-      grid-template-columns: 28px 1fr auto;
+      grid-template-columns: 26px 1fr auto;
       align-items: center;
-      padding: 4px 8px;
+      padding: 5px 8px;
       border-bottom: 1px solid rgba(139,105,20,0.10);
-      gap: 0 3px;
+      gap: 0 4px;
     }
     .fmatch-player-row-2col:last-child { border-bottom: none; }
     .fmatch-player-row-2col:hover { background: rgba(212,160,23,0.05); }
 
-    /* ── FANTASY MATCHUP PANEL ── */
-    .fmatch-header {
-      background: var(--navy);
-      padding: 8px 12px;
-      border-bottom: 2px solid var(--gold);
-    }
-    .fmatch-title {
-      font-family: 'Special Elite', cursive;
-      font-size: 13px; color: var(--gold);
-      letter-spacing: 3px; text-transform: uppercase;
-    }
-    .fmatch-score-bar {
-      display: flex; justify-content: space-between; align-items: baseline;
-      margin-top: 6px;
-    }
-    .fmatch-team-name {
-      font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700;
-      color: #fff; letter-spacing: 0.5px;
-      max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .fmatch-score {
-      font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1;
-    }
-    .fmatch-score.winning { color: var(--gold); }
-    .fmatch-score.losing  { color: rgba(255,255,255,0.4); }
-    .fmatch-score.tied    { color: rgba(255,255,255,0.7); }
-    .fmatch-vs {
-      font-family: 'Special Elite', cursive; font-size: 12px;
-      color: rgba(255,255,255,0.4); padding: 0 4px;
-    }
-
-    /* roster section inside the panel */
-    .fmatch-roster-section { padding: 0 0 8px; }
-    .fmatch-roster-label {
-      font-family: 'Special Elite', cursive; font-size: 11px;
-      letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
-      padding: 8px 12px 4px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .fmatch-roster-label span { color: var(--dark-brown); font-size: 9px; }
-    .fmatch-player-row {
-      display: grid;
-      grid-template-columns: 34px 1fr auto;
-      gap: 0 4px;
-      align-items: center;
-      padding: 5px 12px;
-      border-bottom: 1px solid rgba(139,105,20,0.12);
-      font-size: 11px;
-    }
-    .fmatch-player-row:last-child { border-bottom: none; }
-    .fmatch-player-row:hover { background: rgba(212,160,23,0.05); }
     .fmatch-pos {
-      font-family: 'Special Elite', cursive; font-size: 11px;
+      font-family: 'Special Elite', cursive; font-size: 10px;
       color: var(--muted); text-align: center; letter-spacing: 0.5px;
     }
     .fmatch-pname {
       font-weight: 700; color: var(--navy);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      font-size: 13px;
+      font-size: 12px;
     }
     .fmatch-pname.playing { color: var(--green); }
-    .fmatch-pname.bench   { color: var(--muted); font-weight: 400; }
     .fmatch-ppts {
-      font-family: 'DM Serif Display', serif; font-size: 16px;
-      color: var(--ink); text-align: right; min-width: 36px;
+      font-family: 'DM Serif Display', serif; font-size: 15px;
+      text-align: right; min-width: 32px;
     }
     .fmatch-ppts.positive { color: var(--dark-red); }
     .fmatch-ppts.zero     { color: var(--muted); }
 
-    .fmatch-divider {
-      height: 2px; background: var(--gold); margin: 0;
-    }
     .fmatch-loading {
       font-family: 'Special Elite', cursive; font-size: 13px;
       color: var(--muted); text-align: center; padding: 24px 12px;
     }
-    .fmatch-section-divider {
-      background: var(--tan); height: 1px; margin: 0 12px;
-    }
-    .fmatch-opp-header {
-      background: rgba(26,39,68,0.06);
-    }
 
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .mlb-live-layout { grid-template-columns: 1fr 400px; }
+    }
     @media (max-width: 900px) {
-      .mlb-live-layout { grid-template-columns: 1fr 300px; }
+      .mlb-live-layout { grid-template-columns: 1fr 320px; }
+      #mlb-game-list { grid-template-columns: repeat(2, 1fr) !important; }
     }
     @media (max-width: 700px) {
       .mlb-live-layout { grid-template-columns: 1fr; }
       .mlb-live-right { border-left: none; border-top: 2px solid var(--gold); max-height: none; }
+      #mlb-game-list { grid-template-columns: repeat(2, 1fr) !important; }
     }
-    @media (max-width: 600px) {
-      #mlb-game-list { grid-template-columns: 1fr 1fr !important; }
-    }
-    @media (max-width: 400px) {
+    @media (max-width: 420px) {
       #mlb-game-list { grid-template-columns: 1fr !important; }
-    }
-    /* ── SWIPE HINT ── */
-    .swipe-hint {
-      font-family: 'Special Elite', cursive; font-size: 11px; color: var(--muted);
-      text-align: center; padding: 4px; letter-spacing: 1px; opacity: 0.7;
     }
   </style>
 </head>
@@ -567,7 +517,8 @@
       </div>
       <div class="mlb-live-layout">
         <div class="mlb-live-left">
-          <div id="mlb-game-list" style="padding:12px 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:start"></div>
+          <!-- 4-column game grid -->
+          <div id="mlb-game-list" style="padding:10px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:start"></div>
         </div>
         <div class="mlb-live-right">
           <div id="fantasy-matchup-panel">
@@ -584,11 +535,10 @@
   const SEASON = '2026';
   const PROXY  = 'https://fantasy-baseball-kenoshaleague.onrender.com';
 
-  // 7 segments × 3 weeks each
   const SEGMENTS = [
-    { label: 'Segment 1', weeks: [1,2,3],   playoffs: false },
-    { label: 'Segment 2', weeks: [4,5,6],   playoffs: false },
-    { label: 'Segment 3', weeks: [7,8,9],   playoffs: false },
+    { label: 'Segment 1', weeks: [1,2,3],    playoffs: false },
+    { label: 'Segment 2', weeks: [4,5,6],    playoffs: false },
+    { label: 'Segment 3', weeks: [7,8,9],    playoffs: false },
     { label: 'Segment 4', weeks: [10,11,12], playoffs: false },
     { label: 'Segment 5', weeks: [13,14,15], playoffs: false },
     { label: 'Segment 6', weeks: [16,17,18], playoffs: false },
@@ -602,7 +552,6 @@
   let liveWeek    = 1;
   let maxWeek     = 1;
 
-  // Tab order for swipe navigation
   const TAB_ORDER = ['scoreboard','standings','segments','mlblive'];
   let currentTabIndex = 0;
 
@@ -612,8 +561,8 @@
   }
   function setStatus(msg, isErr) {
     const el = document.getElementById('status-msg');
-    el.innerHTML  = msg;
-    el.className  = 'status-msg' + (isErr ? ' error' : '');
+    el.innerHTML = msg;
+    el.className = 'status-msg' + (isErr ? ' error' : '');
   }
   function fmtPts(n) { return Math.round(Number(n)).toString(); }
   function pct(w, l) {
@@ -640,7 +589,7 @@
     renderScoreboard();
   }
 
-  // Native touch panning is handled by the browser — no swipe overrides needed.
+  // Native touch panning handled by browser.
 
   // ── LOAD ───────────────────────────────────────────────────────
   async function loadAll() {
@@ -655,7 +604,6 @@
       const status   = globalData.status   || {};
       const teams    = globalData.teams    || [];
       const settings = globalData.settings || {};
-      const schedule = globalData.schedule || [];
 
       liveWeek    = status.currentMatchupPeriod ?? 1;
       currentWeek = liveWeek;
@@ -673,14 +621,12 @@
         };
       });
 
-      // Fetch rosters — tag each player with their team abbrev (NEWB, SHOR, VAL, etc.)
+      // Fetch rosters — use team abbrev for tags
       try {
         const rr = await fetch(`${PROXY}/api/league/${SEASON}?view=mRoster`);
         if (rr.ok) {
           const rosterData = await rr.json();
           rosterMap = {};
-          // Also build a map of playerName -> { abbrev, pos, lineupSlotId, teamId }
-          // so the matchup panel can show today's starters
           window._fullRoster = {};
           (rosterData.teams || []).forEach(t => {
             const label = teamMap[t.id]?.abbrev || `T${t.id}`;
@@ -700,7 +646,6 @@
         }
       } catch(e) { console.warn('[Roster] failed:', e); }
 
-      // Show UI
       document.getElementById('status-panel').style.display = 'none';
       document.getElementById('tab-bar').style.display      = '';
       document.getElementById('main-content').style.display = 'block';
@@ -734,17 +679,11 @@
       const hId = m.home?.teamId, aId = m.away?.teamId;
       const isLiveWeek = m.matchupPeriodId === liveWeek;
       const useLive    = isLiveWeek && includesLive;
-      const hPts = useLive
-        ? +(m.home?.totalPointsLive ?? m.home?.totalPoints ?? 0)
-        : +(m.home?.totalPoints ?? 0);
-      const aPts = useLive
-        ? +(m.away?.totalPointsLive ?? m.away?.totalPoints ?? 0)
-        : +(m.away?.totalPoints ?? 0);
-
+      const hPts = useLive ? +(m.home?.totalPointsLive ?? m.home?.totalPoints ?? 0) : +(m.home?.totalPoints ?? 0);
+      const aPts = useLive ? +(m.away?.totalPointsLive ?? m.away?.totalPoints ?? 0) : +(m.away?.totalPoints ?? 0);
       if (totals[hId]) { totals[hId].pf += hPts; totals[hId].pa += aPts; }
       if (totals[aId]) { totals[aId].pf += aPts; totals[aId].pa += hPts; }
     });
-
     return totals;
   }
 
@@ -788,7 +727,7 @@
             </div>
             <div class="matchup-divider">
               <span class="vs-badge">VS</span>
-              <div class="matchup-badge-row">${badgeHtml}</div>
+              ${badgeHtml}
             </div>
             <div class="team-row">
               <div><div class="team-name">${esc(aT.name)}</div><div class="team-record">${rec(aT)}</div></div>
@@ -798,17 +737,14 @@
         list.appendChild(card);
       });
     }
-    renderStrip('bottom-strip', calcPointsForWeeks(
-      Array.from({length: maxWeek}, (_,i) => i+1), true
-    ));
+    renderStrip('bottom-strip', calcPointsForWeeks(Array.from({length: maxWeek}, (_,i) => i+1), true));
   }
 
   // ── STANDINGS ──────────────────────────────────────────────────
   function renderStandings() {
     const allWeeks = Array.from({length: maxWeek}, (_,i) => i+1);
     const totals   = calcPointsForWeeks(allWeeks, true);
-
-    const withId = Object.entries(teamMap).map(([id, t]) => ({
+    const withId   = Object.entries(teamMap).map(([id, t]) => ({
       id, ...t, pf: totals[id]?.pf ?? 0, pa: totals[id]?.pa ?? 0
     })).sort((a,b) => {
       if (b.wins !== a.wins) return b.wins - a.wins;
@@ -830,7 +766,6 @@
       }
       const diff    = t.pf - t.pa;
       const diffStr = diff >= 0 ? '+' + Math.round(diff) : Math.round(diff).toString();
-      const diffCls = diff >= 0 ? 'pos' : 'neg';
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${i+1}</td>
@@ -840,10 +775,9 @@
         <td class="pct">${pct(t.wins,t.losses)}</td>
         <td class="pts">${fmtPts(t.pf)}</td>
         <td class="pts">${fmtPts(t.pa)}</td>
-        <td class="diff ${diffCls}">${diffStr}</td>`;
+        <td class="diff ${diff>=0?'pos':'neg'}">${diffStr}</td>`;
       body.appendChild(row);
     });
-
     renderStrip('bottom-strip-2', totals);
   }
 
@@ -857,30 +791,22 @@
       const hasAny      = activeWeeks.length > 0;
       const isComplete  = seg.weeks.every(w => w < liveWeek);
       const isCurrent   = seg.weeks.includes(liveWeek);
-
-      const totals = hasAny ? calcPointsForWeeks(activeWeeks, true) : {};
-
-      const ranked = Object.entries(teamMap).map(([id, t]) => ({
-        id, ...t,
-        pf: totals[id]?.pf ?? 0,
-        pa: totals[id]?.pa ?? 0,
+      const totals      = hasAny ? calcPointsForWeeks(activeWeeks, true) : {};
+      const ranked      = Object.entries(teamMap).map(([id, t]) => ({
+        id, ...t, pf: totals[id]?.pf ?? 0, pa: totals[id]?.pa ?? 0,
       })).sort((a,b) => b.pf - a.pf);
-
       const winner = isComplete && ranked.length ? ranked[0] : null;
 
       let statusLabel = '';
-      if (!hasAny)     statusLabel = 'UPCOMING';
+      if (!hasAny)        statusLabel = 'UPCOMING';
       else if (isCurrent) statusLabel = `WEEKS ${activeWeeks[0]}–${liveWeek} IN PROGRESS`;
-      else if (isComplete) statusLabel = `WEEKS ${seg.weeks[0]}–${seg.weeks[seg.weeks.length-1]} · COMPLETE`;
+      else if (isComplete)statusLabel = `WEEKS ${seg.weeks[0]}–${seg.weeks[seg.weeks.length-1]} · COMPLETE`;
 
       const block = document.createElement('div');
       block.className = 'segment-block';
-
       block.innerHTML = `
         <div class="segment-header">
-          <div>
-            <span class="segment-label">${esc(seg.label)}${seg.playoffs ? ' — Playoffs' : ''}</span>
-          </div>
+          <div><span class="segment-label">${esc(seg.label)}${seg.playoffs ? ' — Playoffs' : ''}</span></div>
           <div style="text-align:right">
             ${winner ? `<div class="segment-winner-crown">★ ${esc(winner.name)}</div>` : ''}
             <div class="segment-weeks">${statusLabel}</div>
@@ -888,25 +814,20 @@
         </div>`;
 
       if (!hasAny) {
-        const upcoming = document.createElement('div');
-        upcoming.className = 'segment-incomplete';
-        upcoming.textContent = `Starts Week ${seg.weeks[0]}`;
-        block.appendChild(upcoming);
+        const up = document.createElement('div');
+        up.className = 'segment-incomplete';
+        up.textContent = `Starts Week ${seg.weeks[0]}`;
+        block.appendChild(up);
       } else {
         const wrap = document.createElement('div');
         wrap.className = 'segment-table-wrap';
-
-        const weekCols = activeWeeks.map(w => `<th>WK ${w}</th>`).join('');
-
         wrap.innerHTML = `
           <table class="data-table" style="margin-top:10px">
-            <thead>
-              <tr>
-                <th>#</th><th>Team</th>
-                ${weekCols}
-                <th>TOTAL PF</th><th>TOTAL PA</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>#</th><th>Team</th>
+              ${activeWeeks.map(w=>`<th>WK ${w}</th>`).join('')}
+              <th>TOTAL PF</th><th>TOTAL PA</th>
+            </tr></thead>
             <tbody id="seg-body-${si}"></tbody>
           </table>`;
         block.appendChild(wrap);
@@ -925,28 +846,22 @@
           if (!tbody) return;
           ranked.forEach((t, ri) => {
             const isWinner = winner && t.id === winner.id;
-            const weekTds  = activeWeeks.map(w => {
-              const pts = byWeek[t.id]?.[w] ?? 0;
-              return `<td class="pts">${pts > 0 ? fmtPts(pts) : '—'}</td>`;
-            }).join('');
             const row = document.createElement('tr');
             if (isWinner) row.className = 'winner-row';
             row.innerHTML = `
-              <td>${ri+1}${isWinner ? ' ★' : ''}</td>
+              <td>${ri+1}${isWinner?' ★':''}</td>
               <td>${esc(t.name)}</td>
-              ${weekTds}
+              ${activeWeeks.map(w=>`<td class="pts">${(byWeek[t.id]?.[w]??0)>0?fmtPts(byWeek[t.id][w]):'—'}</td>`).join('')}
               <td class="pts">${fmtPts(t.pf)}</td>
               <td class="pts">${fmtPts(t.pa)}</td>`;
             tbody.appendChild(row);
           });
         }, 0);
       }
-
       grid.appendChild(block);
     });
 
-    const allWeeks = Array.from({length: maxWeek}, (_,i) => i+1);
-    renderStrip('bottom-strip-3', calcPointsForWeeks(allWeeks, true));
+    renderStrip('bottom-strip-3', calcPointsForWeeks(Array.from({length: maxWeek}, (_,i) => i+1), true));
   }
 
   // ── BOTTOM STRIP ───────────────────────────────────────────────
@@ -954,7 +869,6 @@
     const ranked = Object.entries(teamMap).map(([tid, t]) => ({
       ...t, pf: totals[tid]?.pf ?? 0
     })).sort((a,b) => b.pf - a.pf);
-
     document.getElementById(id).innerHTML = ranked.map((t, i) => `
       <div class="strip-item">
         <div class="strip-rank">${i+1}</div>
@@ -964,64 +878,44 @@
   }
 
   // ══════════════════════════════════════════════════════════════
-  // ── MLB LIVE SCORES ──────────────────────────────────────────
+  // ── MLB LIVE ─────────────────────────────────────────────────
   // ══════════════════════════════════════════════════════════════
   let mlbLoaded    = false;
   let mlbGames     = [];
   let mlbExpanded  = {};
   let mlbRefreshTm = null;
+  const MLB_API    = 'https://statsapi.mlb.com';
 
-  // ── FANTASY MATCHUP PANEL ──────────────────────────────────────
-  // My team is always ID 1
+  // ── FANTASY MATCHUP ────────────────────────────────────────────
   const MY_TEAM_ID = 1;
   let fMatchupData = null;
 
-  // Build scoring rules from ESPN settings once loaded
-  // ESPN stat IDs for fantasy baseball (standard):
-  // Batters: 0=AB,1=H,2=AVG,3=OBP,4=SLG,5=R,6=RBI,7=2B,8=3B,9=HR,10=TB
-  //          11=BB,12=HBP,14=SB,15=CS,16=SB-CS,17=SO(batter),18=GDP
-  // Pitchers:19=IP,20=TBF,21=H(allowed),22=BB(allowed),23=K,24=ER,25=W,26=L,27=SV,28=HLD,29=BS,30=ERA,31=WHIP,32=CG,33=CGSO,34=NH,41=QS,48=SVO
-  //
-  // We read appliedTotal from stats OR compute from MLB box score raw stats.
-  // Since ESPN stat totals are unreliable via mRoster, we compute from MLB live feeds.
-
-  // Parse ESPN scoring settings into a lookup: { statId -> pointValue }
   function buildScoringMap() {
     const map = {};
-    const scoringItems = globalData?.settings?.scoringSettings?.scoringItems || [];
-    scoringItems.forEach(item => {
-      if (item.isReverseItem) {
-        map[item.statId] = -(item.pointsOverrides?.[0]?.points ?? item.points ?? 0);
-      } else {
-        map[item.statId] = item.pointsOverrides?.[0]?.points ?? item.points ?? 0;
-      }
+    const items = globalData?.settings?.scoringSettings?.scoringItems || [];
+    items.forEach(item => {
+      const val = item.pointsOverrides?.[0]?.points ?? item.points ?? 0;
+      map[item.statId] = item.isReverseItem ? -val : val;
     });
-    console.log('[ScoringMap]', map);
     return map;
   }
 
-  // Map ESPN stat IDs to MLB Stats API box score fields
-  // Returns fantasy points from an MLB player's today box score stats
   function calcFantasyPts(mlbStats, ispitcher, scoringMap) {
     if (!mlbStats || !scoringMap) return 0;
     let pts = 0;
-
     if (!ispitcher) {
-      // Batter stats from MLB API
-      const ab   = mlbStats.atBats       ?? 0;
-      const h    = mlbStats.hits          ?? 0;
-      const r    = mlbStats.runs          ?? 0;
-      const rbi  = mlbStats.rbi           ?? 0;
-      const bb   = mlbStats.baseOnBalls   ?? 0;
-      const hbp  = mlbStats.hitByPitch    ?? 0;
-      const sb   = mlbStats.stolenBases   ?? 0;
+      const h    = mlbStats.hits           ?? 0;
+      const r    = mlbStats.runs           ?? 0;
+      const rbi  = mlbStats.rbi            ?? 0;
+      const bb   = mlbStats.baseOnBalls    ?? 0;
+      const hbp  = mlbStats.hitByPitch     ?? 0;
+      const sb   = mlbStats.stolenBases    ?? 0;
       const cs   = mlbStats.caughtStealing ?? 0;
-      const so   = mlbStats.strikeOuts    ?? 0;
-      const hr   = mlbStats.homeRuns      ?? 0;
-      const dbl  = mlbStats.doubles       ?? 0;
-      const trpl = mlbStats.triples       ?? 0;
-      const tb   = h + dbl + 2*trpl + 3*hr; // total bases
-
+      const so   = mlbStats.strikeOuts     ?? 0;
+      const hr   = mlbStats.homeRuns       ?? 0;
+      const dbl  = mlbStats.doubles        ?? 0;
+      const trpl = mlbStats.triples        ?? 0;
+      const tb   = h + dbl + 2*trpl + 3*hr;
       pts += (scoringMap[5]  ?? 0) * r;
       pts += (scoringMap[6]  ?? 0) * rbi;
       pts += (scoringMap[9]  ?? 0) * hr;
@@ -1035,29 +929,19 @@
       pts += (scoringMap[17] ?? 0) * so;
       pts += (scoringMap[10] ?? 0) * tb;
     } else {
-      // Pitcher stats from MLB API
-      // IP comes as decimal e.g. 6.1 = 6 innings + 1 out = 19/3 outs
-      const ipRaw = mlbStats.inningsPitched ?? '0';
-      const ipParts = String(ipRaw).split('.');
-      const fullInnings = parseInt(ipParts[0]) || 0;
-      const extraOuts   = parseInt(ipParts[1]) || 0;
-      const totalOuts   = fullInnings * 3 + extraOuts;
-      const ip = totalOuts / 3;
-
-      const er  = mlbStats.earnedRuns     ?? 0;
-      const k   = mlbStats.strikeOuts     ?? 0;
-      const bb  = mlbStats.baseOnBalls    ?? 0;
-      const w   = mlbStats.wins           ?? 0;
-      const l   = mlbStats.losses         ?? 0;
-      const sv  = mlbStats.saves          ?? 0;
-      const hld = mlbStats.holds          ?? 0;
-      const bs  = mlbStats.blownSaves     ?? 0;
-      const cg  = mlbStats.completeGames  ?? 0;
-      const sho = mlbStats.shutouts       ?? 0;
-      const nh  = mlbStats.noHitters      ?? 0;  // not always present
-      const ha  = mlbStats.hits           ?? 0;
-      const qs  = (ip >= 6 && er <= 3) ? 1 : 0;  // quality start
-
+      const ipRaw  = String(mlbStats.inningsPitched ?? '0').split('.');
+      const ip     = (parseInt(ipRaw[0])||0) + (parseInt(ipRaw[1])||0)/3;
+      const er  = mlbStats.earnedRuns    ?? 0;
+      const k   = mlbStats.strikeOuts   ?? 0;
+      const bb  = mlbStats.baseOnBalls  ?? 0;
+      const w   = mlbStats.wins         ?? 0;
+      const l   = mlbStats.losses       ?? 0;
+      const sv  = mlbStats.saves        ?? 0;
+      const hld = mlbStats.holds        ?? 0;
+      const bs  = mlbStats.blownSaves   ?? 0;
+      const cg  = mlbStats.completeGames?? 0;
+      const sho = mlbStats.shutouts     ?? 0;
+      const qs  = (ip >= 6 && er <= 3)  ? 1 : 0;
       pts += (scoringMap[19] ?? 0) * ip;
       pts += (scoringMap[23] ?? 0) * k;
       pts += (scoringMap[22] ?? 0) * bb;
@@ -1071,14 +955,9 @@
       pts += (scoringMap[33] ?? 0) * sho;
       pts += (scoringMap[41] ?? 0) * qs;
     }
-
     return Math.round(pts * 10) / 10;
   }
 
-  // ESPN lineup slot IDs for fantasy baseball
-  // 0=C, 1=1B, 2=2B, 3=3B, 4=SS, 5=OF, 6=OF, 7=OF, 8=UTIL,
-  // 9=SP, 10=SP, 11=RP, 12=RP, 13=P, 14=P, 15=P, 16=BN, 17=IL
-  // Note: some leagues use slot 12 for UTIL hitters — check abbrev context
   function posLabel(slotId) {
     const MAP = {
       0:'C', 1:'1B', 2:'2B', 3:'3B', 4:'SS',
@@ -1097,13 +976,11 @@
     if (!panel || !globalData) return;
 
     try {
-      // Find my matchup this week
       const schedule  = globalData.schedule || [];
       const myMatchup = schedule.find(m =>
         m.matchupPeriodId === liveWeek &&
         (m.home?.teamId === MY_TEAM_ID || m.away?.teamId === MY_TEAM_ID)
       );
-
       if (!myMatchup) {
         panel.innerHTML = `<div class="fmatch-loading">No matchup found for Week ${liveWeek}.</div>`;
         return;
@@ -1111,93 +988,68 @@
 
       const iAmHome   = myMatchup.home?.teamId === MY_TEAM_ID;
       const oppTeamId = iAmHome ? myMatchup.away?.teamId : myMatchup.home?.teamId;
-      const myTeam    = teamMap[MY_TEAM_ID]  || { name:'My Team',  abbrev:'ME'  };
-      const oppTeam   = teamMap[oppTeamId]   || { name:'Opponent', abbrev:'OPP' };
+      const myTeam    = teamMap[MY_TEAM_ID] || { name:'My Team',  abbrev:'ME'  };
+      const oppTeam   = teamMap[oppTeamId]  || { name:'Opponent', abbrev:'OPP' };
 
-      // Week totals from ESPN (reliable for matchup total)
-      const myPts  = +(myMatchup[iAmHome?'home':'away']?.totalPointsLive
-                    ?? myMatchup[iAmHome?'home':'away']?.totalPoints ?? 0);
-      const oppPts = +(myMatchup[iAmHome?'away':'home']?.totalPointsLive
-                    ?? myMatchup[iAmHome?'away':'home']?.totalPoints ?? 0);
+      const myPts  = +(myMatchup[iAmHome?'home':'away']?.totalPointsLive ?? myMatchup[iAmHome?'home':'away']?.totalPoints ?? 0);
+      const oppPts = +(myMatchup[iAmHome?'away':'home']?.totalPointsLive ?? myMatchup[iAmHome?'away':'home']?.totalPoints ?? 0);
       const myWin  = myPts > oppPts, oppWin = oppPts > myPts;
 
-      // Build scoring map from ESPN settings
-      const scoringMap = buildScoringMap();
-
-      // Get today's roster starters for both teams from _fullRoster
-      const roster = window._fullRoster || {};
-      const myStarters  = Object.values(roster).filter(p => p.teamId === MY_TEAM_ID  && !p.isBench);
-      const oppStarters = Object.values(roster).filter(p => p.teamId === oppTeamId   && !p.isBench);
+      const scoringMap  = buildScoringMap();
+      const roster      = window._fullRoster || {};
+      const myStarters  = Object.values(roster).filter(p => p.teamId === MY_TEAM_ID && !p.isBench);
+      const oppStarters = Object.values(roster).filter(p => p.teamId === oppTeamId  && !p.isBench);
 
       if (!myStarters.length && !oppStarters.length) {
         panel.innerHTML = `<div class="fmatch-loading">Roster not loaded yet — refresh.</div>`;
         return;
       }
 
-      // Show loading state while we fetch MLB box scores
       panel.innerHTML = `<div class="fmatch-loading">Fetching today's stats&#8230;</div>`;
 
-      // Fetch today's MLB games (already loaded in mlbGames, or fetch fresh)
-      // Build a map of playerName (lowercase) -> today's box score stats
-      const todayStatsMap = {}; // name.toLowerCase() -> { stats, ispitcher }
-
-      const gamesToCheck = mlbGames.length ? mlbGames : [];
-      await Promise.all(gamesToCheck.map(async game => {
+      // Build today stats map from MLB boxscores
+      const todayStatsMap = {};
+      await Promise.all(mlbGames.map(async game => {
         const pk    = game.gameData?.game?.pk;
         const state = game.gameData?.status?.abstractGameState;
         if (!pk || state === 'Preview') return;
-
         try {
-          // Use the boxscore endpoint for clean per-player stat lines
           const res  = await fetch(`${MLB_API}/api/v1/game/${pk}/boxscore`);
           const data = await res.json();
           const teams = data.teams || {};
-
           ['home','away'].forEach(side => {
             const batters  = teams[side]?.batters  || [];
             const pitchers = teams[side]?.pitchers || [];
             const players  = teams[side]?.players  || {};
-
             batters.forEach(id => {
-              const p    = players[`ID${id}`];
-              const name = p?.person?.fullName;
-              if (!name) return;
-              const stats = p?.stats?.batting?.summary ? p.stats.batting : null;
-              // Use gameStats which is today only
+              const p = players[`ID${id}`];
+              if (!p?.person?.fullName) return;
               const gs = p?.gameStats?.batting || p?.stats?.batting || {};
-              todayStatsMap[name.toLowerCase()] = { stats: gs, ispitcher: false };
+              todayStatsMap[p.person.fullName.toLowerCase()] = { stats: gs, ispitcher: false };
             });
-
             pitchers.forEach(id => {
-              const p    = players[`ID${id}`];
-              const name = p?.person?.fullName;
-              if (!name) return;
+              const p = players[`ID${id}`];
+              if (!p?.person?.fullName) return;
               const gs = p?.gameStats?.pitching || p?.stats?.pitching || {};
-              todayStatsMap[name.toLowerCase()] = { stats: gs, ispitcher: true };
+              todayStatsMap[p.person.fullName.toLowerCase()] = { stats: gs, ispitcher: true };
             });
           });
-        } catch(e) { /* skip failed game */ }
+        } catch(e) {}
       }));
 
-      console.log('[TodayStats sample]', Object.entries(todayStatsMap).slice(0,3));
-
-      // Compute today's fantasy points for each starter
       function enrichPlayers(starters) {
         return starters.map(p => {
-          const key   = p.name.toLowerCase();
-          const mlb   = todayStatsMap[key];
-          const pts   = mlb ? calcFantasyPts(mlb.stats, mlb.ispitcher, scoringMap) : null;
+          const mlb = todayStatsMap[p.name.toLowerCase()];
+          const pts = mlb ? calcFantasyPts(mlb.stats, mlb.ispitcher, scoringMap) : null;
           return { ...p, pts, pos: posLabel(p.slotId), playing: !!mlb };
         }).sort((a,b) => {
-          // Sort: playing first, then by slot
-          if (!!a.pts !== !!b.pts) return a.pts === null ? 1 : -1;
+          if ((a.pts===null) !== (b.pts===null)) return a.pts===null ? 1 : -1;
           return a.slotId - b.slotId;
         });
       }
 
       const myEnriched  = enrichPlayers(myStarters);
       const oppEnriched = enrichPlayers(oppStarters);
-
       fMatchupData = { myEnriched, oppEnriched };
       renderMatchupPanel(myTeam, oppTeam, myPts, oppPts, myWin, oppWin, myEnriched, oppEnriched);
 
@@ -1221,8 +1073,8 @@
         return `
           <div class="fmatch-player-row-2col">
             <div class="fmatch-pos">${esc(p.pos)}</div>
-            <div class="fmatch-pname ${nameCls}" style="font-size:11px">${esc(p.name)}</div>
-            <div class="fmatch-ppts ${ptsCls}" style="font-size:13px">${ptsDisp}</div>
+            <div class="fmatch-pname ${nameCls}">${esc(p.name)}</div>
+            <div class="fmatch-ppts ${ptsCls}">${ptsDisp}</div>
           </div>`;
       }).join('');
     }
@@ -1234,14 +1086,14 @@
       <div class="fmatch-header">
         <div class="fmatch-title">⚾ Week ${liveWeek} Matchup</div>
         <div class="fmatch-score-bar">
-          <div>
-            <div class="fmatch-team-name">${esc(myTeam.abbrev)}</div>
+          <div class="fmatch-score-team">
+            <div class="fmatch-team-name">${esc(myTeam.name)}</div>
             <div class="fmatch-score ${myWin?'winning':oppWin?'losing':'tied'}">${Math.round(myPts)}</div>
           </div>
           <div class="fmatch-vs">vs</div>
-          <div style="text-align:right">
-            <div class="fmatch-team-name" style="text-align:right">${esc(oppTeam.abbrev)}</div>
-            <div class="fmatch-score ${oppWin?'winning':myWin?'losing':'tied'}" style="text-align:right">${Math.round(oppPts)}</div>
+          <div class="fmatch-score-team">
+            <div class="fmatch-team-name">${esc(oppTeam.name)}</div>
+            <div class="fmatch-score ${oppWin?'winning':myWin?'losing':'tied'}">${Math.round(oppPts)}</div>
           </div>
         </div>
       </div>
@@ -1249,30 +1101,25 @@
         <div class="fmatch-col">
           <div class="fmatch-col-header">
             ${esc(myTeam.abbrev)}
-            <span>+${myTodayPts.toFixed(1)}</span>
+            <span class="fmatch-col-today">+${myTodayPts.toFixed(1)}</span>
           </div>
           ${colRows(myPlayers)}
         </div>
         <div class="fmatch-col">
           <div class="fmatch-col-header">
             ${esc(oppTeam.abbrev)}
-            <span>+${oppTodayPts.toFixed(1)}</span>
+            <span class="fmatch-col-today">+${oppTodayPts.toFixed(1)}</span>
           </div>
           ${colRows(oppPlayers)}
         </div>
       </div>`;
   }
 
-  const MLB_API = 'https://statsapi.mlb.com';
-
   function refreshMlb() { loadMlb(true); loadFantasyMatchup(); }
 
   async function loadMlb(showLoader = true) {
     const list = document.getElementById('mlb-game-list');
-
-    if (showLoader) {
-      list.innerHTML = `<div class="mlb-no-games">Loading today's games…</div>`;
-    }
+    if (showLoader) list.innerHTML = `<div class="mlb-no-games">Loading today's games…</div>`;
 
     try {
       const today   = new Date();
@@ -1284,8 +1131,7 @@
 
       const schedRes  = await fetch(`${MLB_API}/api/v1/schedule?sportId=1&date=${dateStr}&hydrate=linescore&language=en`);
       const schedData = await schedRes.json();
-      const dates     = schedData.dates || [];
-      const games     = dates.length ? dates[0].games : [];
+      const games     = schedData.dates?.[0]?.games || [];
 
       if (!games.length) {
         list.innerHTML = `<div class="mlb-no-games">No MLB games scheduled today.</div>`;
@@ -1300,18 +1146,18 @@
         const state = g.status?.abstractGameState;
         if (state !== 'Preview') {
           try {
-            const lf = await fetch(`${MLB_API}/api/v1.1/game/${g.gamePk}/feed/live?language=en`);
+            const lf   = await fetch(`${MLB_API}/api/v1.1/game/${g.gamePk}/feed/live?language=en`);
             const data = await lf.json();
             return data;
-          } catch { /* fall through to schedule data */ }
+          } catch {}
         }
-        // For Preview games OR failed live fetches, build a minimal object
-        // that includes scores from the schedule hydration
         return {
           gameData: {
             game:   { pk: g.gamePk },
-            teams:  { home: { teamName: g.teams?.home?.team?.name || g.teams?.home?.teamName || '?' },
-                      away: { teamName: g.teams?.away?.team?.name || g.teams?.away?.teamName || '?' } },
+            teams:  {
+              home: { teamName: g.teams?.home?.team?.name || '?' },
+              away: { teamName: g.teams?.away?.team?.name || '?' }
+            },
             status: g.status
           },
           liveData: {
@@ -1333,34 +1179,21 @@
       mlbLoaded = true;
 
       const order  = { 'Live': 0, 'Preview': 1, 'Final': 2 };
-      const sorted = [...mlbGames].sort((a, b) => {
-        const sa = order[a.gameData?.status?.abstractGameState] ?? 3;
-        const sb = order[b.gameData?.status?.abstractGameState] ?? 3;
-        return sa - sb;
-      });
+      const sorted = [...mlbGames].sort((a,b) =>
+        (order[a.gameData?.status?.abstractGameState]??3) - (order[b.gameData?.status?.abstractGameState]??3)
+      );
 
       if (showLoader || list.children.length === 0) {
         list.innerHTML = '';
         sorted.forEach(game => list.appendChild(buildMlbGameCard(game)));
       } else {
-        const existingPks = new Set(
-          [...list.querySelectorAll('.mlb-game-card[id]')]
-            .map(el => el.id.replace('mlb-card-', ''))
-        );
-        const newPks = new Set(sorted.map(g => String(g.gameData?.game?.pk)));
-
-        existingPks.forEach(pk => {
-          if (!newPks.has(pk)) {
-            const old = document.getElementById(`mlb-card-${pk}`);
-            if (old) old.remove();
-          }
-        });
-
+        const existingPks = new Set([...list.querySelectorAll('.mlb-game-card[id]')].map(el => el.id.replace('mlb-card-','')));
+        const newPks      = new Set(sorted.map(g => String(g.gameData?.game?.pk)));
+        existingPks.forEach(pk => { if (!newPks.has(pk)) document.getElementById(`mlb-card-${pk}`)?.remove(); });
         sorted.forEach(game => {
           const pk       = String(game.gameData?.game?.pk);
           const existing = document.getElementById(`mlb-card-${pk}`);
           const newCard  = buildMlbGameCard(game);
-
           if (!existing) {
             list.appendChild(newCard);
           } else {
@@ -1370,11 +1203,9 @@
             if (wasExpanded) {
               const wrap = existing.querySelector('.mlb-pitch-log-wrap');
               const hint = existing.querySelector('.mlb-expand-hint');
-              if (wrap) { wrap.style.transition = 'none'; wrap.classList.add('open'); }
+              if (wrap) { wrap.style.transition='none'; wrap.classList.add('open'); }
               if (hint) hint.textContent = '▴ CLOSE';
-              requestAnimationFrame(() => {
-                if (wrap) wrap.style.transition = '';
-              });
+              requestAnimationFrame(() => { if (wrap) wrap.style.transition=''; });
             }
           }
         });
@@ -1387,9 +1218,7 @@
       }
 
     } catch(err) {
-      if (showLoader) {
-        list.innerHTML = `<div class="mlb-no-games" style="color:var(--dark-red)">Error loading MLB data: ${esc(err.message)}</div>`;
-      }
+      if (showLoader) list.innerHTML = `<div class="mlb-no-games" style="color:var(--dark-red)">Error: ${esc(err.message)}</div>`;
       if (mlbRefreshTm) clearTimeout(mlbRefreshTm);
       mlbRefreshTm = setTimeout(() => loadMlb(false), 30000);
     }
@@ -1398,15 +1227,14 @@
   function fantasyTag(playerName) {
     if (!playerName) return '';
     const abbrev = rosterMap[playerName.toLowerCase()];
-    if (!abbrev) return '';
-    return `<span class="mlb-roster-tag">${esc(abbrev)}</span>`;
+    return abbrev ? `<span class="mlb-roster-tag">${esc(abbrev)}</span>` : '';
   }
 
   function buildMlbGameCard(game) {
-    const gd     = game.gameData   || {};
-    const ld     = game.liveData   || {};
+    const gd     = game.gameData || {};
+    const ld     = game.liveData || {};
     const state  = gd.status?.abstractGameState || 'Preview';
-    const detail = gd.status?.detailedState || 'Scheduled';
+    const detail = gd.status?.detailedState     || 'Scheduled';
     const pk     = gd.game?.pk;
     const isLive = state === 'Live';
     const isFinal= state === 'Final';
@@ -1415,90 +1243,80 @@
     const awayTeam = gd.teams?.away?.teamName || gd.teams?.away?.team?.name || '?';
 
     const ls    = ld.linescore || {};
-    const homeR = ls.teams?.home?.runs ?? (isFinal || isLive ? 0 : '');
-    const awayR = ls.teams?.away?.runs ?? (isFinal || isLive ? 0 : '');
+    const homeR = ls.teams?.home?.runs ?? (isFinal||isLive ? 0 : '');
+    const awayR = ls.teams?.away?.runs ?? (isFinal||isLive ? 0 : '');
     const inning      = ls.currentInning || 0;
-    const inningHalf  = ls.inningHalf || '';
+    const inningHalf  = ls.inningHalf    || '';
     const inningArrow = inningHalf === 'Top' ? '▲' : '▼';
-
-    const homeWin = typeof homeR === 'number' && typeof awayR === 'number' && homeR > awayR;
-    const awayWin = typeof homeR === 'number' && typeof awayR === 'number' && awayR > homeR;
+    const homeWin = typeof homeR==='number' && typeof awayR==='number' && homeR > awayR;
+    const awayWin = typeof homeR==='number' && typeof awayR==='number' && awayR > homeR;
 
     const offense     = ld.linescore?.offense || {};
-    const plays       = ld.plays || {};
-    const currentPlay = plays.currentPlay || {};
-    const pitchData   = currentPlay.playEvents || [];
-    const matchup     = currentPlay.matchup || {};
+    const plays       = ld.plays              || {};
+    const currentPlay = plays.currentPlay     || {};
+    const pitchData   = currentPlay.playEvents|| [];
+    const matchup     = currentPlay.matchup   || {};
     const pitcher     = matchup.pitcher?.fullName || '';
     const batter      = matchup.batter?.fullName  || '';
 
     const count   = currentPlay.count || ls;
     const balls   = count.balls   ?? 0;
     const strikes = count.strikes ?? 0;
-    const outs    = ls.outs ?? 0;
+    const outs    = ls.outs       ?? 0;
 
-    const onFirst  = !!offense.first;
-    const onSecond = !!offense.second;
-    const onThird  = !!offense.third;
-
-    const pitches  = pitchData.filter(e => e.type === 'pitch' || e.isPitch);
+    const pitches  = pitchData.filter(e => e.type==='pitch' || e.isPitch);
     const allPlays = plays.allPlays || [];
 
     let inningStr = '';
-    if (isLive && inning > 0)  inningStr = `${inningArrow} ${inning}${inningOrdinal(inning)}`;
-    else if (isFinal)          inningStr = inning > 9 ? `F/${inning}` : 'Final';
-    else                       inningStr = detail;
+    if (isLive && inning > 0) inningStr = `${inningArrow} ${inning}${inningOrdinal(inning)}`;
+    else if (isFinal)         inningStr = inning > 9 ? `F/${inning}` : 'Final';
+    else                      inningStr = detail;
 
     const cardClass = isLive ? 'mlb-game-card live-game' : isFinal ? 'mlb-game-card final-game' : 'mlb-game-card';
     const expanded  = mlbExpanded[pk] || false;
-    const diamond   = buildDiamond(onFirst, onSecond, onThird);
-    const countHtml = isLive ? buildCountOuts(balls, strikes, outs) : '';
-    const statusCls = isLive ? 'mlb-inning-badge live' : 'mlb-inning-badge';
 
     const card = document.createElement('div');
     card.className = cardClass;
     card.id = `mlb-card-${pk}`;
-
     card.innerHTML = `
       <div class="mlb-game-header" onclick="toggleMlbExpand(${pk})">
         <div class="mlb-teams">
           <div class="mlb-team-row">
-            <div class="mlb-team-name">${esc(awayTeam)}${isLive && inningHalf==='Top' ? ' <span class="arrow">▶</span>' : ''}</div>
-            <div class="mlb-team-score ${awayWin?'winning':homeWin?'losing':''}">${awayR !== '' ? awayR : '—'}</div>
+            <div class="mlb-team-name">${esc(awayTeam)}${isLive&&inningHalf==='Top'?' <span class="arrow">▶</span>':''}</div>
+            <div class="mlb-team-score ${awayWin?'winning':homeWin?'losing':''}">${awayR!==''?awayR:'—'}</div>
           </div>
           <div class="mlb-divider"></div>
           <div class="mlb-team-row">
-            <div class="mlb-team-name">${esc(homeTeam)}${isLive && inningHalf==='Bottom' ? ' <span class="arrow">▶</span>' : ''}</div>
-            <div class="mlb-team-score ${homeWin?'winning':awayWin?'losing':''}">${homeR !== '' ? homeR : '—'}</div>
+            <div class="mlb-team-name">${esc(homeTeam)}${isLive&&inningHalf==='Bottom'?' <span class="arrow">▶</span>':''}</div>
+            <div class="mlb-team-score ${homeWin?'winning':awayWin?'losing':''}">${homeR!==''?homeR:'—'}</div>
           </div>
         </div>
         <div class="mlb-status-area">
-          <div class="${statusCls}">${esc(inningStr)}</div>
-          ${isLive ? diamond : ''}
-          ${countHtml}
+          <div class="mlb-inning-badge ${isLive?'live':''}">${esc(inningStr)}</div>
+          ${isLive ? buildDiamond(!!offense.first, !!offense.second, !!offense.third) : ''}
+          ${isLive ? buildCountOuts(balls, strikes, outs) : ''}
         </div>
       </div>
-      ${isLive && (pitcher || batter) ? `
+      ${isLive&&(pitcher||batter) ? `
         <div class="mlb-atbat-strip">
           <div class="mlb-atbat-row">
             <span class="mlb-player-label">P</span>
-            <span class="mlb-player-name">${esc(pitcher || '—')}</span>
+            <span class="mlb-player-name">${esc(pitcher||'—')}</span>
             ${fantasyTag(pitcher)}
           </div>
           <div class="mlb-atbat-row">
             <span class="mlb-player-label">AB</span>
-            <span class="mlb-player-name">${esc(batter || '—')}</span>
+            <span class="mlb-player-name">${esc(batter||'—')}</span>
             ${fantasyTag(batter)}
           </div>
         </div>` : ''}
-      ${isLive || isFinal ? `<div class="mlb-expand-hint" id="hint-${pk}">${expanded ? '▴ CLOSE' : '▾ PITCHES'}</div>` : ''}
-      <div class="mlb-pitch-log-wrap ${expanded ? 'open' : ''}" id="pitchlog-${pk}">
+      ${isLive||isFinal ? `<div class="mlb-expand-hint" id="hint-${pk}">${expanded?'▴ CLOSE':'▾ PITCHES'}</div>` : ''}
+      <div class="mlb-pitch-log-wrap ${expanded?'open':''}" id="pitchlog-${pk}">
         <div class="mlb-pitch-log">
           <div class="mlb-pitch-log-title">${esc(awayTeam)} @ ${esc(homeTeam)}</div>
           ${buildPitchLog(pitches, allPlays)}
         </div>
       </div>`;
-
     return card;
   }
 
@@ -1511,71 +1329,48 @@
   }
 
   function inningOrdinal(n) {
-    if (n === 1) return 'st';
-    if (n === 2) return 'nd';
-    if (n === 3) return 'rd';
-    return 'th';
+    return n===1?'st':n===2?'nd':n===3?'rd':'th';
   }
 
   function buildDiamond(first, second, third) {
-    const f = first  ? '#d4a017' : 'none';
-    const s = second ? '#d4a017' : 'none';
-    const t = third  ? '#d4a017' : 'none';
-    const stroke = '#8b6914';
-    return `
-      <div class="mlb-diamond">
-        <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-          <rect x="17" y="3"  width="10" height="10" rx="1.5" fill="${s}" stroke="${stroke}" stroke-width="1.5" transform="rotate(45 22 8)"/>
-          <rect x="3"  y="17" width="10" height="10" rx="1.5" fill="${t}" stroke="${stroke}" stroke-width="1.5" transform="rotate(45 8 22)"/>
-          <rect x="31" y="17" width="10" height="10" rx="1.5" fill="${f}" stroke="${stroke}" stroke-width="1.5" transform="rotate(45 36 22)"/>
-          <polygon points="22,36 18,40 22,44 26,40" fill="white" stroke="${stroke}" stroke-width="1.5"/>
-        </svg>
-      </div>`;
+    const f=first?'#d4a017':'none', s=second?'#d4a017':'none', t=third?'#d4a017':'none', stroke='#8b6914';
+    return `<div class="mlb-diamond"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+      <rect x="17" y="3"  width="10" height="10" rx="1.5" fill="${s}" stroke="${stroke}" stroke-width="1.5" transform="rotate(45 22 8)"/>
+      <rect x="3"  y="17" width="10" height="10" rx="1.5" fill="${t}" stroke="${stroke}" stroke-width="1.5" transform="rotate(45 8 22)"/>
+      <rect x="31" y="17" width="10" height="10" rx="1.5" fill="${f}" stroke="${stroke}" stroke-width="1.5" transform="rotate(45 36 22)"/>
+      <polygon points="22,36 18,40 22,44 26,40" fill="white" stroke="${stroke}" stroke-width="1.5"/>
+    </svg></div>`;
   }
 
   function buildCountOuts(balls, strikes, outs) {
-    let ballDots = '', strikeDots = '', outDots = '';
-    for (let i = 0; i < 4; i++)
-      ballDots   += `<span class="mlb-dot ${i < balls   ? 'on' : ''}"></span>`;
-    for (let i = 0; i < 3; i++)
-      strikeDots += `<span class="mlb-dot ${i < strikes ? 'on' : ''}"></span>`;
-    for (let i = 0; i < 3; i++)
-      outDots    += `<span class="mlb-dot ${i < outs    ? 'out-on' : ''}"></span>`;
-
-    return `
-      <div class="mlb-count-outs">
-        <div class="mlb-count-row"><span class="mlb-count-label">B</span>${ballDots}</div>
-        <div class="mlb-count-row"><span class="mlb-count-label">S</span>${strikeDots}</div>
-        <div class="mlb-count-row"><span class="mlb-count-label">O</span>${outDots}</div>
-      </div>`;
+    let b='', s='', o='';
+    for(let i=0;i<4;i++) b+=`<span class="mlb-dot ${i<balls?'on':''}"></span>`;
+    for(let i=0;i<3;i++) s+=`<span class="mlb-dot ${i<strikes?'on':''}"></span>`;
+    for(let i=0;i<3;i++) o+=`<span class="mlb-dot ${i<outs?'out-on':''}"></span>`;
+    return `<div class="mlb-count-outs">
+      <div class="mlb-count-row"><span class="mlb-count-label">B</span>${b}</div>
+      <div class="mlb-count-row"><span class="mlb-count-label">S</span>${s}</div>
+      <div class="mlb-count-row"><span class="mlb-count-label">O</span>${o}</div>
+    </div>`;
   }
 
   function buildPitchLog(pitches, allPlays) {
-    if (!pitches.length && !allPlays.length) {
-      return `<div style="font-family:'Special Elite',cursive;font-size:11px;color:var(--muted);padding:6px 0">No pitch data yet.</div>`;
-    }
-
-    const entries = pitches.length ? pitches : (allPlays[allPlays.length-1]?.playEvents || []).filter(e => e.isPitch);
-
-    if (!entries.length) return `<div style="font-family:'Special Elite',cursive;font-size:11px;color:var(--muted);padding:6px 0">No pitches in current at-bat.</div>`;
-
-    return entries.map((p, i) => {
-      const desc    = p.details?.description || p.details?.type?.description || '—';
-      const speed   = p.pitchData?.startSpeed ? Math.round(p.pitchData.startSpeed) + ' mph' : '';
-      const b       = p.count?.balls   ?? '?';
-      const s       = p.count?.strikes ?? '?';
-      const isStrike= /strike|foul|swing/i.test(desc);
-      const isBall  = /ball/i.test(desc) && !isStrike;
-      const isHit   = /hit|single|double|triple|homer|home run/i.test(desc);
-      const tagCls  = isHit ? 'tag-hit' : isStrike ? 'tag-strike' : isBall ? 'tag-ball' : 'tag-out';
-
-      return `
-        <div class="mlb-pitch-entry">
-          <div class="mlb-pitch-num">${i+1}</div>
-          <div class="mlb-pitch-desc ${tagCls}">${esc(desc)}</div>
-          <div class="mlb-pitch-count">${b}-${s}</div>
-          <div class="mlb-pitch-speed">${esc(speed)}</div>
-        </div>`;
+    const entries = pitches.length ? pitches : (allPlays[allPlays.length-1]?.playEvents||[]).filter(e=>e.isPitch);
+    if (!entries.length) return `<div style="font-family:'Special Elite',cursive;font-size:11px;color:var(--muted);padding:4px 0">No pitch data yet.</div>`;
+    return entries.map((p,i) => {
+      const desc  = p.details?.description || p.details?.type?.description || '—';
+      const speed = p.pitchData?.startSpeed ? Math.round(p.pitchData.startSpeed)+' mph' : '';
+      const b=p.count?.balls??'?', s=p.count?.strikes??'?';
+      const isStrike=/strike|foul|swing/i.test(desc);
+      const isBall  =/ball/i.test(desc)&&!isStrike;
+      const isHit   =/hit|single|double|triple|homer|home run/i.test(desc);
+      const cls = isHit?'tag-hit':isStrike?'tag-strike':isBall?'tag-ball':'tag-out';
+      return `<div class="mlb-pitch-entry">
+        <div class="mlb-pitch-num">${i+1}</div>
+        <div class="mlb-pitch-desc ${cls}">${esc(desc)}</div>
+        <div class="mlb-pitch-count">${b}-${s}</div>
+        <div class="mlb-pitch-speed">${esc(speed)}</div>
+      </div>`;
     }).join('');
   }
 
