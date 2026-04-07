@@ -346,10 +346,10 @@
       cursor: pointer;
     }
 
-    /* ── MLB LIVE TWO-COLUMN LAYOUT ── */
+    /* ── MLB LIVE LAYOUT — games left, matchup right ── */
     .mlb-live-layout {
       display: grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1fr 420px;
       gap: 0;
       align-items: start;
     }
@@ -360,7 +360,42 @@
       min-height: 200px;
       position: sticky;
       top: 0;
+      overflow-y: auto;
+      max-height: 90vh;
     }
+
+    /* ── MATCHUP PANEL — two columns (my team | opp team) ── */
+    .fmatch-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-top: 1px solid var(--tan);
+    }
+    .fmatch-col {
+      padding: 0 0 8px;
+    }
+    .fmatch-col + .fmatch-col {
+      border-left: 1px solid var(--tan);
+    }
+    .fmatch-col-header {
+      font-family: 'Special Elite', cursive; font-size: 11px;
+      letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
+      padding: 6px 8px 4px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--tan);
+      background: rgba(212,160,23,0.05);
+    }
+    .fmatch-col-header span { color: var(--green); font-size: 10px; font-weight: 700; }
+    .fmatch-player-row-2col {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      align-items: center;
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(139,105,20,0.10);
+      gap: 0 3px;
+    }
+    .fmatch-player-row-2col:last-child { border-bottom: none; }
+    .fmatch-player-row-2col:hover { background: rgba(212,160,23,0.05); }
 
     /* ── FANTASY MATCHUP PANEL ── */
     .fmatch-header {
@@ -445,9 +480,12 @@
       background: rgba(26,39,68,0.06);
     }
 
+    @media (max-width: 900px) {
+      .mlb-live-layout { grid-template-columns: 1fr 300px; }
+    }
     @media (max-width: 700px) {
       .mlb-live-layout { grid-template-columns: 1fr; }
-      .mlb-live-right { border-left: none; border-top: 2px solid var(--gold); }
+      .mlb-live-right { border-left: none; border-top: 2px solid var(--gold); max-height: none; }
     }
     @media (max-width: 600px) {
       #mlb-game-list { grid-template-columns: 1fr 1fr !important; }
@@ -455,7 +493,6 @@
     @media (max-width: 400px) {
       #mlb-game-list { grid-template-columns: 1fr !important; }
     }
-
     /* ── SWIPE HINT ── */
     .swipe-hint {
       font-family: 'Special Elite', cursive; font-size: 11px; color: var(--muted);
@@ -530,7 +567,7 @@
       </div>
       <div class="mlb-live-layout">
         <div class="mlb-live-left">
-          <div id="mlb-game-list" style="padding:12px 16px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;align-items:start"></div>
+          <div id="mlb-game-list" style="padding:12px 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:start"></div>
         </div>
         <div class="mlb-live-right">
           <div id="fantasy-matchup-panel">
@@ -1038,11 +1075,20 @@
     return Math.round(pts * 10) / 10;
   }
 
-  // Position label from ESPN lineup slot ID
+  // ESPN lineup slot IDs for fantasy baseball
+  // 0=C, 1=1B, 2=2B, 3=3B, 4=SS, 5=OF, 6=OF, 7=OF, 8=UTIL,
+  // 9=SP, 10=SP, 11=RP, 12=RP, 13=P, 14=P, 15=P, 16=BN, 17=IL
+  // Note: some leagues use slot 12 for UTIL hitters — check abbrev context
   function posLabel(slotId) {
-    const MAP = {0:'C',1:'1B',2:'2B',3:'3B',4:'SS',5:'OF',6:'OF',7:'OF',
-                 8:'UTIL',9:'SP',10:'SP',11:'RP',12:'RP',13:'P',14:'P',
-                 15:'P',16:'BN',17:'IL'};
+    const MAP = {
+      0:'C', 1:'1B', 2:'2B', 3:'3B', 4:'SS',
+      5:'OF', 6:'OF', 7:'OF',
+      8:'UTIL',
+      9:'SP', 10:'SP',
+      11:'RP', 12:'RP',
+      13:'P', 14:'P', 15:'P',
+      16:'BN', 17:'IL'
+    };
     return MAP[slotId] ?? 'BN';
   }
 
@@ -1165,19 +1211,18 @@
     const panel = document.getElementById('fantasy-matchup-panel');
     if (!panel) return;
 
-    function playerRows(players, isOpp) {
-      if (!players.length) return `<div class="fmatch-loading" style="padding:10px 12px">No roster data.</div>`;
+    function colRows(players) {
+      if (!players.length) return `<div class="fmatch-loading" style="padding:8px">No data.</div>`;
       return players.map(p => {
-        // pts === null means player has no MLB game today
         const hasGame = p.pts !== null;
         const ptsCls  = hasGame && p.pts > 0 ? 'positive' : 'zero';
         const nameCls = hasGame ? 'playing' : '';
-        const ptsDisp = hasGame ? (p.pts > 0 ? p.pts.toFixed(1) : '0.0') : '—';
+        const ptsDisp = hasGame ? (p.pts > 0 ? p.pts.toFixed(1) : '0') : '—';
         return `
-          <div class="fmatch-player-row${isOpp ? ' fmatch-opp-header' : ''}">
+          <div class="fmatch-player-row-2col">
             <div class="fmatch-pos">${esc(p.pos)}</div>
-            <div class="fmatch-pname ${nameCls}">${esc(p.name)}</div>
-            <div class="fmatch-ppts ${ptsCls}">${ptsDisp}</div>
+            <div class="fmatch-pname ${nameCls}" style="font-size:11px">${esc(p.name)}</div>
+            <div class="fmatch-ppts ${ptsCls}" style="font-size:13px">${ptsDisp}</div>
           </div>`;
       }).join('');
     }
@@ -1190,33 +1235,31 @@
         <div class="fmatch-title">⚾ Week ${liveWeek} Matchup</div>
         <div class="fmatch-score-bar">
           <div>
-            <div class="fmatch-team-name">${esc(myTeam.name)}</div>
+            <div class="fmatch-team-name">${esc(myTeam.abbrev)}</div>
             <div class="fmatch-score ${myWin?'winning':oppWin?'losing':'tied'}">${Math.round(myPts)}</div>
           </div>
           <div class="fmatch-vs">vs</div>
           <div style="text-align:right">
-            <div class="fmatch-team-name" style="text-align:right">${esc(oppTeam.name)}</div>
+            <div class="fmatch-team-name" style="text-align:right">${esc(oppTeam.abbrev)}</div>
             <div class="fmatch-score ${oppWin?'winning':myWin?'losing':'tied'}" style="text-align:right">${Math.round(oppPts)}</div>
           </div>
         </div>
       </div>
-
-      <div class="fmatch-roster-section">
-        <div class="fmatch-roster-label">
-          ${esc(myTeam.abbrev)} — Today's Starters
-          <span>+${myTodayPts.toFixed(1)} today</span>
+      <div class="fmatch-two-col">
+        <div class="fmatch-col">
+          <div class="fmatch-col-header">
+            ${esc(myTeam.abbrev)}
+            <span>+${myTodayPts.toFixed(1)}</span>
+          </div>
+          ${colRows(myPlayers)}
         </div>
-        ${playerRows(myPlayers, false)}
-      </div>
-
-      <div class="fmatch-divider"></div>
-
-      <div class="fmatch-roster-section">
-        <div class="fmatch-roster-label">
-          ${esc(oppTeam.abbrev)} — Today's Starters
-          <span>+${oppTodayPts.toFixed(1)} today</span>
+        <div class="fmatch-col">
+          <div class="fmatch-col-header">
+            ${esc(oppTeam.abbrev)}
+            <span>+${oppTodayPts.toFixed(1)}</span>
+          </div>
+          ${colRows(oppPlayers)}
         </div>
-        ${playerRows(oppPlayers, true)}
       </div>`;
   }
 
@@ -1254,15 +1297,35 @@
       document.getElementById('mlb-live-badge').style.display = hasLive ? '' : 'none';
 
       const freshGames = await Promise.all(games.map(async g => {
-        if (g.status?.abstractGameState !== 'Preview') {
+        const state = g.status?.abstractGameState;
+        if (state !== 'Preview') {
           try {
             const lf = await fetch(`${MLB_API}/api/v1.1/game/${g.gamePk}/feed/live?language=en`);
-            return await lf.json();
-          } catch { return g; }
+            const data = await lf.json();
+            return data;
+          } catch { /* fall through to schedule data */ }
         }
+        // For Preview games OR failed live fetches, build a minimal object
+        // that includes scores from the schedule hydration
         return {
-          gameData: { game: { pk: g.gamePk }, teams: { home: g.teams.home, away: g.teams.away }, status: g.status },
-          liveData: null
+          gameData: {
+            game:   { pk: g.gamePk },
+            teams:  { home: { teamName: g.teams?.home?.team?.name || g.teams?.home?.teamName || '?' },
+                      away: { teamName: g.teams?.away?.team?.name || g.teams?.away?.teamName || '?' } },
+            status: g.status
+          },
+          liveData: {
+            linescore: {
+              teams: {
+                home: { runs: g.teams?.home?.score ?? '' },
+                away: { runs: g.teams?.away?.score ?? '' }
+              },
+              currentInning: g.linescore?.currentInning || 0,
+              inningHalf:    g.linescore?.inningHalf    || '',
+              outs:          g.linescore?.outs           || 0
+            },
+            plays: {}
+          }
         };
       }));
 
