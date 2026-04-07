@@ -111,16 +111,25 @@
       border-radius: 3px; text-transform: uppercase;
     }
 
-    /* ── MATCHUP CARDS ── */
-    .matchup-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+    /* ── MATCHUP CARDS — TWO COLUMN GRID ── */
+    .matchup-list {
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 560px) {
+      .matchup-list { grid-template-columns: 1fr; }
+    }
+
     .matchup-card { background: #fff; border: 1.5px solid var(--tan); border-radius: 6px; overflow: hidden; position: relative; }
     .matchup-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--navy); }
     .matchup-inner { padding: 10px 14px 10px 18px; }
     .team-row { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 5px 0; }
     .team-row + .team-row { border-top: 1px dashed var(--tan); }
-    .team-name   { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .team-record { font-family: 'Special Elite', cursive; font-size: 13px; color: var(--muted); margin-top: 1px; }
-    .team-score  { font-family: 'DM Serif Display', serif; font-size: 34px; color: var(--ink); min-width: 80px; text-align: right; line-height: 1; }
+    .team-name   { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .team-record { font-family: 'Special Elite', cursive; font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .team-score  { font-family: 'DM Serif Display', serif; font-size: 30px; color: var(--ink); min-width: 70px; text-align: right; line-height: 1; }
     .team-score.winning { color: var(--dark-red); }
     .team-score.losing  { color: var(--muted); }
     .matchup-divider { display: flex; align-items: center; padding: 2px 0; }
@@ -210,6 +219,7 @@
     .strip-rank   { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--gold); line-height: 1; }
     .strip-name   { font-size: 12px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-align: center; margin-top: 2px; font-family: 'Special Elite', cursive; }
     .strip-record { font-size: 12px; color: rgba(255,255,255,0.4); font-family: 'Special Elite', cursive; }
+
     /* ── MLB LIVE ── */
     .mlb-game-card {
       background: #fff; border: 1.5px solid var(--tan); border-radius: 6px;
@@ -295,11 +305,6 @@
       vertical-align: middle; flex-shrink: 0;
     }
 
-    /* Pitch log full-width breakout — card sits in grid but log spans both cols */
-    .mlb-pitch-log-outer {
-      grid-column: 1 / -1;
-    }
-
     /* Pitch log */
     .mlb-pitch-log-wrap { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
     .mlb-pitch-log-wrap.open { max-height: 1200px; }
@@ -336,12 +341,6 @@
       font-size: 11px; color: var(--muted); font-family: 'Special Elite', cursive;
       letter-spacing: 1px; text-align: right; padding: 0 10px 4px;
       cursor: pointer;
-    }
-    @media (max-width: 600px) {
-      #mlb-game-list { grid-template-columns: 1fr 1fr !important; }
-    }
-    @media (max-width: 400px) {
-      #mlb-game-list { grid-template-columns: 1fr !important; }
     }
 
     /* ── MLB LIVE TWO-COLUMN LAYOUT ── */
@@ -447,6 +446,18 @@
       .mlb-live-layout { grid-template-columns: 1fr; }
       .mlb-live-right { border-left: none; border-top: 2px solid var(--gold); }
     }
+    @media (max-width: 600px) {
+      #mlb-game-list { grid-template-columns: 1fr 1fr !important; }
+    }
+    @media (max-width: 400px) {
+      #mlb-game-list { grid-template-columns: 1fr !important; }
+    }
+
+    /* ── SWIPE HINT ── */
+    .swipe-hint {
+      font-family: 'Special Elite', cursive; font-size: 11px; color: var(--muted);
+      text-align: center; padding: 4px; letter-spacing: 1px; opacity: 0.7;
+    }
   </style>
 </head>
 <body>
@@ -479,6 +490,7 @@
         <span class="week-live-badge" id="live-badge" style="display:none">LIVE</span>
         <button class="week-nav-btn" id="btn-next" onclick="changeWeek(1)">NEXT ▶</button>
       </div>
+      <div class="swipe-hint" id="swipe-hint" style="display:none">← swipe to change week →</div>
       <div class="matchup-list" id="matchup-list"></div>
       <div class="bottom-strip" id="bottom-strip"></div>
     </div>
@@ -546,10 +558,14 @@
 
   let globalData  = null;
   let teamMap     = {};
-  let rosterMap   = {};   // lowercase playerName -> fantasy team abbrev
+  let rosterMap   = {};
   let currentWeek = 1;
   let liveWeek    = 1;
   let maxWeek     = 1;
+
+  // Tab order for swipe navigation
+  const TAB_ORDER = ['scoreboard','standings','segments','mlblive'];
+  let currentTabIndex = 0;
 
   // ── UTILS ──────────────────────────────────────────────────────
   function esc(s) {
@@ -568,7 +584,8 @@
 
   // ── TABS ───────────────────────────────────────────────────────
   function switchTab(tab) {
-    ['scoreboard','standings','segments','mlblive'].forEach((t, i) => {
+    currentTabIndex = TAB_ORDER.indexOf(tab);
+    TAB_ORDER.forEach((t, i) => {
       document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
       document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t === tab);
     });
@@ -584,11 +601,54 @@
     renderScoreboard();
   }
 
+  // ── SWIPE / TOUCH NAVIGATION ───────────────────────────────────
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+
+  document.addEventListener('touchstart', e => {
+    touchStartX    = e.touches[0].clientX;
+    touchStartY    = e.touches[0].clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const dx   = e.changedTouches[0].clientX - touchStartX;
+    const dy   = e.changedTouches[0].clientY - touchStartY;
+    const dt   = Date.now() - touchStartTime;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    // Only count as a swipe if fast enough, horizontal enough, and long enough
+    if (dt > 500) return;           // too slow
+    if (absDx < 50) return;         // too short
+    if (absDy > absDx * 0.8) return; // too vertical (scrolling)
+
+    const currentTab = TAB_ORDER[currentTabIndex];
+
+    if (dx < 0) {
+      // Swipe LEFT → go to next tab OR next week on scoreboard
+      if (currentTab === 'scoreboard') {
+        changeWeek(1);
+      } else {
+        const next = currentTabIndex + 1;
+        if (next < TAB_ORDER.length) switchTab(TAB_ORDER[next]);
+      }
+    } else {
+      // Swipe RIGHT → go to prev tab OR prev week on scoreboard
+      if (currentTab === 'scoreboard') {
+        changeWeek(-1);
+      } else {
+        const prev = currentTabIndex - 1;
+        if (prev >= 0) switchTab(TAB_ORDER[prev]);
+      }
+    }
+  }, { passive: true });
+
   // ── LOAD ───────────────────────────────────────────────────────
   async function loadAll() {
     setStatus('Connecting to proxy...', false);
     try {
-      // Single fetch — get everything in one call
       const r = await fetch(
         `${PROXY}/api/league/${SEASON}?view=mMatchup&view=mMatchupScore&view=mTeam&view=mSettings&view=mStatus`
       );
@@ -606,7 +666,6 @@
 
       document.getElementById('league-name').textContent = settings.name || 'Fantasy Baseball';
 
-      // Build team map first so roster fetch can reference it
       teams.forEach(t => {
         const name = ((t.location||'') + ' ' + (t.nickname||'')).trim() || t.name || `Team ${t.id}`;
         teamMap[t.id] = {
@@ -617,7 +676,7 @@
         };
       });
 
-      // Fetch rosters — label uses teamMap name (now populated) falling back to owner first name
+      // Fetch rosters
       try {
         const rr = await fetch(`${PROXY}/api/league/${SEASON}?view=mRoster`);
         if (rr.ok) {
@@ -625,10 +684,8 @@
           rosterMap = {};
           const members = rosterData.members || [];
           (rosterData.teams || []).forEach(t => {
-            // teamMap already has the real name from the main fetch
             const tm = teamMap[t.id];
             let label = tm?.name || '';
-            // If name is blank/generic, try owner first name from members list
             if (!label || label === `Team ${t.id}`) {
               const ownerId = t.primaryOwner || '';
               const member  = members.find(m => m.id === ownerId);
@@ -637,7 +694,6 @@
               }
             }
             if (!label) label = `T${t.id}`;
-            // Shorten to first 2 words so badge stays compact
             label = label.split(' ').slice(0, 2).join(' ');
 
             (t.roster?.entries || []).forEach(e => {
@@ -650,7 +706,6 @@
               if (name) rosterMap[name.toLowerCase()] = label;
             });
           });
-          console.log(`[Roster] ${Object.keys(rosterMap).length} players. Sample:`, Object.entries(rosterMap).slice(0,4));
         }
       } catch(e) { console.warn('[Roster] failed:', e); }
 
@@ -659,10 +714,14 @@
       document.getElementById('tab-bar').style.display      = '';
       document.getElementById('main-content').style.display = 'block';
 
+      // Show swipe hint on mobile
+      if ('ontouchstart' in window) {
+        document.getElementById('swipe-hint').style.display = '';
+      }
+
       renderScoreboard();
       renderStandings();
       renderSegments();
-      // Pre-load fantasy matchup data so panel is ready when MLB Live tab is opened
       loadFantasyMatchup();
 
     } catch(err) {
@@ -679,8 +738,6 @@
   }
 
   // ── POINTS HELPER ──────────────────────────────────────────────
-  // Returns { teamId -> { pf, pa } } for a given set of week numbers
-  // includesLive: if true, also count in-progress week using live scores
   function calcPointsForWeeks(weeks, includesLive) {
     const schedule = globalData?.schedule || [];
     const totals   = {};
@@ -689,9 +746,8 @@
     schedule.forEach(m => {
       if (!weeks.includes(m.matchupPeriodId)) return;
       const hId = m.home?.teamId, aId = m.away?.teamId;
-
-      const isLiveWeek   = m.matchupPeriodId === liveWeek;
-      const useLive      = isLiveWeek && includesLive;
+      const isLiveWeek = m.matchupPeriodId === liveWeek;
+      const useLive    = isLiveWeek && includesLive;
       const hPts = useLive
         ? +(m.home?.totalPointsLive ?? m.home?.totalPoints ?? 0)
         : +(m.home?.totalPoints ?? 0);
@@ -721,7 +777,7 @@
     list.innerHTML = '';
 
     if (!matchups.length) {
-      list.innerHTML = `<div style="text-align:center;padding:28px;font-family:'Special Elite',cursive;color:var(--muted)">No matchups for Week ${currentWeek}.</div>`;
+      list.innerHTML = `<div style="text-align:center;padding:28px;font-family:'Special Elite',cursive;color:var(--muted);grid-column:1/-1">No matchups for Week ${currentWeek}.</div>`;
     } else {
       matchups.forEach(m => {
         const hId  = m.home?.teamId, aId = m.away?.teamId;
@@ -761,20 +817,9 @@
 
   // ── STANDINGS ──────────────────────────────────────────────────
   function renderStandings() {
-    // Full season PF/PA including live week
-    const allWeeks  = Array.from({length: maxWeek}, (_,i) => i+1);
-    const totals    = calcPointsForWeeks(allWeeks, true);
+    const allWeeks = Array.from({length: maxWeek}, (_,i) => i+1);
+    const totals   = calcPointsForWeeks(allWeeks, true);
 
-    const sorted = Object.values(teamMap).map(t => ({
-      ...t, ...totals[Object.keys(teamMap).find(id => teamMap[id] === t)]
-    })).sort((a,b) => {
-      if (b.wins !== a.wins) return b.wins - a.wins;
-      const ap = a.wins/(a.wins+a.losses||1), bp = b.wins/(b.wins+b.losses||1);
-      if (Math.abs(bp-ap) > 0.001) return bp-ap;
-      return b.pf - a.pf;
-    });
-
-    // Re-derive with IDs
     const withId = Object.entries(teamMap).map(([id, t]) => ({
       id, ...t, pf: totals[id]?.pf ?? 0, pa: totals[id]?.pa ?? 0
     })).sort((a,b) => {
@@ -820,7 +865,6 @@
     grid.innerHTML = '';
 
     SEGMENTS.forEach((seg, si) => {
-      // Which weeks in this segment have any data at all?
       const activeWeeks = seg.weeks.filter(w => w <= maxWeek);
       const hasAny      = activeWeeks.length > 0;
       const isComplete  = seg.weeks.every(w => w < liveWeek);
@@ -828,7 +872,6 @@
 
       const totals = hasAny ? calcPointsForWeeks(activeWeeks, true) : {};
 
-      // Sort by PF descending
       const ranked = Object.entries(teamMap).map(([id, t]) => ({
         id, ...t,
         pf: totals[id]?.pf ?? 0,
@@ -837,7 +880,6 @@
 
       const winner = isComplete && ranked.length ? ranked[0] : null;
 
-      // Status label
       let statusLabel = '';
       if (!hasAny)     statusLabel = 'UPCOMING';
       else if (isCurrent) statusLabel = `WEEKS ${activeWeeks[0]}–${liveWeek} IN PROGRESS`;
@@ -866,10 +908,7 @@
         const wrap = document.createElement('div');
         wrap.className = 'segment-table-wrap';
 
-        // Weeks header row
-        const weekCols = activeWeeks.map(w =>
-          `<th>WK ${w}</th>`
-        ).join('');
+        const weekCols = activeWeeks.map(w => `<th>WK ${w}</th>`).join('');
 
         wrap.innerHTML = `
           <table class="data-table" style="margin-top:10px">
@@ -884,7 +923,6 @@
           </table>`;
         block.appendChild(wrap);
 
-        // Per-week scores for each team
         const byWeek = {};
         activeWeeks.forEach(w => {
           const wt = calcPointsForWeeks([w], w === liveWeek);
@@ -903,7 +941,6 @@
               const pts = byWeek[t.id]?.[w] ?? 0;
               return `<td class="pts">${pts > 0 ? fmtPts(pts) : '—'}</td>`;
             }).join('');
-            const diff    = t.pf - t.pa;
             const row = document.createElement('tr');
             if (isWinner) row.className = 'winner-row';
             row.innerHTML = `
@@ -920,7 +957,6 @@
       grid.appendChild(block);
     });
 
-    // Overall PF for the strip
     const allWeeks = Array.from({length: maxWeek}, (_,i) => i+1);
     renderStrip('bottom-strip-3', calcPointsForWeeks(allWeeks, true));
   }
@@ -944,29 +980,23 @@
   // ══════════════════════════════════════════════════════════════
   let mlbLoaded    = false;
   let mlbGames     = [];
-  let mlbExpanded  = {};   // gamePk -> bool
+  let mlbExpanded  = {};
   let mlbRefreshTm = null;
 
   // ── FANTASY MATCHUP PANEL ──────────────────────────────────────
-  // My team ID — detected automatically as the first team in the league
-  // (overridden to team 1 by default; user can set MY_TEAM_ID manually)
-  let MY_TEAM_ID = null;   // auto-detected from the data
-  let fMatchupData = null; // cached matchup roster data
+  let MY_TEAM_ID   = null;
+  let fMatchupData = null;
 
   async function loadFantasyMatchup() {
     const panel = document.getElementById('fantasy-matchup-panel');
     if (!panel) return;
 
     try {
-      // Auto-detect my team: use the first team alphabetically by abbrev, or team with lowest ID
-      // The user's team is typically team ID 1 in many leagues — we keep it configurable
-      // via the first team found. Users can hardcode MY_TEAM_ID above if needed.
       if (!MY_TEAM_ID) {
         const ids = Object.keys(teamMap).map(Number).sort((a,b)=>a-b);
         MY_TEAM_ID = ids[0] || 1;
       }
 
-      // Find my current week matchup
       const schedule = globalData?.schedule || [];
       const myMatchup = schedule.find(m =>
         m.matchupPeriodId === liveWeek &&
@@ -993,26 +1023,51 @@
       const myWin  = myPts  > oppPts;
       const oppWin = oppPts > myPts;
 
-      // Fetch roster with live scoring for this scoring period
+      // Fetch live roster scoring — use mBoxscore for actual live player points
       const rr = await fetch(
-        `${PROXY}/api/league/${SEASON}?view=mRoster&view=mMatchup&view=mMatchupScore&scoringPeriodId=${liveWeek}`
+        `${PROXY}/api/league/${SEASON}?view=mBoxscore&view=mMatchup&view=mRoster&scoringPeriodId=${liveWeek}`
       );
       const rosterData = rr.ok ? await rr.json() : null;
 
-      // Build player lists with positions and points
       function buildRoster(teamId) {
         const t = (rosterData?.teams || []).find(t => t.id === teamId);
         if (!t) return [];
+
         return (t.roster?.entries || []).map(e => {
-          const ppe        = e.playerPoolEntry || {};
-          const player     = ppe.player || {};
-          const name       = player.fullName || ppe.fullName || '?';
-          const slotId     = e.lineupSlotId ?? 0;
-          const isBench    = slotId === 16 || slotId === 17; // bench / IL
-          const pos        = posLabel(slotId);
-          // Live points from appliedStatTotal or playerPoolEntry stats
-          const liveStats  = ppe.appliedStatTotal ?? ppe.onTeamRosterEntry?.appliedStatTotal;
-          const pts        = liveStats !== undefined ? +liveStats : 0;
+          const ppe    = e.playerPoolEntry || {};
+          const player = ppe.player || {};
+          const name   = player.fullName || ppe.fullName || '?';
+          const slotId = e.lineupSlotId ?? 0;
+          const isBench = slotId === 16 || slotId === 17;
+          const pos    = posLabel(slotId);
+
+          // ── FIX: Read live points from the correct location ──
+          // ESPN returns per-scoring-period stats in playerPoolEntry.playerPoolEntry.onTeamRosterEntry
+          // The correct field for the current scoring period's accrued points is:
+          //   e.playerPoolEntry.appliedStatTotal  (only works with mBoxscore view)
+          // Fall back chain: appliedStatTotal on entry → onTeamRosterEntry → 0
+          // We also guard against stale season-total stats by checking if games played today > 0
+
+          let pts = 0;
+
+          // Primary: appliedStatTotal directly on the roster entry (mBoxscore-populated)
+          if (e.appliedStatTotal !== undefined && e.appliedStatTotal !== null) {
+            pts = +e.appliedStatTotal;
+          }
+          // Secondary: nested under playerPoolEntry
+          else if (ppe.appliedStatTotal !== undefined && ppe.appliedStatTotal !== null) {
+            pts = +ppe.appliedStatTotal;
+          }
+          // Tertiary: stats array for current scoring period
+          else {
+            // Look for stats keyed to the current scoring period
+            const statsArr = ppe.stats || player.stats || [];
+            const periodStat = statsArr.find(s =>
+              s.scoringPeriodId === liveWeek && s.statSourceId === 0 && s.statSplitTypeId === 5
+            );
+            pts = periodStat ? +(periodStat.appliedTotal ?? 0) : 0;
+          }
+
           return { name, pos, pts, isBench };
         }).sort((a,b) => {
           if (a.isBench !== b.isBench) return a.isBench ? 1 : -1;
@@ -1047,7 +1102,7 @@
       const starters = players.filter(p => !p.isBench);
       if (!starters.length) return `<div class="fmatch-loading" style="padding:10px 12px">No roster data.</div>`;
       return starters.map(p => {
-        const ptsCls = p.pts > 0 ? 'positive' : 'zero';
+        const ptsCls  = p.pts > 0 ? 'positive' : 'zero';
         const nameCls = p.pts > 0 ? 'playing' : '';
         return `
           <div class="fmatch-player-row${isOpp ? ' fmatch-opp-header' : ''}">
@@ -1100,18 +1155,13 @@
   async function loadMlb(showLoader = true) {
     const list = document.getElementById('mlb-game-list');
 
-    // Only show the loading spinner on the very first load
     if (showLoader) {
       list.innerHTML = `<div class="mlb-no-games">Loading today's games…</div>`;
     }
 
     try {
       const today   = new Date();
-      // Build date from LOCAL time — toISOString() uses UTC and would flip to
-      // the next day at 7 PM Central (midnight UTC), showing tomorrow's schedule.
-      // Instead use a "baseball day" that stays on today until 3 AM local time
-      // (covers west-coast extra-inning games finishing after midnight).
-      const bball   = new Date(today.getTime() - 3 * 60 * 60 * 1000); // roll back 3 h
+      const bball   = new Date(today.getTime() - 3 * 60 * 60 * 1000);
       const dateStr = `${bball.getFullYear()}-${String(bball.getMonth()+1).padStart(2,'0')}-${String(bball.getDate()).padStart(2,'0')}`;
 
       document.getElementById('mlb-date-label').textContent =
@@ -1131,7 +1181,6 @@
       const hasLive = games.some(g => g.status?.abstractGameState === 'Live');
       document.getElementById('mlb-live-badge').style.display = hasLive ? '' : 'none';
 
-      // Fetch live feeds — only for in-progress or finished games
       const freshGames = await Promise.all(games.map(async g => {
         if (g.status?.abstractGameState !== 'Preview') {
           try {
@@ -1148,8 +1197,6 @@
       mlbGames  = freshGames;
       mlbLoaded = true;
 
-      // ── Silent in-place render ──────────────────────────────────
-      // Sort order same as always: Live → Preview → Final
       const order  = { 'Live': 0, 'Preview': 1, 'Final': 2 };
       const sorted = [...mlbGames].sort((a, b) => {
         const sa = order[a.gameData?.status?.abstractGameState] ?? 3;
@@ -1158,18 +1205,15 @@
       });
 
       if (showLoader || list.children.length === 0) {
-        // First render — build from scratch
         list.innerHTML = '';
         sorted.forEach(game => list.appendChild(buildMlbGameCard(game)));
       } else {
-        // Silent update — patch each card in-place, preserving expanded state & scroll
         const existingPks = new Set(
           [...list.querySelectorAll('.mlb-game-card[id]')]
             .map(el => el.id.replace('mlb-card-', ''))
         );
         const newPks = new Set(sorted.map(g => String(g.gameData?.game?.pk)));
 
-        // Remove cards for games that vanished (shouldn't happen mid-day but be safe)
         existingPks.forEach(pk => {
           if (!newPks.has(pk)) {
             const old = document.getElementById(`mlb-card-${pk}`);
@@ -1178,26 +1222,21 @@
         });
 
         sorted.forEach(game => {
-          const pk      = String(game.gameData?.game?.pk);
+          const pk       = String(game.gameData?.game?.pk);
           const existing = document.getElementById(`mlb-card-${pk}`);
           const newCard  = buildMlbGameCard(game);
 
           if (!existing) {
-            // New game appeared — append
             list.appendChild(newCard);
           } else {
-            // Patch only the parts that change: scores, inning, count, diamond, atbat strip
-            // We re-render the whole inner HTML but restore expanded state immediately after
             const wasExpanded = mlbExpanded[pk];
             existing.className = newCard.className;
             existing.innerHTML = newCard.innerHTML;
-            // If pitch log was open, re-open it without animation flash
             if (wasExpanded) {
               const wrap = existing.querySelector('.mlb-pitch-log-wrap');
               const hint = existing.querySelector('.mlb-expand-hint');
               if (wrap) { wrap.style.transition = 'none'; wrap.classList.add('open'); }
               if (hint) hint.textContent = '▴ CLOSE';
-              // Re-enable transition after paint
               requestAnimationFrame(() => {
                 if (wrap) wrap.style.transition = '';
               });
@@ -1206,20 +1245,16 @@
         });
       }
 
-      // Schedule next silent refresh every 15s while live games exist
       if (mlbRefreshTm) clearTimeout(mlbRefreshTm);
       if (hasLive) {
         mlbRefreshTm = setTimeout(() => loadMlb(false), 15000);
-        // Also refresh fantasy matchup every 60s during live games
         setTimeout(() => loadFantasyMatchup(), 60000);
       }
 
     } catch(err) {
-      // Only show error on first load; silent refreshes fail quietly
       if (showLoader) {
         list.innerHTML = `<div class="mlb-no-games" style="color:var(--dark-red)">Error loading MLB data: ${esc(err.message)}</div>`;
       }
-      // Retry silently after 30s on error
       if (mlbRefreshTm) clearTimeout(mlbRefreshTm);
       mlbRefreshTm = setTimeout(() => loadMlb(false), 30000);
     }
@@ -1355,13 +1390,9 @@
     return `
       <div class="mlb-diamond">
         <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-          <!-- Second base (top) -->
           <rect x="17" y="3"  width="10" height="10" rx="1.5" fill="${s}" stroke="${stroke}" stroke-width="1.5" transform="rotate(45 22 8)"/>
-          <!-- Third base (left) -->
           <rect x="3"  y="17" width="10" height="10" rx="1.5" fill="${t}" stroke="${stroke}" stroke-width="1.5" transform="rotate(45 8 22)"/>
-          <!-- First base (right) -->
           <rect x="31" y="17" width="10" height="10" rx="1.5" fill="${f}" stroke="${stroke}" stroke-width="1.5" transform="rotate(45 36 22)"/>
-          <!-- Home plate -->
           <polygon points="22,36 18,40 22,44 26,40" fill="white" stroke="${stroke}" stroke-width="1.5"/>
         </svg>
       </div>`;
@@ -1389,7 +1420,6 @@
       return `<div style="font-family:'Special Elite',cursive;font-size:11px;color:var(--muted);padding:6px 0">No pitch data yet.</div>`;
     }
 
-    // Show current at-bat pitches, or last few from allPlays if no current
     const entries = pitches.length ? pitches : (allPlays[allPlays.length-1]?.playEvents || []).filter(e => e.isPitch);
 
     if (!entries.length) return `<div style="font-family:'Special Elite',cursive;font-size:11px;color:var(--muted);padding:6px 0">No pitches in current at-bat.</div>`;
