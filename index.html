@@ -1124,17 +1124,21 @@
         teamAId = overrideTeamA;
         teamBId = overrideTeamB;
       } else {
-        // Default: my matchup
+        // No override — use whatever is currently active (defaults to my matchup on first load)
+        const useA = activeMatchupTeamA || MY_TEAM_ID;
         matchup = schedule.find(m =>
           m.matchupPeriodId === liveWeek &&
-          (m.home?.teamId === MY_TEAM_ID || m.away?.teamId === MY_TEAM_ID)
+          (m.home?.teamId === useA || m.away?.teamId === useA)
         );
-        teamAId = MY_TEAM_ID;
+        teamAId = useA;
         teamBId = matchup
-          ? (matchup.home?.teamId === MY_TEAM_ID ? matchup.away?.teamId : matchup.home?.teamId)
+          ? (matchup.home?.teamId === useA ? matchup.away?.teamId : matchup.home?.teamId)
           : null;
-        activeMatchupTeamA = teamAId;
-        activeMatchupTeamB = teamBId;
+        // Only update active tracking on first load (when B is still null)
+        if (!activeMatchupTeamB) {
+          activeMatchupTeamA = teamAId;
+          activeMatchupTeamB = teamBId;
+        }
       }
 
       if (!matchup) {
@@ -1370,7 +1374,7 @@
       if (mlbRefreshTm) clearTimeout(mlbRefreshTm);
       if (hasLive) {
         mlbRefreshTm = setTimeout(() => { cachedTodayStatsMap = null; loadMlb(false); }, 15000);
-        setTimeout(() => { renderMiniMatchupStrip(); loadFantasyMatchup(); }, 60000);
+        setTimeout(() => { renderMiniMatchupStrip(); loadFantasyMatchup(activeMatchupTeamA, activeMatchupTeamB); }, 60000);
       }
 
     } catch(err) {
