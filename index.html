@@ -493,7 +493,6 @@
         <span class="week-live-badge" id="live-badge" style="display:none">LIVE</span>
         <button class="week-nav-btn" id="btn-next" onclick="changeWeek(1)">NEXT ▶</button>
       </div>
-      <div class="swipe-hint" id="swipe-hint" style="display:none">← swipe to change week →</div>
       <div class="matchup-list" id="matchup-list"></div>
       <div class="bottom-strip" id="bottom-strip"></div>
     </div>
@@ -604,49 +603,7 @@
     renderScoreboard();
   }
 
-  // ── SWIPE / TOUCH NAVIGATION ───────────────────────────────────
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchStartTime = 0;
-
-  document.addEventListener('touchstart', e => {
-    touchStartX    = e.touches[0].clientX;
-    touchStartY    = e.touches[0].clientY;
-    touchStartTime = Date.now();
-  }, { passive: true });
-
-  document.addEventListener('touchend', e => {
-    const dx   = e.changedTouches[0].clientX - touchStartX;
-    const dy   = e.changedTouches[0].clientY - touchStartY;
-    const dt   = Date.now() - touchStartTime;
-    const absDx = Math.abs(dx);
-    const absDy = Math.abs(dy);
-
-    // Only count as a swipe if fast enough, horizontal enough, and long enough
-    if (dt > 500) return;           // too slow
-    if (absDx < 50) return;         // too short
-    if (absDy > absDx * 0.8) return; // too vertical (scrolling)
-
-    const currentTab = TAB_ORDER[currentTabIndex];
-
-    if (dx < 0) {
-      // Swipe LEFT → go to next tab OR next week on scoreboard
-      if (currentTab === 'scoreboard') {
-        changeWeek(1);
-      } else {
-        const next = currentTabIndex + 1;
-        if (next < TAB_ORDER.length) switchTab(TAB_ORDER[next]);
-      }
-    } else {
-      // Swipe RIGHT → go to prev tab OR prev week on scoreboard
-      if (currentTab === 'scoreboard') {
-        changeWeek(-1);
-      } else {
-        const prev = currentTabIndex - 1;
-        if (prev >= 0) switchTab(TAB_ORDER[prev]);
-      }
-    }
-  }, { passive: true });
+  // Native touch panning is handled by the browser — no swipe overrides needed.
 
   // ── LOAD ───────────────────────────────────────────────────────
   async function loadAll() {
@@ -679,34 +636,28 @@
         };
       });
 
-      // Fetch rosters
+      // Fetch rosters — tag each player with their team abbrev (NEWB, SHOR, VAL, etc.)
       try {
         const rr = await fetch(`${PROXY}/api/league/${SEASON}?view=mRoster`);
         if (rr.ok) {
           const rosterData = await rr.json();
           rosterMap = {};
-          const members = rosterData.members || [];
+          // Also build a map of playerName -> { abbrev, pos, lineupSlotId, teamId }
+          // so the matchup panel can show today's starters
+          window._fullRoster = {};
           (rosterData.teams || []).forEach(t => {
-            const tm = teamMap[t.id];
-            let label = tm?.name || '';
-            if (!label || label === `Team ${t.id}`) {
-              const ownerId = t.primaryOwner || '';
-              const member  = members.find(m => m.id === ownerId);
-              if (member) {
-                label = (member.displayName || `${member.firstName||''} ${member.lastName||''}`).trim();
-              }
-            }
-            if (!label) label = `T${t.id}`;
-            label = label.split(' ').slice(0, 2).join(' ');
-
+            const label = teamMap[t.id]?.abbrev || `T${t.id}`;
             (t.roster?.entries || []).forEach(e => {
-              const ppe  = e.playerPoolEntry || {};
-              const name = ppe?.player?.fullName
-                        || ppe?.playerPoolEntry?.player?.fullName
-                        || ppe?.onTeamRosterEntry?.player?.fullName
-                        || ppe?.fullName
-                        || '';
-              if (name) rosterMap[name.toLowerCase()] = label;
+              const ppe    = e.playerPoolEntry || {};
+              const name   = ppe?.player?.fullName || ppe?.fullName || '';
+              const slotId = e.lineupSlotId ?? 16;
+              if (name) {
+                rosterMap[name.toLowerCase()] = label;
+                window._fullRoster[name.toLowerCase()] = {
+                  name, abbrev: label, slotId, teamId: t.id,
+                  isBench: slotId === 16 || slotId === 17
+                };
+              }
             });
           });
         }
@@ -716,11 +667,6 @@
       document.getElementById('status-panel').style.display = 'none';
       document.getElementById('tab-bar').style.display      = '';
       document.getElementById('main-content').style.display = 'block';
-
-      // Show swipe hint on mobile
-      if ('ontouchstart' in window) {
-        document.getElementById('swipe-hint').style.display = '';
-      }
 
       renderScoreboard();
       renderStandings();
@@ -989,20 +935,124 @@
   let mlbRefreshTm = null;
 
   // ── FANTASY MATCHUP PANEL ──────────────────────────────────────
-  let MY_TEAM_ID   = null;
+  // My team is always ID 1
+  const MY_TEAM_ID = 1;
   let fMatchupData = null;
+
+  // Build scoring rules from ESPN settings once loaded
+  // ESPN stat IDs for fantasy baseball (standard):
+  // Batters: 0=AB,1=H,2=AVG,3=OBP,4=SLG,5=R,6=RBI,7=2B,8=3B,9=HR,10=TB
+  //          11=BB,12=HBP,14=SB,15=CS,16=SB-CS,17=SO(batter),18=GDP
+  // Pitchers:19=IP,20=TBF,21=H(allowed),22=BB(allowed),23=K,24=ER,25=W,26=L,27=SV,28=HLD,29=BS,30=ERA,31=WHIP,32=CG,33=CGSO,34=NH,41=QS,48=SVO
+  //
+  // We read appliedTotal from stats OR compute from MLB box score raw stats.
+  // Since ESPN stat totals are unreliable via mRoster, we compute from MLB live feeds.
+
+  // Parse ESPN scoring settings into a lookup: { statId -> pointValue }
+  function buildScoringMap() {
+    const map = {};
+    const scoringItems = globalData?.settings?.scoringSettings?.scoringItems || [];
+    scoringItems.forEach(item => {
+      if (item.isReverseItem) {
+        map[item.statId] = -(item.pointsOverrides?.[0]?.points ?? item.points ?? 0);
+      } else {
+        map[item.statId] = item.pointsOverrides?.[0]?.points ?? item.points ?? 0;
+      }
+    });
+    console.log('[ScoringMap]', map);
+    return map;
+  }
+
+  // Map ESPN stat IDs to MLB Stats API box score fields
+  // Returns fantasy points from an MLB player's today box score stats
+  function calcFantasyPts(mlbStats, ispitcher, scoringMap) {
+    if (!mlbStats || !scoringMap) return 0;
+    let pts = 0;
+
+    if (!ispitcher) {
+      // Batter stats from MLB API
+      const ab   = mlbStats.atBats       ?? 0;
+      const h    = mlbStats.hits          ?? 0;
+      const r    = mlbStats.runs          ?? 0;
+      const rbi  = mlbStats.rbi           ?? 0;
+      const bb   = mlbStats.baseOnBalls   ?? 0;
+      const hbp  = mlbStats.hitByPitch    ?? 0;
+      const sb   = mlbStats.stolenBases   ?? 0;
+      const cs   = mlbStats.caughtStealing ?? 0;
+      const so   = mlbStats.strikeOuts    ?? 0;
+      const hr   = mlbStats.homeRuns      ?? 0;
+      const dbl  = mlbStats.doubles       ?? 0;
+      const trpl = mlbStats.triples       ?? 0;
+      const tb   = h + dbl + 2*trpl + 3*hr; // total bases
+
+      pts += (scoringMap[5]  ?? 0) * r;
+      pts += (scoringMap[6]  ?? 0) * rbi;
+      pts += (scoringMap[9]  ?? 0) * hr;
+      pts += (scoringMap[7]  ?? 0) * dbl;
+      pts += (scoringMap[8]  ?? 0) * trpl;
+      pts += (scoringMap[1]  ?? 0) * h;
+      pts += (scoringMap[11] ?? 0) * bb;
+      pts += (scoringMap[12] ?? 0) * hbp;
+      pts += (scoringMap[14] ?? 0) * sb;
+      pts += (scoringMap[15] ?? 0) * cs;
+      pts += (scoringMap[17] ?? 0) * so;
+      pts += (scoringMap[10] ?? 0) * tb;
+    } else {
+      // Pitcher stats from MLB API
+      // IP comes as decimal e.g. 6.1 = 6 innings + 1 out = 19/3 outs
+      const ipRaw = mlbStats.inningsPitched ?? '0';
+      const ipParts = String(ipRaw).split('.');
+      const fullInnings = parseInt(ipParts[0]) || 0;
+      const extraOuts   = parseInt(ipParts[1]) || 0;
+      const totalOuts   = fullInnings * 3 + extraOuts;
+      const ip = totalOuts / 3;
+
+      const er  = mlbStats.earnedRuns     ?? 0;
+      const k   = mlbStats.strikeOuts     ?? 0;
+      const bb  = mlbStats.baseOnBalls    ?? 0;
+      const w   = mlbStats.wins           ?? 0;
+      const l   = mlbStats.losses         ?? 0;
+      const sv  = mlbStats.saves          ?? 0;
+      const hld = mlbStats.holds          ?? 0;
+      const bs  = mlbStats.blownSaves     ?? 0;
+      const cg  = mlbStats.completeGames  ?? 0;
+      const sho = mlbStats.shutouts       ?? 0;
+      const nh  = mlbStats.noHitters      ?? 0;  // not always present
+      const ha  = mlbStats.hits           ?? 0;
+      const qs  = (ip >= 6 && er <= 3) ? 1 : 0;  // quality start
+
+      pts += (scoringMap[19] ?? 0) * ip;
+      pts += (scoringMap[23] ?? 0) * k;
+      pts += (scoringMap[22] ?? 0) * bb;
+      pts += (scoringMap[24] ?? 0) * er;
+      pts += (scoringMap[25] ?? 0) * w;
+      pts += (scoringMap[26] ?? 0) * l;
+      pts += (scoringMap[27] ?? 0) * sv;
+      pts += (scoringMap[28] ?? 0) * hld;
+      pts += (scoringMap[29] ?? 0) * bs;
+      pts += (scoringMap[32] ?? 0) * cg;
+      pts += (scoringMap[33] ?? 0) * sho;
+      pts += (scoringMap[41] ?? 0) * qs;
+    }
+
+    return Math.round(pts * 10) / 10;
+  }
+
+  // Position label from ESPN lineup slot ID
+  function posLabel(slotId) {
+    const MAP = {0:'C',1:'1B',2:'2B',3:'3B',4:'SS',5:'OF',6:'OF',7:'OF',
+                 8:'UTIL',9:'SP',10:'SP',11:'RP',12:'RP',13:'P',14:'P',
+                 15:'P',16:'BN',17:'IL'};
+    return MAP[slotId] ?? 'BN';
+  }
 
   async function loadFantasyMatchup() {
     const panel = document.getElementById('fantasy-matchup-panel');
-    if (!panel) return;
+    if (!panel || !globalData) return;
 
     try {
-      if (!MY_TEAM_ID) {
-        const ids = Object.keys(teamMap).map(Number).sort((a,b)=>a-b);
-        MY_TEAM_ID = ids[0] || 1;
-      }
-
-      const schedule = globalData?.schedule || [];
+      // Find my matchup this week
+      const schedule  = globalData.schedule || [];
       const myMatchup = schedule.find(m =>
         m.matchupPeriodId === liveWeek &&
         (m.home?.teamId === MY_TEAM_ID || m.away?.teamId === MY_TEAM_ID)
@@ -1014,110 +1064,100 @@
       }
 
       const iAmHome   = myMatchup.home?.teamId === MY_TEAM_ID;
-      const myTeamId  = MY_TEAM_ID;
       const oppTeamId = iAmHome ? myMatchup.away?.teamId : myMatchup.home?.teamId;
+      const myTeam    = teamMap[MY_TEAM_ID]  || { name:'My Team',  abbrev:'ME'  };
+      const oppTeam   = teamMap[oppTeamId]   || { name:'Opponent', abbrev:'OPP' };
 
+      // Week totals from ESPN (reliable for matchup total)
       const myPts  = +(myMatchup[iAmHome?'home':'away']?.totalPointsLive
                     ?? myMatchup[iAmHome?'home':'away']?.totalPoints ?? 0);
       const oppPts = +(myMatchup[iAmHome?'away':'home']?.totalPointsLive
                     ?? myMatchup[iAmHome?'away':'home']?.totalPoints ?? 0);
+      const myWin  = myPts > oppPts, oppWin = oppPts > myPts;
 
-      const myTeam  = teamMap[myTeamId]  || { name: `Team ${myTeamId}`,  abbrev: 'ME'  };
-      const oppTeam = teamMap[oppTeamId] || { name: `Team ${oppTeamId}`, abbrev: 'OPP' };
+      // Build scoring map from ESPN settings
+      const scoringMap = buildScoringMap();
 
-      const myWin  = myPts  > oppPts;
-      const oppWin = oppPts > myPts;
+      // Get today's roster starters for both teams from _fullRoster
+      const roster = window._fullRoster || {};
+      const myStarters  = Object.values(roster).filter(p => p.teamId === MY_TEAM_ID  && !p.isBench);
+      const oppStarters = Object.values(roster).filter(p => p.teamId === oppTeamId   && !p.isBench);
 
-      // Fetch live roster scoring.
-      // mRoster + mMatchupScore gives us the stats array per player.
-      // We do NOT use mBoxscore — it's not a valid FLB view.
-      const rr = await fetch(
-        `${PROXY}/api/league/${SEASON}?view=mRoster&view=mMatchupScore&view=mMatchup&scoringPeriodId=${liveWeek}`
-      );
-      const rosterData = rr.ok ? await rr.json() : null;
-
-      // Debug: log the first player's full entry so we can see the real structure
-      const debugTeam = (rosterData?.teams || [])[0];
-      const debugEntry = debugTeam?.roster?.entries?.[0];
-      if (debugEntry) {
-        console.log('[ESPN roster entry sample]', JSON.stringify(debugEntry, null, 2).slice(0, 2000));
+      if (!myStarters.length && !oppStarters.length) {
+        panel.innerHTML = `<div class="fmatch-loading">Roster not loaded yet — refresh.</div>`;
+        return;
       }
 
-      function buildRoster(teamId) {
-        const t = (rosterData?.teams || []).find(t => t.id === teamId);
-        if (!t) return [];
+      // Show loading state while we fetch MLB box scores
+      panel.innerHTML = `<div class="fmatch-loading">Fetching today's stats&#8230;</div>`;
 
-        return (t.roster?.entries || []).map(e => {
-          const ppe    = e.playerPoolEntry || {};
-          const player = ppe.player || {};
-          const name   = player.fullName || ppe.fullName || '?';
-          const slotId = e.lineupSlotId ?? 0;
-          const isBench = slotId === 16 || slotId === 17;
-          const pos    = posLabel(slotId);
+      // Fetch today's MLB games (already loaded in mlbGames, or fetch fresh)
+      // Build a map of playerName (lowercase) -> today's box score stats
+      const todayStatsMap = {}; // name.toLowerCase() -> { stats, ispitcher }
 
-          // ESPN stats array lives at ppe.playerPoolEntry.player.stats[]
-          // Each stat object has:
-          //   statSourceId:    0 = actual, 1 = projected
-          //   statSplitTypeId: 0 = season, 1 = last7, 4 = last15, 5 = last30, 10 = weekly matchup period
-          //   scoringPeriodId: the matchup week number
-          //   appliedTotal:    fantasy points for that split
-          //
-          // For current-week live scoring we want:
-          //   statSourceId === 0 (actual stats, not projected)
-          //   scoringPeriodId === liveWeek
-          //   statSplitTypeId === 0  ← season-to-date through this period
-          //     OR statSplitTypeId === 1 ← this scoring period only (weekly)
-          // Try weekly (1) first, fall back to season-to-date (0) scoped to this period
+      const gamesToCheck = mlbGames.length ? mlbGames : [];
+      await Promise.all(gamesToCheck.map(async game => {
+        const pk    = game.gameData?.game?.pk;
+        const state = game.gameData?.status?.abstractGameState;
+        if (!pk || state === 'Preview') return;
 
-          let pts = 0;
-          const statsArr = ppe.stats || player.stats || [];
+        try {
+          // Use the boxscore endpoint for clean per-player stat lines
+          const res  = await fetch(`${MLB_API}/api/v1/game/${pk}/boxscore`);
+          const data = await res.json();
+          const teams = data.teams || {};
 
-          // Log first player's stats for debugging
-          if (name !== '?' && statsArr.length > 0 && !window._debuggedStats) {
-            console.log(`[ESPN stats for ${name}]`, JSON.stringify(statsArr).slice(0, 1000));
-            window._debuggedStats = true;
-          }
+          ['home','away'].forEach(side => {
+            const batters  = teams[side]?.batters  || [];
+            const pitchers = teams[side]?.pitchers || [];
+            const players  = teams[side]?.players  || {};
 
-          // Try: actual stats, this scoring period, weekly split (type 1)
-          let stat = statsArr.find(s =>
-            s.scoringPeriodId === liveWeek && s.statSourceId === 0 && s.statSplitTypeId === 1
-          );
-          // Fallback: actual stats, this scoring period, any split type
-          if (!stat) {
-            stat = statsArr.find(s =>
-              s.scoringPeriodId === liveWeek && s.statSourceId === 0
-            );
-          }
-          // Fallback 2: any stat for this scoring period
-          if (!stat) {
-            stat = statsArr.find(s => s.scoringPeriodId === liveWeek);
-          }
+            batters.forEach(id => {
+              const p    = players[`ID${id}`];
+              const name = p?.person?.fullName;
+              if (!name) return;
+              const stats = p?.stats?.batting?.summary ? p.stats.batting : null;
+              // Use gameStats which is today only
+              const gs = p?.gameStats?.batting || p?.stats?.batting || {};
+              todayStatsMap[name.toLowerCase()] = { stats: gs, ispitcher: false };
+            });
 
-          pts = stat ? +(stat.appliedTotal ?? 0) : 0;
+            pitchers.forEach(id => {
+              const p    = players[`ID${id}`];
+              const name = p?.person?.fullName;
+              if (!name) return;
+              const gs = p?.gameStats?.pitching || p?.stats?.pitching || {};
+              todayStatsMap[name.toLowerCase()] = { stats: gs, ispitcher: true };
+            });
+          });
+        } catch(e) { /* skip failed game */ }
+      }));
 
-          return { name, pos, pts, isBench };
+      console.log('[TodayStats sample]', Object.entries(todayStatsMap).slice(0,3));
+
+      // Compute today's fantasy points for each starter
+      function enrichPlayers(starters) {
+        return starters.map(p => {
+          const key   = p.name.toLowerCase();
+          const mlb   = todayStatsMap[key];
+          const pts   = mlb ? calcFantasyPts(mlb.stats, mlb.ispitcher, scoringMap) : null;
+          return { ...p, pts, pos: posLabel(p.slotId), playing: !!mlb };
         }).sort((a,b) => {
-          if (a.isBench !== b.isBench) return a.isBench ? 1 : -1;
-          return b.pts - a.pts;
+          // Sort: playing first, then by slot
+          if (!!a.pts !== !!b.pts) return a.pts === null ? 1 : -1;
+          return a.slotId - b.slotId;
         });
       }
 
-      function posLabel(slotId) {
-        const MAP = {0:'C',1:'1B',2:'2B',3:'3B',4:'SS',5:'OF',6:'OF',7:'OF',
-                     8:'UTIL',9:'SP',10:'SP',11:'RP',12:'RP',13:'P',14:'P',
-                     15:'P',16:'BN',17:'IL'};
-        return MAP[slotId] ?? 'BN';
-      }
+      const myEnriched  = enrichPlayers(myStarters);
+      const oppEnriched = enrichPlayers(oppStarters);
 
-      const myPlayers  = buildRoster(myTeamId);
-      const oppPlayers = buildRoster(oppTeamId);
-
-      fMatchupData = { myPlayers, oppPlayers };
-      renderMatchupPanel(myTeam, oppTeam, myPts, oppPts, myWin, oppWin, myPlayers, oppPlayers);
+      fMatchupData = { myEnriched, oppEnriched };
+      renderMatchupPanel(myTeam, oppTeam, myPts, oppPts, myWin, oppWin, myEnriched, oppEnriched);
 
     } catch(err) {
       console.warn('[Fantasy Matchup]', err);
-      if (panel) panel.innerHTML = `<div class="fmatch-loading" style="color:var(--dark-red)">Could not load matchup.</div>`;
+      if (panel) panel.innerHTML = `<div class="fmatch-loading" style="color:var(--dark-red)">Could not load matchup: ${err.message}</div>`;
     }
   }
 
@@ -1126,23 +1166,28 @@
     if (!panel) return;
 
     function playerRows(players, isOpp) {
-      const starters = players.filter(p => !p.isBench);
-      if (!starters.length) return `<div class="fmatch-loading" style="padding:10px 12px">No roster data.</div>`;
-      return starters.map(p => {
-        const ptsCls  = p.pts > 0 ? 'positive' : 'zero';
-        const nameCls = p.pts > 0 ? 'playing' : '';
+      if (!players.length) return `<div class="fmatch-loading" style="padding:10px 12px">No roster data.</div>`;
+      return players.map(p => {
+        // pts === null means player has no MLB game today
+        const hasGame = p.pts !== null;
+        const ptsCls  = hasGame && p.pts > 0 ? 'positive' : 'zero';
+        const nameCls = hasGame ? 'playing' : '';
+        const ptsDisp = hasGame ? (p.pts > 0 ? p.pts.toFixed(1) : '0.0') : '—';
         return `
           <div class="fmatch-player-row${isOpp ? ' fmatch-opp-header' : ''}">
             <div class="fmatch-pos">${esc(p.pos)}</div>
             <div class="fmatch-pname ${nameCls}">${esc(p.name)}</div>
-            <div class="fmatch-ppts ${ptsCls}">${p.pts > 0 ? p.pts.toFixed(1) : '—'}</div>
+            <div class="fmatch-ppts ${ptsCls}">${ptsDisp}</div>
           </div>`;
       }).join('');
     }
 
+    const myTodayPts  = myPlayers.filter(p=>p.pts!==null).reduce((s,p)=>s+(p.pts??0),0);
+    const oppTodayPts = oppPlayers.filter(p=>p.pts!==null).reduce((s,p)=>s+(p.pts??0),0);
+
     panel.innerHTML = `
       <div class="fmatch-header">
-        <div class="fmatch-title">⚾ This Week's Matchup</div>
+        <div class="fmatch-title">⚾ Week ${liveWeek} Matchup</div>
         <div class="fmatch-score-bar">
           <div>
             <div class="fmatch-team-name">${esc(myTeam.name)}</div>
@@ -1158,8 +1203,8 @@
 
       <div class="fmatch-roster-section">
         <div class="fmatch-roster-label">
-          ${esc(myTeam.abbrev || myTeam.name)} — My Starters
-          <span>${myPlayers.filter(p=>!p.isBench).reduce((s,p)=>s+p.pts,0).toFixed(1)} pts</span>
+          ${esc(myTeam.abbrev)} — Today's Starters
+          <span>+${myTodayPts.toFixed(1)} today</span>
         </div>
         ${playerRows(myPlayers, false)}
       </div>
@@ -1168,8 +1213,8 @@
 
       <div class="fmatch-roster-section">
         <div class="fmatch-roster-label">
-          ${esc(oppTeam.abbrev || oppTeam.name)} — Opp Starters
-          <span>${oppPlayers.filter(p=>!p.isBench).reduce((s,p)=>s+p.pts,0).toFixed(1)} pts</span>
+          ${esc(oppTeam.abbrev)} — Today's Starters
+          <span>+${oppTodayPts.toFixed(1)} today</span>
         </div>
         ${playerRows(oppPlayers, true)}
       </div>`;
