@@ -437,7 +437,6 @@
       background: var(--dark-brown);
       border-bottom: 2px solid var(--gold);
       padding: 0 8px;
-      display: flex;
       gap: 0;
       overflow-x: auto;
       scrollbar-width: none;
@@ -1093,18 +1092,17 @@
           <div class="mini-abbrev">${esc(aT.abbrev)}</div>
           <div class="mini-score ${aWin?'winning':hWin?'losing':''}">${Math.round(aPts)}</div>
         </div>`;
-      pill.onclick = () => selectMatchup(hId, aId);
+      pill.onclick = () => selectMatchup(hId, aId, pill);
       strip.appendChild(pill);
     });
   }
 
   // Called when a mini matchup pill is clicked
-  async function selectMatchup(teamAId, teamBId) {
+  async function selectMatchup(teamAId, teamBId, pillEl) {
     activeMatchupTeamA = teamAId;
     activeMatchupTeamB = teamBId;
-    // Re-highlight active pill
     document.querySelectorAll('.mini-matchup').forEach(el => el.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    if (pillEl) pillEl.classList.add('active');
     await loadFantasyMatchup(teamAId, teamBId);
   }
 
