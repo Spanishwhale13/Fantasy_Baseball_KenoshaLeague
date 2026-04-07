@@ -646,7 +646,7 @@
                 rosterMap[name.toLowerCase()] = label;
                 window._fullRoster[name.toLowerCase()] = {
                   name, abbrev: label, slotId, teamId: t.id,
-                  isBench: slotId === 16 || slotId === 17
+                  isBench: BENCH_SLOTS.has(slotId)
                 };
               }
             });
@@ -966,17 +966,34 @@
     return Math.round(pts * 10) / 10;
   }
 
+  // ESPN lineup slot IDs — confirmed for this league:
+  // 0=C, 1=1B, 2=2B, 3=3B, 4=SS, 5=OF, 6=OF, 7=OF
+  // 8=UTIL (first), 12=UTIL (second) ← ESPN reuses 12 for extra UTIL in some leagues
+  // 9=SP, 10=SP, 11=SP, 13=SP, 14=SP (5 SP slots)
+  // 15=RP (1 RP slot)
+  // 16=BN, 17=IL
+  // Desired display order: C,1B,2B,3B,SS,OF,OF,OF,UTIL,UTIL,SP,SP,SP,SP,SP,RP
+  const SLOT_LABEL = {
+    0:'C', 1:'1B', 2:'2B', 3:'3B', 4:'SS',
+    5:'OF', 6:'OF', 7:'OF',
+    8:'UTIL', 12:'UTIL',
+    9:'SP', 10:'SP', 11:'SP', 13:'SP', 14:'SP',
+    15:'RP',
+    16:'BN', 17:'IL'
+  };
+  const SLOT_ORDER = {
+    0:0, 1:1, 2:2, 3:3, 4:4,          // C 1B 2B 3B SS
+    5:5, 6:6, 7:7,                      // OF OF OF
+    8:8, 12:9,                          // UTIL UTIL
+    9:10, 10:11, 11:12, 13:13, 14:14,  // SP SP SP SP SP
+    15:15,                              // RP
+    16:99, 17:100                       // BN IL
+  };
+  // Bench = slots 16 (BN) and 17 (IL) only
+  const BENCH_SLOTS = new Set([16, 17]);
+
   function posLabel(slotId) {
-    const MAP = {
-      0:'C', 1:'1B', 2:'2B', 3:'3B', 4:'SS',
-      5:'OF', 6:'OF', 7:'OF',
-      8:'UTIL',
-      9:'SP', 10:'SP',
-      11:'RP', 12:'RP',
-      13:'P', 14:'P', 15:'P',
-      16:'BN', 17:'IL'
-    };
-    return MAP[slotId] ?? 'BN';
+    return SLOT_LABEL[slotId] ?? 'BN';
   }
 
   async function loadFantasyMatchup() {
@@ -1050,10 +1067,7 @@
           const mlb = todayStatsMap[p.name.toLowerCase()];
           const pts = mlb ? calcFantasyPts(mlb.stats, mlb.ispitcher, scoringMap) : null;
           return { ...p, pts, pos: posLabel(p.slotId), playing: !!mlb };
-        }).sort((a,b) => {
-          if ((a.pts===null) !== (b.pts===null)) return a.pts===null ? 1 : -1;
-          return a.slotId - b.slotId;
-        });
+        }).sort((a, b) => (SLOT_ORDER[a.slotId] ?? 98) - (SLOT_ORDER[b.slotId] ?? 98));
       }
 
       const myEnriched  = enrichPlayers(myStarters);
