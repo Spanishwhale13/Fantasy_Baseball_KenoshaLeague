@@ -432,6 +432,59 @@
       color: var(--muted); text-align: center; padding: 24px 12px;
     }
 
+    /* ── MINI MATCHUP STRIP ── */
+    #mini-matchup-strip {
+      background: var(--dark-brown);
+      border-bottom: 2px solid var(--gold);
+      padding: 0 8px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    #mini-matchup-strip::-webkit-scrollbar { display: none; }
+
+    .mini-matchup {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-right: 1px solid rgba(212,160,23,0.2);
+      transition: background 0.15s;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .mini-matchup:last-child { border-right: none; }
+    .mini-matchup:hover { background: rgba(212,160,23,0.1); }
+    .mini-matchup.active {
+      background: rgba(212,160,23,0.18);
+    }
+    .mini-matchup.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0; height: 2px;
+      background: var(--gold);
+    }
+    .mini-team {
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 38px;
+    }
+    .mini-abbrev {
+      font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.75); letter-spacing: 1px; text-transform: uppercase;
+    }
+    .mini-score {
+      font-family: 'DM Serif Display', serif; font-size: 17px; line-height: 1;
+      color: rgba(255,255,255,0.5);
+    }
+    .mini-score.winning { color: var(--gold); }
+    .mini-score.losing  { color: rgba(255,255,255,0.3); }
+    .mini-vs {
+      font-family: 'Special Elite', cursive; font-size: 9px;
+      color: rgba(255,255,255,0.25); padding: 0 5px; margin-top: 8px;
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 1100px) {
       .mlb-live-layout { grid-template-columns: 1fr 320px; }
@@ -515,6 +568,8 @@
         <span class="week-live-badge" id="mlb-live-badge" style="display:none">LIVE</span>
         <button class="week-nav-btn" onclick="refreshMlb()" style="padding:4px 12px">↻ REFRESH</button>
       </div>
+      <!-- ── MINI MATCHUP STRIP ── -->
+      <div id="mini-matchup-strip" style="display:none"></div>
       <div class="mlb-live-layout">
         <div class="mlb-live-left">
           <!-- 4-column game grid -->
@@ -581,9 +636,10 @@
       if (!mlbLoaded) {
         // First open — load games first, then matchup so box scores are ready
         await loadMlb(true);
+        renderMiniMatchupStrip();
         loadFantasyMatchup();
       } else {
-        // Already loaded — just refresh the matchup panel
+        renderMiniMatchupStrip();
         loadFantasyMatchup();
       }
     }
@@ -996,84 +1052,164 @@
     return SLOT_LABEL[slotId] ?? 'BN';
   }
 
-  async function loadFantasyMatchup() {
+  // Currently selected matchup team IDs (defaults to my matchup)
+  let activeMatchupTeamA = MY_TEAM_ID;
+  let activeMatchupTeamB = null; // resolved on first load
+  // Cached today stats so we don't re-fetch boxscores on every panel switch
+  let cachedTodayStatsMap = null;
+
+  // Build and show the mini strip of all this week's matchups
+  function renderMiniMatchupStrip() {
+    const strip = document.getElementById('mini-matchup-strip');
+    if (!strip || !globalData) return;
+
+    const schedule = globalData.schedule || [];
+    const matchups = schedule.filter(m => m.matchupPeriodId === liveWeek);
+    if (!matchups.length) return;
+
+    strip.innerHTML = '';
+    strip.style.display = 'flex';
+
+    matchups.forEach(m => {
+      const hId  = m.home?.teamId, aId = m.away?.teamId;
+      const hT   = teamMap[hId] || { abbrev:`T${hId}` };
+      const aT   = teamMap[aId] || { abbrev:`T${aId}` };
+      const hPts = +(m.home?.totalPointsLive ?? m.home?.totalPoints ?? 0);
+      const aPts = +(m.away?.totalPointsLive ?? m.away?.totalPoints ?? 0);
+      const hWin = hPts > aPts, aWin = aPts > hPts;
+
+      // Is this the active matchup?
+      const isActive = (activeMatchupTeamA === hId || activeMatchupTeamA === aId);
+
+      const pill = document.createElement('div');
+      pill.className = `mini-matchup${isActive ? ' active' : ''}`;
+      pill.innerHTML = `
+        <div class="mini-team">
+          <div class="mini-abbrev">${esc(hT.abbrev)}</div>
+          <div class="mini-score ${hWin?'winning':aWin?'losing':''}">${Math.round(hPts)}</div>
+        </div>
+        <div class="mini-vs">vs</div>
+        <div class="mini-team">
+          <div class="mini-abbrev">${esc(aT.abbrev)}</div>
+          <div class="mini-score ${aWin?'winning':hWin?'losing':''}">${Math.round(aPts)}</div>
+        </div>`;
+      pill.onclick = () => selectMatchup(hId, aId);
+      strip.appendChild(pill);
+    });
+  }
+
+  // Called when a mini matchup pill is clicked
+  async function selectMatchup(teamAId, teamBId) {
+    activeMatchupTeamA = teamAId;
+    activeMatchupTeamB = teamBId;
+    // Re-highlight active pill
+    document.querySelectorAll('.mini-matchup').forEach(el => el.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    await loadFantasyMatchup(teamAId, teamBId);
+  }
+
+  async function loadFantasyMatchup(overrideTeamA, overrideTeamB) {
     const panel = document.getElementById('fantasy-matchup-panel');
     if (!panel || !globalData) return;
 
     try {
-      const schedule  = globalData.schedule || [];
-      const myMatchup = schedule.find(m =>
-        m.matchupPeriodId === liveWeek &&
-        (m.home?.teamId === MY_TEAM_ID || m.away?.teamId === MY_TEAM_ID)
-      );
-      if (!myMatchup) {
-        panel.innerHTML = `<div class="fmatch-loading">No matchup found for Week ${liveWeek}.</div>`;
+      const schedule = globalData.schedule || [];
+
+      // Determine which matchup to show
+      let matchup, teamAId, teamBId;
+
+      if (overrideTeamA) {
+        // Specific matchup selected from strip
+        matchup = schedule.find(m =>
+          m.matchupPeriodId === liveWeek &&
+          ((m.home?.teamId === overrideTeamA && m.away?.teamId === overrideTeamB) ||
+           (m.home?.teamId === overrideTeamB && m.away?.teamId === overrideTeamA))
+        );
+        teamAId = overrideTeamA;
+        teamBId = overrideTeamB;
+      } else {
+        // Default: my matchup
+        matchup = schedule.find(m =>
+          m.matchupPeriodId === liveWeek &&
+          (m.home?.teamId === MY_TEAM_ID || m.away?.teamId === MY_TEAM_ID)
+        );
+        teamAId = MY_TEAM_ID;
+        teamBId = matchup
+          ? (matchup.home?.teamId === MY_TEAM_ID ? matchup.away?.teamId : matchup.home?.teamId)
+          : null;
+        activeMatchupTeamA = teamAId;
+        activeMatchupTeamB = teamBId;
+      }
+
+      if (!matchup) {
+        panel.innerHTML = `<div class="fmatch-loading">No matchup found.</div>`;
         return;
       }
 
-      const iAmHome   = myMatchup.home?.teamId === MY_TEAM_ID;
-      const oppTeamId = iAmHome ? myMatchup.away?.teamId : myMatchup.home?.teamId;
-      const myTeam    = teamMap[MY_TEAM_ID] || { name:'My Team',  abbrev:'ME'  };
-      const oppTeam   = teamMap[oppTeamId]  || { name:'Opponent', abbrev:'OPP' };
+      const isHomeA = matchup.home?.teamId === teamAId;
+      const aPts = +(matchup[isHomeA?'home':'away']?.totalPointsLive ?? matchup[isHomeA?'home':'away']?.totalPoints ?? 0);
+      const bPts = +(matchup[isHomeA?'away':'home']?.totalPointsLive ?? matchup[isHomeA?'away':'home']?.totalPoints ?? 0);
+      const aWin = aPts > bPts, bWin = bPts > aPts;
 
-      const myPts  = +(myMatchup[iAmHome?'home':'away']?.totalPointsLive ?? myMatchup[iAmHome?'home':'away']?.totalPoints ?? 0);
-      const oppPts = +(myMatchup[iAmHome?'away':'home']?.totalPointsLive ?? myMatchup[iAmHome?'away':'home']?.totalPoints ?? 0);
-      const myWin  = myPts > oppPts, oppWin = oppPts > myPts;
+      const teamA = teamMap[teamAId] || { name:'Team A', abbrev:'A' };
+      const teamB = teamMap[teamBId] || { name:'Team B', abbrev:'B' };
 
-      const scoringMap  = buildScoringMap();
-      const roster      = window._fullRoster || {};
-      const myStarters  = Object.values(roster).filter(p => p.teamId === MY_TEAM_ID && !p.isBench);
-      const oppStarters = Object.values(roster).filter(p => p.teamId === oppTeamId  && !p.isBench);
+      const scoringMap = buildScoringMap();
+      const roster     = window._fullRoster || {};
+      const aStarters  = Object.values(roster).filter(p => p.teamId === teamAId && !p.isBench);
+      const bStarters  = Object.values(roster).filter(p => p.teamId === teamBId && !p.isBench);
 
-      if (!myStarters.length && !oppStarters.length) {
+      if (!aStarters.length && !bStarters.length) {
         panel.innerHTML = `<div class="fmatch-loading">Roster not loaded yet — refresh.</div>`;
         return;
       }
 
       panel.innerHTML = `<div class="fmatch-loading">Fetching today's stats&#8230;</div>`;
 
-      // Build today stats map from MLB boxscores
-      const todayStatsMap = {};
-      await Promise.all(mlbGames.map(async game => {
-        const pk    = game.gameData?.game?.pk;
-        const state = game.gameData?.status?.abstractGameState;
-        if (!pk || state === 'Preview') return;
-        try {
-          const res  = await fetch(`${MLB_API}/api/v1/game/${pk}/boxscore`);
-          const data = await res.json();
-          const teams = data.teams || {};
-          ['home','away'].forEach(side => {
-            const batters  = teams[side]?.batters  || [];
-            const pitchers = teams[side]?.pitchers || [];
-            const players  = teams[side]?.players  || {};
-            batters.forEach(id => {
-              const p = players[`ID${id}`];
-              if (!p?.person?.fullName) return;
-              const gs = p?.gameStats?.batting || p?.stats?.batting || {};
-              todayStatsMap[p.person.fullName.toLowerCase()] = { stats: gs, ispitcher: false };
+      // Build (or reuse cached) today stats map from MLB boxscores
+      if (!cachedTodayStatsMap) {
+        cachedTodayStatsMap = {};
+        await Promise.all(mlbGames.map(async game => {
+          const pk    = game.gameData?.game?.pk;
+          const state = game.gameData?.status?.abstractGameState;
+          if (!pk || state === 'Preview') return;
+          try {
+            const res   = await fetch(`${MLB_API}/api/v1/game/${pk}/boxscore`);
+            const data  = await res.json();
+            const teams = data.teams || {};
+            ['home','away'].forEach(side => {
+              const batters  = teams[side]?.batters  || [];
+              const pitchers = teams[side]?.pitchers || [];
+              const players  = teams[side]?.players  || {};
+              batters.forEach(id => {
+                const p = players[`ID${id}`];
+                if (!p?.person?.fullName) return;
+                const gs = p?.gameStats?.batting || p?.stats?.batting || {};
+                cachedTodayStatsMap[p.person.fullName.toLowerCase()] = { stats: gs, ispitcher: false };
+              });
+              pitchers.forEach(id => {
+                const p = players[`ID${id}`];
+                if (!p?.person?.fullName) return;
+                const gs = p?.gameStats?.pitching || p?.stats?.pitching || {};
+                cachedTodayStatsMap[p.person.fullName.toLowerCase()] = { stats: gs, ispitcher: true };
+              });
             });
-            pitchers.forEach(id => {
-              const p = players[`ID${id}`];
-              if (!p?.person?.fullName) return;
-              const gs = p?.gameStats?.pitching || p?.stats?.pitching || {};
-              todayStatsMap[p.person.fullName.toLowerCase()] = { stats: gs, ispitcher: true };
-            });
-          });
-        } catch(e) {}
-      }));
+          } catch(e) {}
+        }));
+      }
 
       function enrichPlayers(starters) {
         return starters.map(p => {
-          const mlb = todayStatsMap[p.name.toLowerCase()];
+          const mlb = cachedTodayStatsMap[p.name.toLowerCase()];
           const pts = mlb ? calcFantasyPts(mlb.stats, mlb.ispitcher, scoringMap) : null;
           return { ...p, pts, pos: posLabel(p.slotId), playing: !!mlb };
         }).sort((a, b) => (SLOT_ORDER[a.slotId] ?? 98) - (SLOT_ORDER[b.slotId] ?? 98));
       }
 
-      const myEnriched  = enrichPlayers(myStarters);
-      const oppEnriched = enrichPlayers(oppStarters);
-      fMatchupData = { myEnriched, oppEnriched };
-      renderMatchupPanel(myTeam, oppTeam, myPts, oppPts, myWin, oppWin, myEnriched, oppEnriched);
+      const aEnriched = enrichPlayers(aStarters);
+      const bEnriched = enrichPlayers(bStarters);
+      fMatchupData = { aEnriched, bEnriched };
+      renderMatchupPanel(teamA, teamB, aPts, bPts, aWin, bWin, aEnriched, bEnriched);
 
     } catch(err) {
       console.warn('[Fantasy Matchup]', err);
@@ -1137,7 +1273,7 @@
       </div>`;
   }
 
-  function refreshMlb() { loadMlb(true); loadFantasyMatchup(); }
+  function refreshMlb() { cachedTodayStatsMap = null; loadMlb(true); loadFantasyMatchup(); }
 
   async function loadMlb(showLoader = true) {
     const list = document.getElementById('mlb-game-list');
@@ -1235,8 +1371,8 @@
 
       if (mlbRefreshTm) clearTimeout(mlbRefreshTm);
       if (hasLive) {
-        mlbRefreshTm = setTimeout(() => loadMlb(false), 15000);
-        setTimeout(() => loadFantasyMatchup(), 60000);
+        mlbRefreshTm = setTimeout(() => { cachedTodayStatsMap = null; loadMlb(false); }, 15000);
+        setTimeout(() => { renderMiniMatchupStrip(); loadFantasyMatchup(); }, 60000);
       }
 
     } catch(err) {
