@@ -571,14 +571,22 @@
   }
 
   // ── TABS ───────────────────────────────────────────────────────
-  function switchTab(tab) {
+  async function switchTab(tab) {
     currentTabIndex = TAB_ORDER.indexOf(tab);
     TAB_ORDER.forEach((t, i) => {
       document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
       document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t === tab);
     });
-    if (tab === 'mlblive' && !mlbLoaded) loadMlb(true);
-    if (tab === 'mlblive') loadFantasyMatchup();
+    if (tab === 'mlblive') {
+      if (!mlbLoaded) {
+        // First open — load games first, then matchup so box scores are ready
+        await loadMlb(true);
+        loadFantasyMatchup();
+      } else {
+        // Already loaded — just refresh the matchup panel
+        loadFantasyMatchup();
+      }
+    }
   }
 
   // ── WEEK NAV ───────────────────────────────────────────────────
