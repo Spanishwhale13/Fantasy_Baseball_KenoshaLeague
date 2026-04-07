@@ -135,12 +135,15 @@
     .matchup-divider { display: flex; align-items: center; padding: 2px 0; }
     .vs-badge { font-family: 'Special Elite', cursive; font-size: 12px; color: var(--muted); letter-spacing: 1px; background: var(--tan); padding: 1px 6px; border-radius: 3px; }
     .matchup-status-badge {
-      position: absolute; top: 8px; right: 10px;
       font-size: 11px; font-weight: 700; letter-spacing: 1px;
-      padding: 3px 8px; border-radius: 3px; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 3px; text-transform: uppercase;
+      display: inline-block;
     }
     .badge-final { background: #e8f5e9; color: var(--green); border: 1px solid #a5d6a7; }
     .badge-live  { background: #fdecea; color: var(--dark-red); border: 1px solid #f5c6c3; }
+    .matchup-badge-row {
+      display: flex; align-items: center; gap: 8px; padding: 4px 0 2px;
+    }
 
     /* ── SHARED TABLE STYLES ── */
     .section-block { padding: 16px; }
@@ -788,20 +791,22 @@
         const hWin = hPts > aPts, aWin = aPts > hPts;
         const isFinal = m.winner && m.winner !== 'UNDECIDED';
         const rec = t => `${t.wins}-${t.losses}${t.ties>0?'-'+t.ties:''}`;
-        const badge = isFinal
+        const badgeHtml = isFinal
           ? `<span class="matchup-status-badge badge-final">FINAL</span>`
           : `<span class="matchup-status-badge badge-live">LIVE</span>`;
 
         const card = document.createElement('div');
         card.className = 'matchup-card';
         card.innerHTML = `
-          ${badge}
           <div class="matchup-inner">
             <div class="team-row">
               <div><div class="team-name">${esc(hT.name)}</div><div class="team-record">${rec(hT)}</div></div>
               <div class="team-score ${hWin?'winning':aWin?'losing':''}">${fmtPts(hPts)}</div>
             </div>
-            <div class="matchup-divider"><span class="vs-badge">VS</span></div>
+            <div class="matchup-divider">
+              <span class="vs-badge">VS</span>
+              <div class="matchup-badge-row">${badgeHtml}</div>
+            </div>
             <div class="team-row">
               <div><div class="team-name">${esc(aT.name)}</div><div class="team-record">${rec(aT)}</div></div>
               <div class="team-score ${aWin?'winning':hWin?'losing':''}">${fmtPts(aPts)}</div>
@@ -1023,11 +1028,20 @@
       const myWin  = myPts  > oppPts;
       const oppWin = oppPts > myPts;
 
-      // Fetch live roster scoring — use mBoxscore for actual live player points
+      // Fetch live roster scoring.
+      // mRoster + mMatchupScore gives us the stats array per player.
+      // We do NOT use mBoxscore — it's not a valid FLB view.
       const rr = await fetch(
-        `${PROXY}/api/league/${SEASON}?view=mBoxscore&view=mMatchup&view=mRoster&scoringPeriodId=${liveWeek}`
+        `${PROXY}/api/league/${SEASON}?view=mRoster&view=mMatchupScore&view=mMatchup&scoringPeriodId=${liveWeek}`
       );
       const rosterData = rr.ok ? await rr.json() : null;
+
+      // Debug: log the first player's full entry so we can see the real structure
+      const debugTeam = (rosterData?.teams || [])[0];
+      const debugEntry = debugTeam?.roster?.entries?.[0];
+      if (debugEntry) {
+        console.log('[ESPN roster entry sample]', JSON.stringify(debugEntry, null, 2).slice(0, 2000));
+      }
 
       function buildRoster(teamId) {
         const t = (rosterData?.teams || []).find(t => t.id === teamId);
@@ -1041,32 +1055,45 @@
           const isBench = slotId === 16 || slotId === 17;
           const pos    = posLabel(slotId);
 
-          // ── FIX: Read live points from the correct location ──
-          // ESPN returns per-scoring-period stats in playerPoolEntry.playerPoolEntry.onTeamRosterEntry
-          // The correct field for the current scoring period's accrued points is:
-          //   e.playerPoolEntry.appliedStatTotal  (only works with mBoxscore view)
-          // Fall back chain: appliedStatTotal on entry → onTeamRosterEntry → 0
-          // We also guard against stale season-total stats by checking if games played today > 0
+          // ESPN stats array lives at ppe.playerPoolEntry.player.stats[]
+          // Each stat object has:
+          //   statSourceId:    0 = actual, 1 = projected
+          //   statSplitTypeId: 0 = season, 1 = last7, 4 = last15, 5 = last30, 10 = weekly matchup period
+          //   scoringPeriodId: the matchup week number
+          //   appliedTotal:    fantasy points for that split
+          //
+          // For current-week live scoring we want:
+          //   statSourceId === 0 (actual stats, not projected)
+          //   scoringPeriodId === liveWeek
+          //   statSplitTypeId === 0  ← season-to-date through this period
+          //     OR statSplitTypeId === 1 ← this scoring period only (weekly)
+          // Try weekly (1) first, fall back to season-to-date (0) scoped to this period
 
           let pts = 0;
+          const statsArr = ppe.stats || player.stats || [];
 
-          // Primary: appliedStatTotal directly on the roster entry (mBoxscore-populated)
-          if (e.appliedStatTotal !== undefined && e.appliedStatTotal !== null) {
-            pts = +e.appliedStatTotal;
+          // Log first player's stats for debugging
+          if (name !== '?' && statsArr.length > 0 && !window._debuggedStats) {
+            console.log(`[ESPN stats for ${name}]`, JSON.stringify(statsArr).slice(0, 1000));
+            window._debuggedStats = true;
           }
-          // Secondary: nested under playerPoolEntry
-          else if (ppe.appliedStatTotal !== undefined && ppe.appliedStatTotal !== null) {
-            pts = +ppe.appliedStatTotal;
-          }
-          // Tertiary: stats array for current scoring period
-          else {
-            // Look for stats keyed to the current scoring period
-            const statsArr = ppe.stats || player.stats || [];
-            const periodStat = statsArr.find(s =>
-              s.scoringPeriodId === liveWeek && s.statSourceId === 0 && s.statSplitTypeId === 5
+
+          // Try: actual stats, this scoring period, weekly split (type 1)
+          let stat = statsArr.find(s =>
+            s.scoringPeriodId === liveWeek && s.statSourceId === 0 && s.statSplitTypeId === 1
+          );
+          // Fallback: actual stats, this scoring period, any split type
+          if (!stat) {
+            stat = statsArr.find(s =>
+              s.scoringPeriodId === liveWeek && s.statSourceId === 0
             );
-            pts = periodStat ? +(periodStat.appliedTotal ?? 0) : 0;
           }
+          // Fallback 2: any stat for this scoring period
+          if (!stat) {
+            stat = statsArr.find(s => s.scoringPeriodId === liveWeek);
+          }
+
+          pts = stat ? +(stat.appliedTotal ?? 0) : 0;
 
           return { name, pos, pts, isBench };
         }).sort((a,b) => {
