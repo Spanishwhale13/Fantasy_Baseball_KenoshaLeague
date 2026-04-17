@@ -36,15 +36,40 @@
       background: var(--navy); border-radius: 10px 10px 0 0;
       border: 3px solid var(--gold); border-bottom: none;
       position: relative; overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     .masthead::before {
       content: ''; position: absolute; inset: 0;
       background: repeating-linear-gradient(0deg, transparent, transparent 24px,
         rgba(255,255,255,0.03) 24px, rgba(255,255,255,0.03) 25px);
     }
-    .masthead-eyebrow { font-family: 'Special Elite', cursive; font-size: 13px; color: var(--gold); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 4px; position: relative; }
-    .masthead-title   { font-family: 'DM Serif Display', serif; font-size: 46px; color: #fff; line-height: 1; letter-spacing: 1px; position: relative; }
-    .masthead-sub     { font-size: 14px; color: rgba(255,255,255,0.5); letter-spacing: 3px; margin-top: 6px; font-family: 'Special Elite', cursive; position: relative; }
+    .masthead-eyebrow { font-family: 'Special Elite', cursive; font-size: 13px; color: var(--gold); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 4px; position: relative; z-index: 1; }
+    .masthead-title   { font-family: 'DM Serif Display', serif; font-size: 46px; color: #fff; line-height: 1; letter-spacing: 1px; position: relative; z-index: 1; }
+    .masthead-sub     { font-size: 14px; color: rgba(255,255,255,0.5); letter-spacing: 3px; margin-top: 6px; font-family: 'Special Elite', cursive; position: relative; z-index: 1; }
+    .masthead-league-btn {
+      margin-top: 12px;
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      padding: 8px 18px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: opacity 0.15s;
+      position: relative;
+      z-index: 1;
+    }
+    .masthead-league-btn:hover {
+      opacity: 0.85;
+    }
 
     /* ── TABS ── */
     .tab-bar {
@@ -155,6 +180,25 @@
       font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       color: var(--muted); text-align: right; padding: 8px 12px;
       border-bottom: 2px solid var(--tan); white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+    .data-table th:hover {
+      background: rgba(212,160,23,0.08);
+    }
+    .data-table th.sortable::after {
+      content: ' ↕';
+      font-size: 10px;
+      opacity: 0.5;
+    }
+    .data-table th.sort-asc::after {
+      content: ' ↑';
+      opacity: 1;
+    }
+    .data-table th.sort-desc::after {
+      content: ' ↓';
+      opacity: 1;
     }
     .data-table th:first-child  { text-align: left; width: 28px; }
     .data-table th:nth-child(2) { text-align: left; }
@@ -228,6 +272,10 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .mlb-team-name .arrow { font-size: 11px; color: var(--red); flex-shrink: 0; }
+    .mlb-team-record {
+      font-size: 10px; color: var(--muted); font-family: 'Special Elite', cursive;
+      letter-spacing: 0.5px; margin-left: 2px;
+    }
     .mlb-team-score {
       font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink);
       min-width: 26px; text-align: right; line-height: 1;
@@ -316,6 +364,51 @@
     .mlb-expand-hint {
       font-size: 10px; color: var(--muted); font-family: 'Special Elite', cursive;
       letter-spacing: 1px; text-align: right; padding: 0 8px 3px; cursor: pointer;
+    }
+
+    /* ── FINAL GAMES SECTION ── */
+    .final-games-header {
+      background: var(--dark-brown);
+      border-top: 2px solid var(--gold);
+      padding: 6px 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .final-games-title {
+      font-family: 'Special Elite', cursive; font-size: 13px;
+      color: var(--gold); letter-spacing: 3px; text-transform: uppercase;
+    }
+    #mlb-final-list {
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 900px) { #mlb-final-list { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 420px) { #mlb-final-list { grid-template-columns: 1fr; } }
+
+    /* Pitcher decision strip on final game cards */
+    .mlb-decision-strip {
+      padding: 4px 8px 5px 14px;
+      background: #fafaf6;
+      border-top: 1px solid var(--tan);
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .mlb-decision-row {
+      display: flex; align-items: baseline; gap: 4px;
+    }
+    .mlb-decision-label {
+      font-size: 9px; color: var(--muted); font-family: 'Special Elite', cursive;
+      letter-spacing: 1px; flex-shrink: 0; min-width: 20px;
+    }
+    .mlb-decision-name {
+      font-size: 11px; font-weight: 700; color: var(--navy);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mlb-decision-name.win  { color: var(--green); }
+    .mlb-decision-name.loss { color: var(--dark-red); }
+    .mlb-decision-stat {
+      font-family: 'Special Elite', cursive; font-size: 10px; color: var(--muted);
+      white-space: nowrap; flex-shrink: 0;
     }
 
     /* ── MLB LIVE PAGE LAYOUT: 4-col games | matchup panel ── */
@@ -426,6 +519,7 @@
     }
     .fmatch-ppts.positive { color: var(--dark-red); }
     .fmatch-ppts.zero     { color: var(--muted); }
+    .fmatch-ppts.negative { color: var(--dark-red); }
 
     .fmatch-loading {
       font-family: 'Special Elite', cursive; font-size: 13px;
@@ -510,6 +604,7 @@
     <div class="masthead-eyebrow">★ Official Scorecard ★</div>
     <div class="masthead-title">Fantasy Baseball</div>
     <div class="masthead-sub" id="league-name">KTown Reloaded</div>
+    <a href="https://fantasy.espn.com/baseball/league?leagueId=152693" class="masthead-league-btn" target="_blank">View League →</a>
   </div>
 
   <div class="tab-bar" id="tab-bar" style="display:none">
@@ -541,12 +636,12 @@
     <div id="tab-standings" style="display:none">
       <div class="section-block">
         <div class="section-title">Season Standings</div>
-        <table class="data-table">
+        <table class="data-table" id="standings-table">
           <thead>
             <tr>
               <th>#</th><th>Team</th>
-              <th>W</th><th>L</th><th>PCT</th>
-              <th>PF</th><th>PA</th><th>DIFF</th>
+              <th class="sortable" data-sort="wins">W</th><th class="sortable" data-sort="losses">L</th><th class="sortable" data-sort="pct">PCT</th>
+              <th class="sortable" data-sort="pf">PF</th><th class="sortable" data-sort="pa">PA</th><th class="sortable" data-sort="diff">DIFF</th>
             </tr>
           </thead>
           <tbody id="standings-body"></tbody>
@@ -572,7 +667,7 @@
       <div id="mini-matchup-strip" style="display:none"></div>
       <div class="mlb-live-layout">
         <div class="mlb-live-left">
-          <!-- 4-column game grid -->
+          <!-- 4-column game grid (live + preview only) -->
           <div id="mlb-game-list" style="padding:10px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:start"></div>
         </div>
         <div class="mlb-live-right">
@@ -580,6 +675,13 @@
             <div class="fmatch-loading">Loading matchup&#8230;</div>
           </div>
         </div>
+      </div>
+      <!-- FINAL GAMES SECTION -->
+      <div id="final-games-section" style="display:none">
+        <div class="final-games-header">
+          <span class="final-games-title">&#10003; Final</span>
+        </div>
+        <div id="mlb-final-list"></div>
       </div>
     </div>
 
@@ -606,9 +708,12 @@
   let currentWeek = 1;
   let liveWeek    = 1;
   let maxWeek     = 1;
+  let mlbTeamRecords = {};
 
   const TAB_ORDER = ['scoreboard','standings','segments','mlblive'];
   let currentTabIndex = 0;
+  let standingsSortColumn = null;
+  let standingsSortOrder = 'asc'; // asc or desc
 
   // ── UTILS ──────────────────────────────────────────────────────
   function esc(s) {
@@ -814,11 +919,54 @@
       return b.pf - a.pf;
     });
 
-    const cutline = Math.ceil(withId.length / 2);
-    const body    = document.getElementById('standings-body');
+    standingsSortColumn = null;
+    standingsSortOrder = 'asc';
+    sortStandings(withId);
+    renderStrip('bottom-strip-2', totals);
+
+    // Add click handlers to headers
+    document.querySelectorAll('#standings-table th.sortable').forEach(th => {
+      th.onclick = (e) => {
+        const col = th.getAttribute('data-sort');
+        if (standingsSortColumn === col) {
+          standingsSortOrder = standingsSortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+          standingsSortColumn = col;
+          standingsSortOrder = 'asc';
+        }
+        sortStandings(withId);
+      };
+    });
+  }
+
+  function sortStandings(data) {
+    const body = document.getElementById('standings-body');
+    let sorted = [...data];
+
+    if (standingsSortColumn) {
+      sorted.sort((a, b) => {
+        let aVal, bVal;
+        switch(standingsSortColumn) {
+          case 'wins':  aVal = a.wins;  bVal = b.wins; break;
+          case 'losses': aVal = a.losses; bVal = b.losses; break;
+          case 'pct':
+            aVal = a.wins/(a.wins+a.losses||1);
+            bVal = b.wins/(b.wins+b.losses||1);
+            break;
+          case 'pf': aVal = a.pf; bVal = b.pf; break;
+          case 'pa': aVal = a.pa; bVal = b.pa; break;
+          case 'diff': aVal = a.pf - a.pa; bVal = b.pf - b.pa; break;
+          default: return 0;
+        }
+        const result = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+        return standingsSortOrder === 'asc' ? result : -result;
+      });
+    }
+
+    const cutline = Math.ceil(sorted.length / 2);
     body.innerHTML = '';
 
-    withId.forEach((t, i) => {
+    sorted.forEach((t, i) => {
       if (i === cutline) {
         const div = document.createElement('tr');
         div.className = 'table-divider';
@@ -839,7 +987,15 @@
         <td class="diff ${diff>=0?'pos':'neg'}">${diffStr}</td>`;
       body.appendChild(row);
     });
-    renderStrip('bottom-strip-2', totals);
+
+    // Update header indicators
+    document.querySelectorAll('#standings-table th.sortable').forEach(th => {
+      const col = th.getAttribute('data-sort');
+      th.classList.remove('sort-asc', 'sort-desc');
+      if (standingsSortColumn === col) {
+        th.classList.add(standingsSortOrder === 'asc' ? 'sort-asc' : 'sort-desc');
+      }
+    });
   }
 
   // ── SEGMENTS ───────────────────────────────────────────────────
@@ -1225,9 +1381,23 @@
       if (!players.length) return `<div class="fmatch-loading" style="padding:8px">No data.</div>`;
       return players.map(p => {
         const hasGame = p.pts !== null;
-        const ptsCls  = hasGame && p.pts > 0 ? 'positive' : 'zero';
+        let ptsCls, ptsDisp;
+        if (hasGame) {
+          if (p.pts > 0) {
+            ptsCls = 'positive';
+            ptsDisp = Math.round(p.pts);
+          } else if (p.pts < 0) {
+            ptsCls = 'negative';
+            ptsDisp = Math.round(p.pts);
+          } else {
+            ptsCls = 'zero';
+            ptsDisp = '0';
+          }
+        } else {
+          ptsCls = 'zero';
+          ptsDisp = '—';
+        }
         const nameCls = hasGame ? 'playing' : '';
-        const ptsDisp = hasGame ? (p.pts > 0 ? p.pts.toFixed(1) : '0') : '—';
         return `
           <div class="fmatch-player-row-2col">
             <div class="fmatch-pos">${esc(p.pos)}</div>
@@ -1259,14 +1429,14 @@
         <div class="fmatch-col">
           <div class="fmatch-col-header">
             ${esc(myTeam.abbrev)}
-            <span class="fmatch-col-today">+${myTodayPts.toFixed(1)}</span>
+            <span class="fmatch-col-today">+${Math.round(myTodayPts)}</span>
           </div>
           ${colRows(myPlayers)}
         </div>
         <div class="fmatch-col">
           <div class="fmatch-col-header">
             ${esc(oppTeam.abbrev)}
-            <span class="fmatch-col-today">+${oppTodayPts.toFixed(1)}</span>
+            <span class="fmatch-col-today">+${Math.round(oppTodayPts)}</span>
           </div>
           ${colRows(oppPlayers)}
         </div>
@@ -1315,10 +1485,11 @@
           gameData: {
             game:   { pk: g.gamePk },
             teams:  {
-              home: { teamName: g.teams?.home?.team?.name || '?' },
-              away: { teamName: g.teams?.away?.team?.name || '?' }
+              home: { teamName: g.teams?.home?.team?.name || '?', record: g.teams?.home?.team?.record },
+              away: { teamName: g.teams?.away?.team?.name || '?', record: g.teams?.away?.team?.record }
             },
-            status: g.status
+            status: g.status,
+            officialDate: g.officialDate
           },
           liveData: {
             linescore: {
@@ -1343,14 +1514,27 @@
         (order[a.gameData?.status?.abstractGameState]??3) - (order[b.gameData?.status?.abstractGameState]??3)
       );
 
+      const activeGames = sorted.filter(g => g.gameData?.status?.abstractGameState !== 'Final');
+      const finalGames  = sorted.filter(g => g.gameData?.status?.abstractGameState === 'Final');
+
+      const finalSection = document.getElementById('final-games-section');
+      const finalList    = document.getElementById('mlb-final-list');
+      finalSection.style.display = finalGames.length ? '' : 'none';
+
       if (showLoader || list.children.length === 0) {
-        list.innerHTML = '';
-        sorted.forEach(game => list.appendChild(buildMlbGameCard(game)));
+        list.innerHTML = activeGames.length
+          ? ''
+          : `<div class="mlb-no-games">No live or upcoming games right now.</div>`;
+        activeGames.forEach(game => list.appendChild(buildMlbGameCard(game)));
+
+        finalList.innerHTML = '';
+        finalGames.forEach(game => finalList.appendChild(buildMlbGameCard(game)));
       } else {
+        // Update active games
         const existingPks = new Set([...list.querySelectorAll('.mlb-game-card[id]')].map(el => el.id.replace('mlb-card-','')));
-        const newPks      = new Set(sorted.map(g => String(g.gameData?.game?.pk)));
-        existingPks.forEach(pk => { if (!newPks.has(pk)) document.getElementById(`mlb-card-${pk}`)?.remove(); });
-        sorted.forEach(game => {
+        const newActivePks = new Set(activeGames.map(g => String(g.gameData?.game?.pk)));
+        existingPks.forEach(pk => { if (!newActivePks.has(pk)) document.getElementById(`mlb-card-${pk}`)?.remove(); });
+        activeGames.forEach(game => {
           const pk       = String(game.gameData?.game?.pk);
           const existing = document.getElementById(`mlb-card-${pk}`);
           const newCard  = buildMlbGameCard(game);
@@ -1367,6 +1551,22 @@
               if (hint) hint.textContent = '▴ CLOSE';
               requestAnimationFrame(() => { if (wrap) wrap.style.transition=''; });
             }
+          }
+        });
+
+        // Update final games
+        const existingFinalPks = new Set([...finalList.querySelectorAll('.mlb-game-card[id]')].map(el => el.id.replace('mlb-card-','')));
+        const newFinalPks = new Set(finalGames.map(g => String(g.gameData?.game?.pk)));
+        existingFinalPks.forEach(pk => { if (!newFinalPks.has(pk)) document.getElementById(`mlb-card-${pk}`)?.remove(); });
+        finalGames.forEach(game => {
+          const pk       = String(game.gameData?.game?.pk);
+          const existing = document.getElementById(`mlb-card-${pk}`);
+          const newCard  = buildMlbGameCard(game);
+          if (!existing) {
+            finalList.appendChild(newCard);
+          } else {
+            existing.className = newCard.className;
+            existing.innerHTML = newCard.innerHTML;
           }
         });
       }
@@ -1390,6 +1590,22 @@
     return abbrev ? `<span class="mlb-roster-tag">${esc(abbrev)}</span>` : '';
   }
 
+  function formatStartTime(isoDate) {
+    if (!isoDate) return '';
+    try {
+      const d = new Date(isoDate);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    } catch(e) { return ''; }
+  }
+
+  function getTeamRecord(teamRecord) {
+    if (!teamRecord) return '';
+    const wins = teamRecord.wins ?? 0;
+    const losses = teamRecord.losses ?? 0;
+    return `${wins}-${losses}`;
+  }
+
   function buildMlbGameCard(game) {
     const gd     = game.gameData || {};
     const ld     = game.liveData || {};
@@ -1401,6 +1617,8 @@
 
     const homeTeam = gd.teams?.home?.teamName || gd.teams?.home?.team?.name || '?';
     const awayTeam = gd.teams?.away?.teamName || gd.teams?.away?.team?.name || '?';
+    const homeRecord = getTeamRecord(gd.teams?.home?.record);
+    const awayRecord = getTeamRecord(gd.teams?.away?.record);
 
     const ls    = ld.linescore || {};
     const homeR = ls.teams?.home?.runs ?? (isFinal||isLive ? 0 : '');
@@ -1430,24 +1648,59 @@
     let inningStr = '';
     if (isLive && inning > 0) inningStr = `${inningArrow} ${inning}${inningOrdinal(inning)}`;
     else if (isFinal)         inningStr = inning > 9 ? `F/${inning}` : 'Final';
-    else                      inningStr = detail;
+    else {
+      inningStr = formatStartTime(gd.datetime?.dateTime) || detail;
+    }
 
     const cardClass = isLive ? 'mlb-game-card live-game' : isFinal ? 'mlb-game-card final-game' : 'mlb-game-card';
     const expanded  = mlbExpanded[pk] || false;
+
+    // Build pitcher decisions for final games
+    let decisionHtml = '';
+    if (isFinal) {
+      const decisions = ld.decisions || {};
+      const winner = decisions.winner?.fullName || '';
+      const loser  = decisions.loser?.fullName  || '';
+      const saver  = decisions.save?.fullName   || '';
+      // Pull pitcher stats from boxscore if available
+      const boxPitchers = ld.boxscore?.teams;
+      function pitcherStat(name) {
+        if (!name || !boxPitchers) return '';
+        for (const side of ['home','away']) {
+          const players = boxPitchers?.[side]?.players || {};
+          const found = Object.values(players).find(p => p.person?.fullName === name);
+          if (found) {
+            const s = found.stats?.pitching || found.gameStats?.pitching || {};
+            const ip = s.inningsPitched ?? '';
+            const er = s.earnedRuns     ?? '';
+            const k  = s.strikeOuts     ?? '';
+            if (ip !== '') return `${ip} IP, ${er} ER, ${k} K`;
+          }
+        }
+        return '';
+      }
+      if (winner || loser || saver) {
+        decisionHtml = `<div class="mlb-decision-strip">`;
+        if (winner) decisionHtml += `<div class="mlb-decision-row"><span class="mlb-decision-label">W</span><span class="mlb-decision-name win">${esc(winner)}</span>${fantasyTag(winner)}<span class="mlb-decision-stat">${pitcherStat(winner)}</span></div>`;
+        if (loser)  decisionHtml += `<div class="mlb-decision-row"><span class="mlb-decision-label">L</span><span class="mlb-decision-name loss">${esc(loser)}</span>${fantasyTag(loser)}<span class="mlb-decision-stat">${pitcherStat(loser)}</span></div>`;
+        if (saver)  decisionHtml += `<div class="mlb-decision-row"><span class="mlb-decision-label">SV</span><span class="mlb-decision-name">${esc(saver)}</span>${fantasyTag(saver)}<span class="mlb-decision-stat">${pitcherStat(saver)}</span></div>`;
+        decisionHtml += `</div>`;
+      }
+    }
 
     const card = document.createElement('div');
     card.className = cardClass;
     card.id = `mlb-card-${pk}`;
     card.innerHTML = `
-      <div class="mlb-game-header" onclick="toggleMlbExpand(${pk})">
+      <div class="mlb-game-header">
         <div class="mlb-teams">
           <div class="mlb-team-row">
-            <div class="mlb-team-name">${esc(awayTeam)}${isLive&&inningHalf==='Top'?' <span class="arrow">▶</span>':''}</div>
+            <div class="mlb-team-name">${esc(awayTeam)}${isLive&&inningHalf==='Top'?' <span class="arrow">▶</span>':''}<span class="mlb-team-record">${awayRecord}</span></div>
             <div class="mlb-team-score ${awayWin?'winning':homeWin?'losing':''}">${awayR!==''?awayR:'—'}</div>
           </div>
           <div class="mlb-divider"></div>
           <div class="mlb-team-row">
-            <div class="mlb-team-name">${esc(homeTeam)}${isLive&&inningHalf==='Bottom'?' <span class="arrow">▶</span>':''}</div>
+            <div class="mlb-team-name">${esc(homeTeam)}${isLive&&inningHalf==='Bottom'?' <span class="arrow">▶</span>':''}<span class="mlb-team-record">${homeRecord}</span></div>
             <div class="mlb-team-score ${homeWin?'winning':awayWin?'losing':''}">${homeR!==''?homeR:'—'}</div>
           </div>
         </div>
@@ -1470,13 +1723,14 @@
             ${fantasyTag(batter)}
           </div>
         </div>` : ''}
-      ${isLive||isFinal ? `<div class="mlb-expand-hint" id="hint-${pk}">${expanded?'▴ CLOSE':'▾ PITCHES'}</div>` : ''}
-      <div class="mlb-pitch-log-wrap ${expanded?'open':''}" id="pitchlog-${pk}">
+      ${decisionHtml}
+      ${isLive ? `<div class="mlb-expand-hint" id="hint-${pk}">${expanded?'▴ CLOSE':'▾ PITCHES'}</div>` : ''}
+      ${isLive ? `<div class="mlb-pitch-log-wrap ${expanded?'open':''}" id="pitchlog-${pk}">
         <div class="mlb-pitch-log">
           <div class="mlb-pitch-log-title">${esc(awayTeam)} @ ${esc(homeTeam)}</div>
           ${buildPitchLog(pitches, allPlays)}
         </div>
-      </div>`;
+      </div>` : ''}`;
     return card;
   }
 
