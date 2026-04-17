@@ -1729,70 +1729,68 @@
     console.log('%cTip: window._scoringMap and window._scoringItems are available in console', 'color:#888');
   }
 
-  function calcFantasyPts(mlbStats, ispitcher, scoringMap) {
-    if (!mlbStats || !scoringMap) return 0;
-    let pts = 0;
-    if (!ispitcher) {
-      const h    = mlbStats.hits           ?? 0;
-      const r    = mlbStats.runs           ?? 0;
-      const rbi  = mlbStats.rbi            ?? 0;
-      const bb   = mlbStats.baseOnBalls    ?? 0;
-      const hbp  = mlbStats.hitByPitch     ?? 0;
-      const sb   = mlbStats.stolenBases    ?? 0;
-      const cs   = mlbStats.caughtStealing ?? 0;
-      const so   = mlbStats.strikeOuts     ?? 0;
-      const hr   = mlbStats.homeRuns       ?? 0;
-      const dbl  = mlbStats.doubles        ?? 0;
-      const trpl = mlbStats.triples        ?? 0;
-      const tb   = h + dbl + 2*trpl + 3*hr;
-      pts += (scoringMap[5]  ?? 0) * r;
-      pts += (scoringMap[6]  ?? 0) * rbi;
-      pts += (scoringMap[9]  ?? 0) * hr;
-      pts += (scoringMap[7]  ?? 0) * dbl;
-      pts += (scoringMap[8]  ?? 0) * trpl;
-      pts += (scoringMap[1]  ?? 0) * h;
-      pts += (scoringMap[11] ?? 0) * bb;
-      pts += (scoringMap[12] ?? 0) * hbp;
-      pts += (scoringMap[14] ?? 0) * sb;
-      pts += (scoringMap[15] ?? 0) * cs;
-      pts += (scoringMap[17] ?? 0) * so;
-      pts += (scoringMap[10] ?? 0) * tb;
+function calcFantasyPts(mlbStats, ispitcher, scoringMap) {
+  if (!mlbStats || !scoringMap) return 0;
+  let pts = 0;
+  if (!ispitcher) {
+    const h    = mlbStats.hits        ?? 0;
+    const r    = mlbStats.runs        ?? 0;
+    const rbi  = mlbStats.rbi         ?? 0;
+    const bb   = mlbStats.baseOnBalls ?? 0;
+    const hbp  = mlbStats.hitByPitch  ?? 0;
+    const sb   = mlbStats.stolenBases ?? 0;
+    const hr   = mlbStats.homeRuns    ?? 0;
+    const dbl  = mlbStats.doubles     ?? 0;
+    const trpl = mlbStats.triples     ?? 0;
+    const tb   = h + dbl + 2*trpl + 3*hr;
+    pts += (scoringMap[5]  ?? 0) * r;    // R
+    pts += (scoringMap[6]  ?? 0) * rbi;  // RBI
+    pts += (scoringMap[11] ?? 0) * bb;   // BB (batting)
+    pts += (scoringMap[12] ?? 0) * hbp;  // HBP (batting)
+    pts += (scoringMap[14] ?? 0) * sb;   // SB
+    pts += (scoringMap[10] ?? 0) * tb;   // TB (handles singles/doubles/triples/HR all via TB)
+  } else {
+    // Parse IP correctly: MLB API returns baseball notation (6.1 = 6⅓ innings)
+    // BUT sometimes sends true decimals (6.333). Handle both.
+    const ipRaw = String(mlbStats.inningsPitched ?? '0');
+    const ipParts = ipRaw.split('.');
+    const ipWhole = parseInt(ipParts[0]) || 0;
+    const ipFrac  = parseInt(ipParts[1] || '0');
+    // If fractional part > 2, it's a true decimal (e.g. 5.333); round to nearest out
+    let totalOuts;
+    if (ipFrac > 2) {
+      // True decimal — convert to outs by rounding: 5.333→16, 5.666→17, 6.0→18
+      totalOuts = Math.round(parseFloat(ipRaw) * 3);
     } else {
-      const ipRaw  = String(mlbStats.inningsPitched ?? '0').split('.');
-      const ip     = (parseInt(ipRaw[0])||0) + (parseInt(ipRaw[1])||0)/3;
-      const er  = mlbStats.earnedRuns    ?? 0;
-      const k   = mlbStats.strikeOuts   ?? 0;
-      const bb  = mlbStats.baseOnBalls  ?? 0;
-      const w   = mlbStats.wins         ?? 0;
-      const l   = mlbStats.losses       ?? 0;
-      const sv  = mlbStats.saves        ?? 0;
-      const hld = mlbStats.holds        ?? 0;
-      const bs  = mlbStats.blownSaves   ?? 0;
-      const cg  = mlbStats.completeGames?? 0;
-      const sho = mlbStats.shutouts     ?? 0;
-      const qs  = (ip >= 6 && er <= 3)  ? 1 : 0;
-      // Confirmed stat IDs for this league:
-      // [8]=K +1, [10]=H allowed -1, [12]=HBP allowed -1
-      // [20]=IP(+3) or Outs(+1), [21]=SV +5, [37]=BB -1
-      // [45]=ER -3, [48]=HLD +1, [53]=QS +5, [63]=W +5
-      // No L or BS scoring in this league
-      const outs = ip * 3;
-      const ipOrOutVal = scoringMap[20] ?? 0;
-      pts += ipOrOutVal === 3 ? ipOrOutVal * ip : ipOrOutVal * outs;
-      pts += (scoringMap[8]  ?? 0) * k;
-      pts += (scoringMap[37] ?? 0) * bb;
-      pts += (scoringMap[10] ?? 0) * (mlbStats.hits ?? 0);
-      pts += (scoringMap[12] ?? 0) * (mlbStats.hitBatsmen ?? mlbStats.hitByPitch ?? 0);
-      pts += (scoringMap[45] ?? 0) * er;
-      pts += (scoringMap[63] ?? 0) * w;
-      pts += (scoringMap[21] ?? 0) * sv;
-      pts += (scoringMap[48] ?? 0) * hld;
-      pts += (scoringMap[53] ?? 0) * qs;
-      pts += (scoringMap[32] ?? 0) * cg;
-      pts += (scoringMap[33] ?? 0) * sho;
+      // Baseball notation: 5.1 = 5 innings + 1 out = 16 outs
+      totalOuts = ipWhole * 3 + ipFrac;
     }
-    return Math.round(pts * 10) / 10;
+    const ip = totalOuts / 3;
+
+    const er     = mlbStats.earnedRuns   ?? 0;
+    const k      = mlbStats.strikeOuts   ?? 0;
+    const bb     = mlbStats.baseOnBalls  ?? 0;
+    const w      = mlbStats.wins         ?? 0;
+    const sv     = mlbStats.saves        ?? 0;
+    const qs     = (ip >= 6 && er <= 3)  ? 1 : 0;
+    const hAllow = mlbStats.hits         ?? 0;
+    const hbp    = mlbStats.hitBatsmen ?? mlbStats.hitByPitch ?? 0;
+
+    // IP scoring: scoringMap[20] = +3 per IP → multiply by ip
+    // (outs-based leagues would use totalOuts × 1, but this league is +3/IP)
+    pts += (scoringMap[20] ?? 0) * ip;   // IP × 3
+    pts += (scoringMap[8]  ?? 0) * k;    // K +1
+    pts += (scoringMap[37] ?? 0) * bb;   // BB -1
+    pts += (scoringMap[10] ?? 0) * hAllow; // H allowed -1
+    pts += (scoringMap[12] ?? 0) * hbp;  // HB -1
+    pts += (scoringMap[45] ?? 0) * er;   // ER -3
+    pts += (scoringMap[63] ?? 0) * w;    // W +5
+    pts += (scoringMap[21] ?? 0) * sv;   // SV +5
+    pts += (scoringMap[53] ?? 0) * qs;   // QS +5
+    // No HLD in this league's scoring
   }
+  return Math.round(pts * 10) / 10;
+}
 
   let activeMatchupTeamA = MY_TEAM_ID;
   let activeMatchupTeamB = null;
@@ -2424,14 +2422,68 @@ function showPitcherDebug() {
     if (!fantasyTeam) return; // only show rostered pitchers
     foundRostered = true;
 
-    const ipRaw   = String(stats.inningsPitched ?? '0').split('.');
-    const ipWhole = parseInt(ipRaw[0]) || 0;
-    const ipFrac  = parseInt(ipRaw[1]) || 0;
-    // Detect if ESPN sent a true decimal like 6.333 vs baseball 6.1
-    const ipIsDecimal = ipFrac > 2;
-    const ip = ipIsDecimal
-      ? parseFloat(stats.inningsPitched)
-      : ipWhole + ipFrac / 3;
+function calcFantasyPts(mlbStats, ispitcher, scoringMap) {
+  if (!mlbStats || !scoringMap) return 0;
+  let pts = 0;
+  if (!ispitcher) {
+    const h    = mlbStats.hits        ?? 0;
+    const r    = mlbStats.runs        ?? 0;
+    const rbi  = mlbStats.rbi         ?? 0;
+    const bb   = mlbStats.baseOnBalls ?? 0;
+    const hbp  = mlbStats.hitByPitch  ?? 0;
+    const sb   = mlbStats.stolenBases ?? 0;
+    const hr   = mlbStats.homeRuns    ?? 0;
+    const dbl  = mlbStats.doubles     ?? 0;
+    const trpl = mlbStats.triples     ?? 0;
+    const tb   = h + dbl + 2*trpl + 3*hr;
+    pts += (scoringMap[5]  ?? 0) * r;    // R
+    pts += (scoringMap[6]  ?? 0) * rbi;  // RBI
+    pts += (scoringMap[11] ?? 0) * bb;   // BB (batting)
+    pts += (scoringMap[12] ?? 0) * hbp;  // HBP (batting)
+    pts += (scoringMap[14] ?? 0) * sb;   // SB
+    pts += (scoringMap[10] ?? 0) * tb;   // TB (handles singles/doubles/triples/HR all via TB)
+  } else {
+    // Parse IP correctly: MLB API returns baseball notation (6.1 = 6⅓ innings)
+    // BUT sometimes sends true decimals (6.333). Handle both.
+    const ipRaw = String(mlbStats.inningsPitched ?? '0');
+    const ipParts = ipRaw.split('.');
+    const ipWhole = parseInt(ipParts[0]) || 0;
+    const ipFrac  = parseInt(ipParts[1] || '0');
+    // If fractional part > 2, it's a true decimal (e.g. 5.333); round to nearest out
+    let totalOuts;
+    if (ipFrac > 2) {
+      // True decimal — convert to outs by rounding: 5.333→16, 5.666→17, 6.0→18
+      totalOuts = Math.round(parseFloat(ipRaw) * 3);
+    } else {
+      // Baseball notation: 5.1 = 5 innings + 1 out = 16 outs
+      totalOuts = ipWhole * 3 + ipFrac;
+    }
+    const ip = totalOuts / 3;
+
+    const er     = mlbStats.earnedRuns   ?? 0;
+    const k      = mlbStats.strikeOuts   ?? 0;
+    const bb     = mlbStats.baseOnBalls  ?? 0;
+    const w      = mlbStats.wins         ?? 0;
+    const sv     = mlbStats.saves        ?? 0;
+    const qs     = (ip >= 6 && er <= 3)  ? 1 : 0;
+    const hAllow = mlbStats.hits         ?? 0;
+    const hbp    = mlbStats.hitBatsmen ?? mlbStats.hitByPitch ?? 0;
+
+    // IP scoring: scoringMap[20] = +3 per IP → multiply by ip
+    // (outs-based leagues would use totalOuts × 1, but this league is +3/IP)
+    pts += (scoringMap[20] ?? 0) * ip;   // IP × 3
+    pts += (scoringMap[8]  ?? 0) * k;    // K +1
+    pts += (scoringMap[37] ?? 0) * bb;   // BB -1
+    pts += (scoringMap[10] ?? 0) * hAllow; // H allowed -1
+    pts += (scoringMap[12] ?? 0) * hbp;  // HB -1
+    pts += (scoringMap[45] ?? 0) * er;   // ER -3
+    pts += (scoringMap[63] ?? 0) * w;    // W +5
+    pts += (scoringMap[21] ?? 0) * sv;   // SV +5
+    pts += (scoringMap[53] ?? 0) * qs;   // QS +5
+    // No HLD in this league's scoring
+  }
+  return Math.round(pts * 10) / 10;
+}
 
     const er  = stats.earnedRuns    ?? null;
     const k   = stats.strikeOuts    ?? 0;
@@ -2464,7 +2516,6 @@ function showPitcherDebug() {
       { sid:45,  label:'ER',      raw:er===null?'NULL (using 0)':er, val:erVal, pts:(scoringMap[45]??0)*erVal },
       { sid:63,  label:'W',       raw:w,             val:w,          pts:(scoringMap[63]??0)*w },
       { sid:21,  label:'SV',      raw:sv,            val:sv,         pts:(scoringMap[21]??0)*sv },
-      { sid:48,  label:'HLD',     raw:hld,           val:hld,        pts:(scoringMap[48]??0)*hld },
       { sid:53,  label:'QS',      raw:`ip=${ip.toFixed(2)}, er=${er===null?'NULL':er} → ${qs}`, val:qs, pts:(scoringMap[53]??0)*qs },
     ];
 
