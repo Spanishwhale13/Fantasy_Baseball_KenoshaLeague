@@ -67,9 +67,7 @@
       position: relative;
       z-index: 1;
     }
-    .masthead-league-btn:hover {
-      opacity: 0.85;
-    }
+    .masthead-league-btn:hover { opacity: 0.85; }
 
     /* ── TABS ── */
     .tab-bar {
@@ -77,14 +75,17 @@
       background: var(--dark-brown);
       border-left: 3px solid var(--gold);
       border-right: 3px solid var(--gold);
+      overflow-x: auto;
+      scrollbar-width: none;
     }
+    .tab-bar::-webkit-scrollbar { display: none; }
     .tab-btn {
       flex: 1; padding: 10px 8px;
       font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700;
       letter-spacing: 2px; color: rgba(255,255,255,0.45);
       background: none; border: none; border-bottom: 3px solid transparent;
       cursor: pointer; transition: color 0.15s, border-color 0.15s;
-      text-transform: uppercase;
+      text-transform: uppercase; white-space: nowrap;
     }
     .tab-btn:hover  { color: rgba(255,255,255,0.75); }
     .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
@@ -180,26 +181,12 @@
       font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       color: var(--muted); text-align: right; padding: 8px 12px;
       border-bottom: 2px solid var(--tan); white-space: nowrap;
-      cursor: pointer;
-      user-select: none;
-      position: relative;
+      cursor: pointer; user-select: none; position: relative;
     }
-    .data-table th:hover {
-      background: rgba(212,160,23,0.08);
-    }
-    .data-table th.sortable::after {
-      content: ' ↕';
-      font-size: 10px;
-      opacity: 0.5;
-    }
-    .data-table th.sort-asc::after {
-      content: ' ↑';
-      opacity: 1;
-    }
-    .data-table th.sort-desc::after {
-      content: ' ↓';
-      opacity: 1;
-    }
+    .data-table th:hover { background: rgba(212,160,23,0.08); }
+    .data-table th.sortable::after  { content: ' ↕'; font-size: 10px; opacity: 0.5; }
+    .data-table th.sort-asc::after  { content: ' ↑'; opacity: 1; }
+    .data-table th.sort-desc::after { content: ' ↓'; opacity: 1; }
     .data-table th:first-child  { text-align: left; width: 28px; }
     .data-table th:nth-child(2) { text-align: left; }
     .data-table td {
@@ -294,11 +281,9 @@
     }
     .mlb-inning-badge.live { color: var(--green); font-weight: bold; }
 
-    /* Diamond — slightly smaller for 4-col */
     .mlb-diamond { position: relative; width: 28px; height: 28px; flex-shrink: 0; }
     .mlb-diamond svg { width: 28px; height: 28px; }
 
-    /* Count + Outs */
     .mlb-count-outs {
       display: flex; flex-direction: column; align-items: center; gap: 2px;
       font-family: 'Special Elite', cursive; font-size: 9px; color: var(--muted);
@@ -312,7 +297,6 @@
     .mlb-dot.out-on { background: var(--dark-red);  border-color: var(--dark-red); }
     .mlb-count-label { font-size: 9px; margin-right: 1px; }
 
-    /* At-bat strip */
     .mlb-atbat-strip {
       padding: 3px 8px 3px 14px;
       background: #fafaf6; border-top: 1px solid var(--tan);
@@ -330,7 +314,6 @@
       vertical-align: middle; flex-shrink: 0;
     }
 
-    /* Pitch log */
     .mlb-pitch-log-wrap { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
     .mlb-pitch-log-wrap.open { max-height: 1200px; }
     .mlb-pitch-log {
@@ -366,7 +349,6 @@
       letter-spacing: 1px; text-align: right; padding: 0 8px 3px; cursor: pointer;
     }
 
-    /* ── FINAL GAMES SECTION ── */
     .final-games-header {
       background: var(--dark-brown);
       border-top: 2px solid var(--gold);
@@ -386,16 +368,13 @@
     @media (max-width: 900px) { #mlb-final-list { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 420px) { #mlb-final-list { grid-template-columns: 1fr; } }
 
-    /* Pitcher decision strip on final game cards */
     .mlb-decision-strip {
       padding: 4px 8px 5px 14px;
       background: #fafaf6;
       border-top: 1px solid var(--tan);
       display: flex; flex-direction: column; gap: 2px;
     }
-    .mlb-decision-row {
-      display: flex; align-items: baseline; gap: 4px;
-    }
+    .mlb-decision-row { display: flex; align-items: baseline; gap: 4px; }
     .mlb-decision-label {
       font-size: 9px; color: var(--muted); font-family: 'Special Elite', cursive;
       letter-spacing: 1px; flex-shrink: 0; min-width: 20px;
@@ -411,7 +390,7 @@
       white-space: nowrap; flex-shrink: 0;
     }
 
-    /* ── MLB LIVE PAGE LAYOUT: 4-col games | matchup panel ── */
+    /* ── MLB LIVE PAGE LAYOUT ── */
     .mlb-live-layout {
       display: grid;
       grid-template-columns: 1fr 360px;
@@ -429,7 +408,6 @@
       max-height: 92vh;
     }
 
-    /* ── MATCHUP PANEL HEADER ── */
     .fmatch-header {
       background: var(--navy);
       padding: 8px 12px 10px;
@@ -469,7 +447,6 @@
       color: rgba(255,255,255,0.3); flex-shrink: 0;
     }
 
-    /* ── MATCHUP TWO-COL ROSTER ── */
     .fmatch-two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -551,9 +528,7 @@
     }
     .mini-matchup:last-child { border-right: none; }
     .mini-matchup:hover { background: rgba(212,160,23,0.1); }
-    .mini-matchup.active {
-      background: rgba(212,160,23,0.18);
-    }
+    .mini-matchup.active { background: rgba(212,160,23,0.18); }
     .mini-matchup.active::after {
       content: '';
       position: absolute;
@@ -579,6 +554,301 @@
       color: rgba(255,255,255,0.25); padding: 0 5px; margin-top: 8px;
     }
 
+    /* ════════════════════════════════════════
+       ── ROSTERS TAB ──
+    ════════════════════════════════════════ */
+
+    /* Mode toggle bar */
+    .roster-mode-bar {
+      background: var(--tan);
+      border-bottom: 2px solid var(--gold);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .roster-mode-toggle {
+      display: flex;
+      background: var(--cream);
+      border: 1.5px solid var(--gold);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .roster-mode-btn {
+      padding: 7px 18px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      background: none; border: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .roster-mode-btn + .roster-mode-btn {
+      border-left: 1.5px solid var(--gold);
+    }
+    .roster-mode-btn.active {
+      background: var(--navy);
+      color: var(--gold);
+    }
+    .roster-mode-btn:hover:not(.active) {
+      background: rgba(212,160,23,0.1);
+      color: var(--dark-brown);
+    }
+
+    /* Position filter pills */
+    .roster-pos-filters {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+    .pos-pill {
+      font-family: 'Special Elite', cursive;
+      font-size: 11px; letter-spacing: 1px;
+      padding: 3px 9px;
+      border: 1.5px solid var(--brown);
+      border-radius: 20px;
+      background: var(--cream);
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      text-transform: uppercase;
+    }
+    .pos-pill.active {
+      background: var(--navy);
+      color: var(--gold);
+      border-color: var(--navy);
+    }
+    .pos-pill:hover:not(.active) {
+      background: rgba(212,160,23,0.12);
+      color: var(--dark-brown);
+    }
+
+    /* ── ALL ROSTERS GRID ── */
+    .all-rosters-grid {
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .roster-card {
+      background: #fff;
+      border: 1.5px solid var(--tan);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      transition: box-shadow 0.2s;
+    }
+    .roster-card:hover { box-shadow: 0 4px 16px rgba(26,39,68,0.12); }
+    .roster-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: var(--navy);
+    }
+
+    .roster-card-header {
+      background: var(--navy);
+      padding: 8px 12px 8px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .roster-card-team-name {
+      font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700;
+      color: #fff; letter-spacing: 0.5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .roster-card-record {
+      font-family: 'Special Elite', cursive; font-size: 11px;
+      color: var(--gold); letter-spacing: 1px; flex-shrink: 0; margin-left: 8px;
+    }
+
+    .roster-player-list { padding: 4px 0; }
+    .roster-player-row {
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      align-items: center;
+      padding: 5px 10px 5px 16px;
+      border-bottom: 1px solid rgba(139,105,20,0.08);
+      gap: 0 4px;
+    }
+    .roster-player-row:last-child { border-bottom: none; }
+    .roster-player-row:hover { background: rgba(212,160,23,0.05); }
+    .roster-player-row.bench-row {
+      background: rgba(107,90,62,0.04);
+    }
+    .roster-player-row.bench-row .rp-pos { color: #bbb; }
+
+    .rp-pos {
+      font-family: 'Special Elite', cursive; font-size: 10px;
+      color: var(--muted); text-align: center; letter-spacing: 0.5px;
+    }
+    .rp-name {
+      font-weight: 700; font-size: 13px; color: var(--navy);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rp-name.highlighted {
+      color: var(--dark-red);
+      background: rgba(192,57,43,0.07);
+      border-radius: 3px;
+      padding: 0 3px;
+    }
+    .rp-injury {
+      font-size: 10px; font-family: 'Special Elite', cursive;
+      color: var(--dark-red); letter-spacing: 0.5px; flex-shrink: 0;
+    }
+
+    .roster-section-divider {
+      background: var(--tan);
+      padding: 3px 10px 3px 16px;
+      font-family: 'Special Elite', cursive; font-size: 10px;
+      color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
+      border-top: 1px solid rgba(139,105,20,0.15);
+      border-bottom: 1px solid rgba(139,105,20,0.15);
+    }
+
+    /* ── COMPARE MODE ── */
+    .compare-selectors {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--cream);
+      border-bottom: 2px solid var(--gold);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .compare-team-select-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 160px;
+    }
+    .compare-team-select-label {
+      font-family: 'Special Elite', cursive; font-size: 10px;
+      color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
+    }
+    .compare-team-select {
+      font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700;
+      color: var(--navy); background: #fff;
+      border: 1.5px solid var(--gold); border-radius: 5px;
+      padding: 7px 10px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238b6914'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+    .compare-team-select:focus { outline: 2px solid var(--gold); }
+
+    .compare-vs-badge {
+      font-family: 'DM Serif Display', serif; font-size: 22px;
+      color: var(--muted); align-self: flex-end; padding-bottom: 6px;
+    }
+
+    /* Compare two-column layout */
+    .compare-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--tan);
+    }
+    .compare-col {
+      min-width: 0;
+    }
+    .compare-col + .compare-col {
+      border-left: 2px solid var(--gold);
+    }
+    .compare-col-header {
+      background: var(--navy);
+      padding: 8px 12px;
+      text-align: center;
+    }
+    .compare-col-team-name {
+      font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700;
+      color: #fff; letter-spacing: 0.5px;
+    }
+    .compare-col-record {
+      font-family: 'Special Elite', cursive; font-size: 12px; color: var(--gold);
+    }
+    .compare-col-pf {
+      font-family: 'DM Serif Display', serif; font-size: 13px;
+      color: rgba(255,255,255,0.5); margin-top: 2px;
+    }
+
+    .compare-player-row {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      align-items: center;
+      padding: 6px 10px 6px 12px;
+      border-bottom: 1px solid rgba(139,105,20,0.09);
+      gap: 0 4px;
+    }
+    .compare-player-row:last-child { border-bottom: none; }
+    .compare-player-row:hover { background: rgba(212,160,23,0.05); }
+    .compare-player-row.bench-row { background: rgba(107,90,62,0.04); }
+
+    .cp-pos {
+      font-family: 'Special Elite', cursive; font-size: 10px;
+      color: var(--muted); text-align: center;
+    }
+    .cp-name {
+      font-weight: 700; font-size: 12px; color: var(--navy);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .cp-injury {
+      font-size: 10px; font-family: 'Special Elite', cursive;
+      color: var(--dark-red); flex-shrink: 0;
+    }
+
+    /* Slot-to-slot alignment helper */
+    .compare-slot-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .compare-slot-left, .compare-slot-right {
+      padding: 5px 10px;
+      border-bottom: 1px solid rgba(139,105,20,0.09);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .compare-slot-right { border-left: 2px solid var(--gold); }
+    .compare-slot-pos {
+      font-family: 'Special Elite', cursive; font-size: 10px;
+      color: var(--muted); min-width: 26px; text-align: center;
+    }
+    .compare-slot-name {
+      font-weight: 700; font-size: 12px; color: var(--navy);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .compare-slot-name.empty { color: var(--tan); font-style: italic; font-weight: 400; }
+    .compare-slot-injury {
+      font-size: 10px; font-family: 'Special Elite', cursive;
+      color: var(--dark-red); flex-shrink: 0;
+    }
+    .compare-section-header {
+      background: var(--dark-brown);
+      padding: 4px 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .compare-section-label {
+      font-family: 'Special Elite', cursive; font-size: 10px;
+      color: var(--gold); letter-spacing: 2px; text-transform: uppercase;
+      padding: 0 4px;
+    }
+    .compare-section-label + .compare-section-label {
+      border-left: 2px solid var(--gold);
+    }
+
+    .compare-no-selection {
+      text-align: center; padding: 40px 24px;
+      font-family: 'Special Elite', cursive; font-size: 16px;
+      color: var(--muted); grid-column: 1 / -1;
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 1100px) {
       .mlb-live-layout { grid-template-columns: 1fr 320px; }
@@ -586,14 +856,22 @@
     @media (max-width: 900px) {
       .mlb-live-layout { grid-template-columns: 1fr 280px; }
       #mlb-game-list { grid-template-columns: repeat(2, 1fr) !important; }
+      .all-rosters-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
     }
     @media (max-width: 700px) {
       .mlb-live-layout { grid-template-columns: 1fr; }
       .mlb-live-right { border-left: none; border-top: 2px solid var(--gold); max-height: none; }
       #mlb-game-list { grid-template-columns: repeat(2, 1fr) !important; }
+      .compare-two-col { grid-template-columns: 1fr; }
+      .compare-col + .compare-col { border-left: none; border-top: 2px solid var(--gold); }
+      .compare-slot-row { grid-template-columns: 1fr; }
+      .compare-slot-right { border-left: none; border-top: 1px solid var(--tan); }
+      .compare-section-header { grid-template-columns: 1fr; }
+      .compare-section-label + .compare-section-label { border-left: none; border-top: 1px solid rgba(212,160,23,0.3); }
     }
     @media (max-width: 420px) {
       #mlb-game-list { grid-template-columns: 1fr !important; }
+      .all-rosters-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -612,6 +890,7 @@
     <button class="tab-btn"        onclick="switchTab('standings')">📊 Standings</button>
     <button class="tab-btn"        onclick="switchTab('segments')">🏆 Segments</button>
     <button class="tab-btn"        onclick="switchTab('mlblive')">📡 MLB Live</button>
+    <button class="tab-btn"        onclick="switchTab('rosters')">📋 Rosters</button>
   </div>
 
   <div class="status-panel" id="status-panel">
@@ -663,11 +942,9 @@
         <span class="week-live-badge" id="mlb-live-badge" style="display:none">LIVE</span>
         <button class="week-nav-btn" onclick="refreshMlb()" style="padding:4px 12px">↻ REFRESH</button>
       </div>
-      <!-- ── MINI MATCHUP STRIP ── -->
       <div id="mini-matchup-strip" style="display:none"></div>
       <div class="mlb-live-layout">
         <div class="mlb-live-left">
-          <!-- 4-column game grid (live + preview only) -->
           <div id="mlb-game-list" style="padding:10px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:start"></div>
         </div>
         <div class="mlb-live-right">
@@ -676,7 +953,6 @@
           </div>
         </div>
       </div>
-      <!-- FINAL GAMES SECTION -->
       <div id="final-games-section" style="display:none">
         <div class="final-games-header">
           <span class="final-games-title">&#10003; Final</span>
@@ -684,6 +960,53 @@
         <div id="mlb-final-list"></div>
       </div>
     </div>
+
+    <!-- ══════════════════════════════════════
+         ── ROSTERS TAB ──
+    ══════════════════════════════════════ -->
+    <div id="tab-rosters" style="display:none">
+
+      <!-- Mode toggle + filters -->
+      <div class="roster-mode-bar">
+        <div class="roster-mode-toggle">
+          <button class="roster-mode-btn active" id="roster-mode-all-btn"     onclick="setRosterMode('all')">👥 All Rosters</button>
+          <button class="roster-mode-btn"        id="roster-mode-compare-btn" onclick="setRosterMode('compare')">⚖️ Compare</button>
+        </div>
+        <div class="roster-pos-filters" id="roster-pos-filters">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- All Rosters view -->
+      <div id="rosters-all-view">
+        <div class="all-rosters-grid" id="all-rosters-grid">
+          <div style="text-align:center;padding:32px;font-family:'Special Elite',cursive;color:var(--muted);grid-column:1/-1">Loading rosters…</div>
+        </div>
+      </div>
+
+      <!-- Compare view -->
+      <div id="rosters-compare-view" style="display:none">
+        <div class="compare-selectors">
+          <div class="compare-team-select-wrap">
+            <div class="compare-team-select-label">Team A</div>
+            <select class="compare-team-select" id="compare-team-a" onchange="renderCompare()">
+              <option value="">— Select Team —</option>
+            </select>
+          </div>
+          <div class="compare-vs-badge">vs</div>
+          <div class="compare-team-select-wrap">
+            <div class="compare-team-select-label">Team B</div>
+            <select class="compare-team-select" id="compare-team-b" onchange="renderCompare()">
+              <option value="">— Select Team —</option>
+            </select>
+          </div>
+        </div>
+        <div id="compare-content">
+          <div class="compare-no-selection">Select two teams above to compare their rosters.</div>
+        </div>
+      </div>
+
+    </div><!-- /tab-rosters -->
 
   </div>
 </div>
@@ -710,10 +1033,17 @@
   let maxWeek     = 1;
   let mlbTeamRecords = {};
 
-  const TAB_ORDER = ['scoreboard','standings','segments','mlblive'];
+  // Full roster data keyed by teamId → sorted player array
+  let fullRosterByTeam = {};
+
+  const TAB_ORDER = ['scoreboard','standings','segments','mlblive','rosters'];
   let currentTabIndex = 0;
   let standingsSortColumn = null;
-  let standingsSortOrder = 'asc'; // asc or desc
+  let standingsSortOrder = 'asc';
+
+  // Roster tab state
+  let rosterMode = 'all';       // 'all' | 'compare'
+  let rosterPosFilter = 'ALL';  // 'ALL' | 'BAT' | 'PIT' | 'BN'
 
   // ── UTILS ──────────────────────────────────────────────────────
   function esc(s) {
@@ -739,11 +1069,13 @@
     });
     if (tab === 'mlblive') {
       if (!mlbLoaded) {
-        // First open — load games first so box scores are ready for the matchup panel
         await loadMlb(true);
       }
       renderMiniMatchupStrip();
       await loadFantasyMatchup();
+    }
+    if (tab === 'rosters') {
+      renderRostersTab();
     }
   }
 
@@ -754,8 +1086,6 @@
     currentWeek = nw;
     renderScoreboard();
   }
-
-  // Native touch panning handled by browser.
 
   // ── LOAD ───────────────────────────────────────────────────────
   async function loadAll() {
@@ -787,28 +1117,42 @@
         };
       });
 
-      // Fetch rosters — use team abbrev for tags
+      // Fetch rosters
       try {
         const rr = await fetch(`${PROXY}/api/league/${SEASON}?view=mRoster`);
         if (rr.ok) {
           const rosterData = await rr.json();
           rosterMap = {};
           window._fullRoster = {};
+          fullRosterByTeam = {};
+
           (rosterData.teams || []).forEach(t => {
             const label = teamMap[t.id]?.abbrev || `T${t.id}`;
+            const players = [];
             (t.roster?.entries || []).forEach(e => {
               const ppe    = e.playerPoolEntry || {};
               const name   = ppe?.player?.fullName || ppe?.fullName || '';
               const slotId = e.lineupSlotId ?? 16;
+              const injStatus = ppe?.player?.injuryStatus || ppe?.injuryStatus || '';
               if (name) {
                 rosterMap[name.toLowerCase()] = label;
-                window._fullRoster[name.toLowerCase()] = {
+                const playerObj = {
                   name, abbrev: label, slotId, teamId: t.id,
-                  isBench: BENCH_SLOTS.has(slotId)
+                  isBench: BENCH_SLOTS.has(slotId),
+                  injuryStatus: injStatus
                 };
+                window._fullRoster[name.toLowerCase()] = playerObj;
+                players.push(playerObj);
               }
             });
+
+            // Sort by slot order
+            players.sort((a, b) => (SLOT_ORDER[a.slotId] ?? 98) - (SLOT_ORDER[b.slotId] ?? 98));
+            fullRosterByTeam[t.id] = players;
           });
+
+          // Populate compare dropdowns
+          populateCompareSelects();
         }
       } catch(e) { console.warn('[Roster] failed:', e); }
 
@@ -924,7 +1268,6 @@
     sortStandings(withId);
     renderStrip('bottom-strip-2', totals);
 
-    // Add click handlers to headers
     document.querySelectorAll('#standings-table th.sortable').forEach(th => {
       th.onclick = (e) => {
         const col = th.getAttribute('data-sort');
@@ -947,14 +1290,14 @@
       sorted.sort((a, b) => {
         let aVal, bVal;
         switch(standingsSortColumn) {
-          case 'wins':  aVal = a.wins;  bVal = b.wins; break;
+          case 'wins':   aVal = a.wins;  bVal = b.wins; break;
           case 'losses': aVal = a.losses; bVal = b.losses; break;
           case 'pct':
             aVal = a.wins/(a.wins+a.losses||1);
             bVal = b.wins/(b.wins+b.losses||1);
             break;
-          case 'pf': aVal = a.pf; bVal = b.pf; break;
-          case 'pa': aVal = a.pa; bVal = b.pa; break;
+          case 'pf':   aVal = a.pf; bVal = b.pf; break;
+          case 'pa':   aVal = a.pa; bVal = b.pa; break;
           case 'diff': aVal = a.pf - a.pa; bVal = b.pf - b.pa; break;
           default: return 0;
         }
@@ -988,7 +1331,6 @@
       body.appendChild(row);
     });
 
-    // Update header indicators
     document.querySelectorAll('#standings-table th.sortable').forEach(th => {
       const col = th.getAttribute('data-sort');
       th.classList.remove('sort-asc', 'sort-desc');
@@ -1095,6 +1437,258 @@
   }
 
   // ══════════════════════════════════════════════════════════════
+  // ── ROSTERS TAB ──────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════
+
+  const SLOT_LABEL = {
+    0:'C', 1:'1B', 2:'2B', 3:'3B', 4:'SS',
+    5:'OF', 6:'OF', 7:'OF',
+    8:'UTIL', 12:'UTIL',
+    9:'SP', 10:'SP', 11:'SP', 13:'SP', 14:'SP',
+    15:'RP',
+    16:'BN', 17:'IL'
+  };
+  const SLOT_ORDER = {
+    0:0, 1:1, 2:2, 3:3, 4:4,
+    5:5, 6:6, 7:7,
+    8:8, 12:9,
+    9:10, 10:11, 11:12, 13:13, 14:14,
+    15:15,
+    16:99, 17:100
+  };
+  const BENCH_SLOTS = new Set([16, 17]);
+  const PITCHER_SLOTS = new Set([9, 10, 11, 13, 14, 15]);
+  const BATTER_SLOTS  = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 12]);
+
+  function posLabel(slotId) {
+    return SLOT_LABEL[slotId] ?? 'BN';
+  }
+
+  function injuryBadge(status) {
+    if (!status || status === 'ACTIVE' || status === '') return '';
+    const map = { 'INJURY_RESERVE':'IL', 'OUT':'OUT', 'QUESTIONABLE':'Q', 'DAY_TO_DAY':'DTD', 'SUSPENSION':'SUS', 'SIXTY_DAY_DL':'60-DL', 'TEN_DAY_DL':'10-DL' };
+    return map[status] || status.replace(/_/g,' ').substring(0,6);
+  }
+
+  function setRosterMode(mode) {
+    rosterMode = mode;
+    document.getElementById('roster-mode-all-btn').classList.toggle('active', mode === 'all');
+    document.getElementById('roster-mode-compare-btn').classList.toggle('active', mode === 'compare');
+    document.getElementById('rosters-all-view').style.display     = mode === 'all'     ? '' : 'none';
+    document.getElementById('rosters-compare-view').style.display = mode === 'compare' ? '' : 'none';
+    document.getElementById('roster-pos-filters').style.display   = mode === 'all'     ? '' : 'none';
+    if (mode === 'compare') renderCompare();
+  }
+
+  function buildPosFilters() {
+    const bar = document.getElementById('roster-pos-filters');
+    const filters = [
+      { key: 'ALL', label: 'All' },
+      { key: 'BAT', label: '⚾ Batters' },
+      { key: 'PIT', label: '⚡ Pitchers' },
+      { key: 'BN',  label: '🪑 Bench' },
+    ];
+    bar.innerHTML = filters.map(f =>
+      `<button class="pos-pill ${rosterPosFilter === f.key ? 'active' : ''}" onclick="setPosFilter('${f.key}')">${esc(f.label)}</button>`
+    ).join('');
+  }
+
+  function setPosFilter(key) {
+    rosterPosFilter = key;
+    buildPosFilters();
+    renderAllRosters();
+  }
+
+  function filterPlayers(players) {
+    if (rosterPosFilter === 'ALL') return players;
+    if (rosterPosFilter === 'BN')  return players.filter(p => BENCH_SLOTS.has(p.slotId));
+    if (rosterPosFilter === 'PIT') return players.filter(p => PITCHER_SLOTS.has(p.slotId));
+    if (rosterPosFilter === 'BAT') return players.filter(p => BATTER_SLOTS.has(p.slotId) && !BENCH_SLOTS.has(p.slotId));
+    return players;
+  }
+
+  function renderAllRosters() {
+    const grid = document.getElementById('all-rosters-grid');
+    const teamIds = Object.keys(fullRosterByTeam);
+    if (!teamIds.length) {
+      grid.innerHTML = `<div style="text-align:center;padding:32px;font-family:'Special Elite',cursive;color:var(--muted);grid-column:1/-1">Roster data not yet loaded.</div>`;
+      return;
+    }
+
+    // Sort teams by W-L record descending
+    const allWeeks = Array.from({length: maxWeek}, (_,i) => i+1);
+    const totals   = calcPointsForWeeks(allWeeks, true);
+    const sortedIds = teamIds.sort((a, b) => {
+      const ta = teamMap[a] || {}, tb = teamMap[b] || {};
+      if (tb.wins !== ta.wins) return (tb.wins||0) - (ta.wins||0);
+      return (totals[b]?.pf||0) - (totals[a]?.pf||0);
+    });
+
+    grid.innerHTML = '';
+    sortedIds.forEach(teamId => {
+      const team   = teamMap[teamId] || { name:`Team ${teamId}`, wins:0, losses:0 };
+      const allPlayers = fullRosterByTeam[teamId] || [];
+      const players    = filterPlayers(allPlayers);
+
+      const card = document.createElement('div');
+      card.className = 'roster-card';
+
+      const starters = players.filter(p => !BENCH_SLOTS.has(p.slotId));
+      const bench    = players.filter(p => BENCH_SLOTS.has(p.slotId));
+
+      let starterRows = starters.map(p => {
+        const inj = injuryBadge(p.injuryStatus);
+        return `<div class="roster-player-row">
+          <div class="rp-pos">${esc(posLabel(p.slotId))}</div>
+          <div class="rp-name">${esc(p.name)}</div>
+          ${inj ? `<div class="rp-injury">${esc(inj)}</div>` : ''}
+        </div>`;
+      }).join('');
+
+      let benchRows = bench.map(p => {
+        const inj = injuryBadge(p.injuryStatus);
+        return `<div class="roster-player-row bench-row">
+          <div class="rp-pos">${esc(posLabel(p.slotId))}</div>
+          <div class="rp-name">${esc(p.name)}</div>
+          ${inj ? `<div class="rp-injury">${esc(inj)}</div>` : ''}
+        </div>`;
+      }).join('');
+
+      // Only show section dividers if there's both starters and bench
+      let bodyHtml = '';
+      if (rosterPosFilter === 'ALL') {
+        bodyHtml = `
+          ${starters.length ? `<div class="roster-section-divider">Active</div>` : ''}
+          <div class="roster-player-list">${starterRows}</div>
+          ${bench.length ? `<div class="roster-section-divider">Bench / IL</div>` : ''}
+          ${bench.length ? `<div class="roster-player-list">${benchRows}</div>` : ''}`;
+      } else {
+        bodyHtml = `<div class="roster-player-list">${starterRows || benchRows}</div>`;
+      }
+
+      card.innerHTML = `
+        <div class="roster-card-header">
+          <div class="roster-card-team-name">${esc(team.name)}</div>
+          <div class="roster-card-record">${team.wins}-${team.losses}</div>
+        </div>
+        ${bodyHtml}`;
+      grid.appendChild(card);
+    });
+  }
+
+  function populateCompareSelects() {
+    const sortedIds = Object.keys(teamMap).sort((a, b) => {
+      const ta = teamMap[a], tb = teamMap[b];
+      return ta.name.localeCompare(tb.name);
+    });
+
+    ['compare-team-a', 'compare-team-b'].forEach((selId, idx) => {
+      const sel = document.getElementById(selId);
+      sel.innerHTML = `<option value="">— Select Team —</option>`;
+      sortedIds.forEach(id => {
+        const t = teamMap[id];
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = `${t.name} (${t.wins}-${t.losses})`;
+        sel.appendChild(opt);
+      });
+    });
+  }
+
+  function renderCompare() {
+    const selA = document.getElementById('compare-team-a')?.value;
+    const selB = document.getElementById('compare-team-b')?.value;
+    const content = document.getElementById('compare-content');
+
+    if (!selA || !selB) {
+      content.innerHTML = `<div class="compare-no-selection">Select two teams above to compare their rosters.</div>`;
+      return;
+    }
+    if (selA === selB) {
+      content.innerHTML = `<div class="compare-no-selection">Please select two different teams.</div>`;
+      return;
+    }
+
+    const teamA = teamMap[selA] || { name:`Team ${selA}`, wins:0, losses:0 };
+    const teamB = teamMap[selB] || { name:`Team ${selB}`, wins:0, losses:0 };
+    const allWeeks = Array.from({length: maxWeek}, (_,i) => i+1);
+    const totals   = calcPointsForWeeks(allWeeks, true);
+    const pfA = fmtPts(totals[selA]?.pf || 0);
+    const pfB = fmtPts(totals[selB]?.pf || 0);
+
+    const playersA = fullRosterByTeam[selA] || [];
+    const playersB = fullRosterByTeam[selB] || [];
+
+    // Group by slot type for paired comparison
+    const GROUPS = [
+      { label: 'Batters', slotIds: [0,1,2,3,4,5,6,7,8,12] },
+      { label: 'Pitchers', slotIds: [9,10,11,13,14,15] },
+      { label: 'Bench / IL', slotIds: [16,17] },
+    ];
+
+    let html = `
+      <div class="compare-two-col">
+        <div class="compare-col">
+          <div class="compare-col-header">
+            <div class="compare-col-team-name">${esc(teamA.name)}</div>
+            <div class="compare-col-record">${teamA.wins}-${teamA.losses}</div>
+            <div class="compare-col-pf">${pfA} PF</div>
+          </div>
+        </div>
+        <div class="compare-col">
+          <div class="compare-col-header">
+            <div class="compare-col-team-name">${esc(teamB.name)}</div>
+            <div class="compare-col-record">${teamB.wins}-${teamB.losses}</div>
+            <div class="compare-col-pf">${pfB} PF</div>
+          </div>
+        </div>
+      </div>`;
+
+    GROUPS.forEach(group => {
+      const aPlayers = playersA.filter(p => group.slotIds.includes(p.slotId));
+      const bPlayers = playersB.filter(p => group.slotIds.includes(p.slotId));
+      const maxLen   = Math.max(aPlayers.length, bPlayers.length);
+      if (!maxLen) return;
+
+      const isBench = group.label === 'Bench / IL';
+
+      html += `
+        <div class="compare-section-header">
+          <div class="compare-section-label">${esc(group.label)}</div>
+          <div class="compare-section-label">${esc(group.label)}</div>
+        </div>`;
+
+      for (let i = 0; i < maxLen; i++) {
+        const pa = aPlayers[i];
+        const pb = bPlayers[i];
+        const injA = pa ? injuryBadge(pa.injuryStatus) : '';
+        const injB = pb ? injuryBadge(pb.injuryStatus) : '';
+
+        html += `<div class="compare-slot-row">
+          <div class="compare-slot-left ${isBench?'bench-row':''}">
+            <div class="compare-slot-pos">${pa ? esc(posLabel(pa.slotId)) : ''}</div>
+            <div class="compare-slot-name ${pa?'':'empty'}">${pa ? esc(pa.name) : '—'}</div>
+            ${injA ? `<div class="compare-slot-injury">${esc(injA)}</div>` : ''}
+          </div>
+          <div class="compare-slot-right ${isBench?'bench-row':''}">
+            <div class="compare-slot-pos">${pb ? esc(posLabel(pb.slotId)) : ''}</div>
+            <div class="compare-slot-name ${pb?'':'empty'}">${pb ? esc(pb.name) : '—'}</div>
+            ${injB ? `<div class="compare-slot-injury">${esc(injB)}</div>` : ''}
+          </div>
+        </div>`;
+      }
+    });
+
+    content.innerHTML = html;
+  }
+
+  function renderRostersTab() {
+    buildPosFilters();
+    renderAllRosters();
+    if (rosterMode === 'compare') renderCompare();
+  }
+
+  // ══════════════════════════════════════════════════════════════
   // ── MLB LIVE ─────────────────────────────────────────────────
   // ══════════════════════════════════════════════════════════════
   let mlbLoaded    = false;
@@ -1103,7 +1697,6 @@
   let mlbRefreshTm = null;
   const MLB_API    = 'https://statsapi.mlb.com';
 
-  // ── FANTASY MATCHUP ────────────────────────────────────────────
   const MY_TEAM_ID = 1;
   let fMatchupData = null;
 
@@ -1175,43 +1768,10 @@
     return Math.round(pts * 10) / 10;
   }
 
-  // ESPN lineup slot IDs — confirmed for this league:
-  // 0=C, 1=1B, 2=2B, 3=3B, 4=SS, 5=OF, 6=OF, 7=OF
-  // 8=UTIL (first), 12=UTIL (second) ← ESPN reuses 12 for extra UTIL in some leagues
-  // 9=SP, 10=SP, 11=SP, 13=SP, 14=SP (5 SP slots)
-  // 15=RP (1 RP slot)
-  // 16=BN, 17=IL
-  // Desired display order: C,1B,2B,3B,SS,OF,OF,OF,UTIL,UTIL,SP,SP,SP,SP,SP,RP
-  const SLOT_LABEL = {
-    0:'C', 1:'1B', 2:'2B', 3:'3B', 4:'SS',
-    5:'OF', 6:'OF', 7:'OF',
-    8:'UTIL', 12:'UTIL',
-    9:'SP', 10:'SP', 11:'SP', 13:'SP', 14:'SP',
-    15:'RP',
-    16:'BN', 17:'IL'
-  };
-  const SLOT_ORDER = {
-    0:0, 1:1, 2:2, 3:3, 4:4,          // C 1B 2B 3B SS
-    5:5, 6:6, 7:7,                      // OF OF OF
-    8:8, 12:9,                          // UTIL UTIL
-    9:10, 10:11, 11:12, 13:13, 14:14,  // SP SP SP SP SP
-    15:15,                              // RP
-    16:99, 17:100                       // BN IL
-  };
-  // Bench = slots 16 (BN) and 17 (IL) only
-  const BENCH_SLOTS = new Set([16, 17]);
-
-  function posLabel(slotId) {
-    return SLOT_LABEL[slotId] ?? 'BN';
-  }
-
-  // Currently selected matchup team IDs (defaults to my matchup)
   let activeMatchupTeamA = MY_TEAM_ID;
-  let activeMatchupTeamB = null; // resolved on first load
-  // Cached today stats so we don't re-fetch boxscores on every panel switch
+  let activeMatchupTeamB = null;
   let cachedTodayStatsMap = null;
 
-  // Build and show the mini strip of all this week's matchups
   function renderMiniMatchupStrip() {
     const strip = document.getElementById('mini-matchup-strip');
     if (!strip || !globalData) return;
@@ -1230,8 +1790,6 @@
       const hPts = +(m.home?.totalPointsLive ?? m.home?.totalPoints ?? 0);
       const aPts = +(m.away?.totalPointsLive ?? m.away?.totalPoints ?? 0);
       const hWin = hPts > aPts, aWin = aPts > hPts;
-
-      // Is this the active matchup?
       const isActive = (activeMatchupTeamA === hId || activeMatchupTeamA === aId);
 
       const pill = document.createElement('div');
@@ -1251,7 +1809,6 @@
     });
   }
 
-  // Called when a mini matchup pill is clicked
   async function selectMatchup(teamAId, teamBId, pillEl) {
     activeMatchupTeamA = teamAId;
     activeMatchupTeamB = teamBId;
@@ -1266,12 +1823,9 @@
 
     try {
       const schedule = globalData.schedule || [];
-
-      // Determine which matchup to show
       let matchup, teamAId, teamBId;
 
       if (overrideTeamA) {
-        // Specific matchup selected from strip
         matchup = schedule.find(m =>
           m.matchupPeriodId === liveWeek &&
           ((m.home?.teamId === overrideTeamA && m.away?.teamId === overrideTeamB) ||
@@ -1280,7 +1834,6 @@
         teamAId = overrideTeamA;
         teamBId = overrideTeamB;
       } else {
-        // No override — use whatever is currently active (defaults to my matchup on first load)
         const useA = activeMatchupTeamA || MY_TEAM_ID;
         matchup = schedule.find(m =>
           m.matchupPeriodId === liveWeek &&
@@ -1290,7 +1843,6 @@
         teamBId = matchup
           ? (matchup.home?.teamId === useA ? matchup.away?.teamId : matchup.home?.teamId)
           : null;
-        // Only update active tracking on first load (when B is still null)
         if (!activeMatchupTeamB) {
           activeMatchupTeamA = teamAId;
           activeMatchupTeamB = teamBId;
@@ -1322,7 +1874,6 @@
 
       panel.innerHTML = `<div class="fmatch-loading">Fetching today's stats&#8230;</div>`;
 
-      // Build (or reuse cached) today stats map from MLB boxscores
       if (!cachedTodayStatsMap) {
         cachedTodayStatsMap = {};
         await Promise.all(mlbGames.map(async game => {
@@ -1383,19 +1934,11 @@
         const hasGame = p.pts !== null;
         let ptsCls, ptsDisp;
         if (hasGame) {
-          if (p.pts > 0) {
-            ptsCls = 'positive';
-            ptsDisp = Math.round(p.pts);
-          } else if (p.pts < 0) {
-            ptsCls = 'negative';
-            ptsDisp = Math.round(p.pts);
-          } else {
-            ptsCls = 'zero';
-            ptsDisp = '0';
-          }
+          if (p.pts > 0)      { ptsCls = 'positive'; ptsDisp = Math.round(p.pts); }
+          else if (p.pts < 0) { ptsCls = 'negative'; ptsDisp = Math.round(p.pts); }
+          else                { ptsCls = 'zero';     ptsDisp = '0'; }
         } else {
-          ptsCls = 'zero';
-          ptsDisp = '—';
+          ptsCls = 'zero'; ptsDisp = '—';
         }
         const nameCls = hasGame ? 'playing' : '';
         return `
@@ -1448,7 +1991,6 @@
   async function loadMlb(showLoader = true) {
     const list = document.getElementById('mlb-game-list');
     if (showLoader) list.innerHTML = `<div class="mlb-no-games">Loading today's games…</div>`;
-    // Always clear stats cache so the matchup panel re-fetches fresh box scores
     cachedTodayStatsMap = null;
 
     try {
@@ -1526,11 +2068,9 @@
           ? ''
           : `<div class="mlb-no-games">No live or upcoming games right now.</div>`;
         activeGames.forEach(game => list.appendChild(buildMlbGameCard(game)));
-
         finalList.innerHTML = '';
         finalGames.forEach(game => finalList.appendChild(buildMlbGameCard(game)));
       } else {
-        // Update active games
         const existingPks = new Set([...list.querySelectorAll('.mlb-game-card[id]')].map(el => el.id.replace('mlb-card-','')));
         const newActivePks = new Set(activeGames.map(g => String(g.gameData?.game?.pk)));
         existingPks.forEach(pk => { if (!newActivePks.has(pk)) document.getElementById(`mlb-card-${pk}`)?.remove(); });
@@ -1554,7 +2094,6 @@
           }
         });
 
-        // Update final games
         const existingFinalPks = new Set([...finalList.querySelectorAll('.mlb-game-card[id]')].map(el => el.id.replace('mlb-card-','')));
         const newFinalPks = new Set(finalGames.map(g => String(g.gameData?.game?.pk)));
         existingFinalPks.forEach(pk => { if (!newFinalPks.has(pk)) document.getElementById(`mlb-card-${pk}`)?.remove(); });
@@ -1655,14 +2194,12 @@
     const cardClass = isLive ? 'mlb-game-card live-game' : isFinal ? 'mlb-game-card final-game' : 'mlb-game-card';
     const expanded  = mlbExpanded[pk] || false;
 
-    // Build pitcher decisions for final games
     let decisionHtml = '';
     if (isFinal) {
       const decisions = ld.decisions || {};
       const winner = decisions.winner?.fullName || '';
       const loser  = decisions.loser?.fullName  || '';
       const saver  = decisions.save?.fullName   || '';
-      // Pull pitcher stats from boxscore if available
       const boxPitchers = ld.boxscore?.teams;
       function pitcherStat(name) {
         if (!name || !boxPitchers) return '';
