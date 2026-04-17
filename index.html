@@ -36,10 +36,8 @@
       background: var(--navy); border-radius: 10px 10px 0 0;
       border: 3px solid var(--gold); border-bottom: none;
       position: relative; overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
     }
     .masthead::before {
       content: ''; position: absolute; inset: 0;
@@ -51,32 +49,28 @@
     .masthead-sub     { font-size: 14px; color: rgba(255,255,255,0.5); letter-spacing: 3px; margin-top: 6px; font-family: 'Special Elite', cursive; position: relative; z-index: 1; }
     .masthead-league-btn {
       margin-top: 12px;
-      background: var(--gold);
-      color: var(--navy);
-      border: none;
-      padding: 8px 18px;
-      font-family: 'Oswald', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      border-radius: 4px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-      transition: opacity 0.15s;
-      position: relative;
-      z-index: 1;
+      background: var(--gold); color: var(--navy);
+      border: none; padding: 8px 18px;
+      font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 2px; border-radius: 4px; cursor: pointer;
+      text-decoration: none; display: inline-block;
+      transition: opacity 0.15s; position: relative; z-index: 1;
     }
     .masthead-league-btn:hover { opacity: 0.85; }
 
+    /* ── LAST UPDATED ── */
+    .last-updated {
+      position: absolute; bottom: 8px; right: 12px;
+      font-family: 'Special Elite', cursive; font-size: 10px;
+      color: rgba(255,255,255,0.3); letter-spacing: 1px;
+      z-index: 1;
+    }
+
     /* ── TABS ── */
     .tab-bar {
-      display: flex;
-      background: var(--dark-brown);
-      border-left: 3px solid var(--gold);
-      border-right: 3px solid var(--gold);
-      overflow-x: auto;
-      scrollbar-width: none;
+      display: flex; background: var(--dark-brown);
+      border-left: 3px solid var(--gold); border-right: 3px solid var(--gold);
+      overflow-x: auto; scrollbar-width: none;
     }
     .tab-bar::-webkit-scrollbar { display: none; }
     .tab-btn {
@@ -97,6 +91,16 @@
     }
     .status-msg { font-family: 'Special Elite', cursive; font-size: 16px; color: var(--muted); line-height: 1.8; }
     .status-msg.error { color: var(--dark-red); }
+
+    /* ── LOADING SPINNER ── */
+    .spinner {
+      display: inline-block; width: 24px; height: 24px;
+      border: 3px solid var(--tan); border-top-color: var(--gold);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .retry-btn {
       margin-top: 16px; background: var(--navy); color: #fff;
       font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700;
@@ -107,6 +111,14 @@
       font-family: monospace; background: #fff3cd; border: 1px solid var(--tan);
       padding: 2px 8px; border-radius: 3px; font-size: 12px; color: var(--dark-brown);
       display: inline-block; margin: 2px 0;
+    }
+
+    /* ── AUTH EXPIRED BANNER ── */
+    .auth-banner {
+      background: var(--dark-red); color: #fff;
+      font-family: 'Special Elite', cursive; font-size: 13px;
+      letter-spacing: 1px; padding: 8px 16px; text-align: center;
+      border-left: 3px solid var(--gold); border-right: 3px solid var(--gold);
     }
 
     /* ── MAIN CONTENT ── */
@@ -137,16 +149,12 @@
       border-radius: 3px; text-transform: uppercase;
     }
 
-    /* ── MATCHUP CARDS — TWO COLUMN GRID ── */
+    /* ── MATCHUP CARDS ── */
     .matchup-list {
       padding: 12px 16px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
     }
-    @media (max-width: 560px) {
-      .matchup-list { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 560px) { .matchup-list { grid-template-columns: 1fr; } }
 
     .matchup-card { background: #fff; border: 1.5px solid var(--tan); border-radius: 6px; overflow: hidden; position: relative; }
     .matchup-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--navy); }
@@ -235,8 +243,7 @@
 
     /* ── MLB GAME CARDS ── */
     .mlb-game-card {
-      background: #fff; border: 1.5px solid var(--tan); border-radius: 6px;
-      position: relative;
+      background: #fff; border: 1.5px solid var(--tan); border-radius: 6px; position: relative;
     }
     .mlb-game-card::before {
       content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
@@ -293,8 +300,8 @@
       width: 7px; height: 7px; border-radius: 50%;
       border: 1.5px solid var(--muted); background: transparent; display: inline-block;
     }
-    .mlb-dot.on     { background: var(--gold);     border-color: var(--gold); }
-    .mlb-dot.out-on { background: var(--dark-red);  border-color: var(--dark-red); }
+    .mlb-dot.on     { background: var(--gold);    border-color: var(--gold); }
+    .mlb-dot.out-on { background: var(--dark-red); border-color: var(--dark-red); }
     .mlb-count-label { font-size: 9px; margin-right: 1px; }
 
     .mlb-atbat-strip {
@@ -336,8 +343,8 @@
     .mlb-pitch-count { font-family: 'Special Elite', cursive; font-size: 11px; color: var(--muted); text-align: right; }
     .mlb-pitch-speed { font-size: 11px; color: var(--muted); text-align: right; font-family: 'Special Elite', cursive; }
     .tag-strike { color: var(--dark-red); font-weight: bold; }
-    .tag-ball   { color: var(--green);    font-weight: bold; }
-    .tag-hit    { color: var(--brown);    font-weight: bold; }
+    .tag-ball   { color: var(--green);   font-weight: bold; }
+    .tag-hit    { color: var(--brown);   font-weight: bold; }
     .tag-out    { color: var(--muted); }
 
     .mlb-no-games {
@@ -351,8 +358,7 @@
 
     /* ── MLB PREVIEW CARD STRIPS ── */
     .mlb-preview-strip {
-      padding: 4px 8px 5px 14px;
-      background: #fafaf6;
+      padding: 4px 8px 5px 14px; background: #fafaf6;
       border-top: 1px solid var(--tan);
       display: flex; flex-direction: column; gap: 2px;
     }
@@ -369,15 +375,12 @@
     .mlb-game-time-badge {
       background: var(--navy); color: var(--gold);
       font-family: 'Special Elite', cursive; font-size: 10px; letter-spacing: 1px;
-      padding: 2px 7px; border-radius: 3px; display: inline-block;
-      white-space: nowrap;
+      padding: 2px 7px; border-radius: 3px; display: inline-block; white-space: nowrap;
     }
 
     .final-games-header {
-      background: var(--dark-brown);
-      border-top: 2px solid var(--gold);
-      padding: 6px 16px;
-      display: flex; align-items: center; gap: 8px;
+      background: var(--dark-brown); border-top: 2px solid var(--gold);
+      padding: 6px 16px; display: flex; align-items: center; gap: 8px;
     }
     .final-games-title {
       font-family: 'Special Elite', cursive; font-size: 13px;
@@ -385,16 +388,13 @@
     }
     #mlb-final-list {
       padding: 10px 12px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
     }
     @media (max-width: 900px) { #mlb-final-list { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 420px) { #mlb-final-list { grid-template-columns: 1fr; } }
 
     .mlb-decision-strip {
-      padding: 4px 8px 5px 14px;
-      background: #fafaf6;
+      padding: 4px 8px 5px 14px; background: #fafaf6;
       border-top: 1px solid var(--tan);
       display: flex; flex-direction: column; gap: 2px;
     }
@@ -416,39 +416,27 @@
 
     /* ── MLB LIVE PAGE LAYOUT ── */
     .mlb-live-layout {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 0;
-      align-items: start;
+      display: grid; grid-template-columns: 1fr 360px;
+      gap: 0; align-items: start;
     }
     .mlb-live-left  { min-width: 0; }
     .mlb-live-right {
-      border-left: 2px solid var(--gold);
-      background: var(--cream);
-      min-height: 200px;
-      position: sticky;
-      top: 0;
-      overflow-y: auto;
-      max-height: 92vh;
+      border-left: 2px solid var(--gold); background: var(--cream);
+      min-height: 200px; position: sticky; top: 0;
+      overflow-y: auto; max-height: 92vh;
     }
 
     .fmatch-header {
-      background: var(--navy);
-      padding: 8px 12px 10px;
-      border-bottom: 2px solid var(--gold);
-      text-align: center;
+      background: var(--navy); padding: 8px 12px 10px;
+      border-bottom: 2px solid var(--gold); text-align: center;
     }
     .fmatch-title {
       font-family: 'Special Elite', cursive;
       font-size: 10px; color: var(--gold);
-      letter-spacing: 3px; text-transform: uppercase;
-      margin-bottom: 6px;
+      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px;
     }
     .fmatch-score-bar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
+      display: flex; justify-content: center; align-items: center; gap: 12px;
     }
     .fmatch-score-team {
       display: flex; flex-direction: column; align-items: center; gap: 1px;
@@ -457,12 +445,9 @@
     .fmatch-team-name {
       font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700;
       color: rgba(255,255,255,0.7); letter-spacing: 0.5px; text-transform: uppercase;
-      white-space: normal; word-break: break-word;
-      text-align: center; line-height: 1.2;
+      white-space: normal; word-break: break-word; text-align: center; line-height: 1.2;
     }
-    .fmatch-score {
-      font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1;
-    }
+    .fmatch-score { font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1; }
     .fmatch-score.winning { color: var(--gold); }
     .fmatch-score.losing  { color: rgba(255,255,255,0.35); }
     .fmatch-score.tied    { color: rgba(255,255,255,0.7); }
@@ -471,11 +456,7 @@
       color: rgba(255,255,255,0.3); flex-shrink: 0;
     }
 
-    .fmatch-two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
-    }
+    .fmatch-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
     .fmatch-col { padding: 0 0 6px; }
     .fmatch-col + .fmatch-col { border-left: 1px solid var(--tan); }
 
@@ -485,8 +466,7 @@
       padding: 5px 6px 4px;
       display: flex; align-items: center; justify-content: center; gap: 4px;
       border-bottom: 1px solid var(--tan);
-      background: rgba(212,160,23,0.06);
-      text-align: center;
+      background: rgba(212,160,23,0.06); text-align: center;
     }
     .fmatch-col-today {
       color: var(--green); font-size: 10px; font-weight: 700;
@@ -494,12 +474,9 @@
     }
 
     .fmatch-player-row-2col {
-      display: grid;
-      grid-template-columns: 24px 1fr auto;
-      align-items: center;
-      padding: 4px 6px;
-      border-bottom: 1px solid rgba(139,105,20,0.10);
-      gap: 0 3px;
+      display: grid; grid-template-columns: 24px 1fr auto;
+      align-items: center; padding: 4px 6px;
+      border-bottom: 1px solid rgba(139,105,20,0.10); gap: 0 3px;
     }
     .fmatch-player-row-2col:last-child { border-bottom: none; }
     .fmatch-player-row-2col:hover { background: rgba(212,160,23,0.05); }
@@ -510,8 +487,7 @@
     }
     .fmatch-pname {
       font-weight: 700; color: var(--navy);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      font-size: 11px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px;
     }
     .fmatch-pname.playing { color: var(--green); }
     .fmatch-ppts {
@@ -529,40 +505,25 @@
 
     /* ── MINI MATCHUP STRIP ── */
     #mini-matchup-strip {
-      background: var(--dark-brown);
-      border-bottom: 2px solid var(--gold);
-      padding: 0 8px;
-      gap: 0;
-      overflow-x: auto;
-      scrollbar-width: none;
+      background: var(--dark-brown); border-bottom: 2px solid var(--gold);
+      padding: 0 8px; gap: 0; overflow-x: auto; scrollbar-width: none;
     }
     #mini-matchup-strip::-webkit-scrollbar { display: none; }
 
     .mini-matchup {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-      padding: 5px 10px;
-      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0;
+      padding: 5px 10px; cursor: pointer;
       border-right: 1px solid rgba(212,160,23,0.2);
-      transition: background 0.15s;
-      flex: 1;
-      position: relative;
+      transition: background 0.15s; flex: 1; position: relative;
     }
     .mini-matchup:last-child { border-right: none; }
     .mini-matchup:hover { background: rgba(212,160,23,0.1); }
     .mini-matchup.active { background: rgba(212,160,23,0.18); }
     .mini-matchup.active::after {
-      content: '';
-      position: absolute;
-      bottom: -2px; left: 0; right: 0; height: 2px;
-      background: var(--gold);
+      content: ''; position: absolute;
+      bottom: -2px; left: 0; right: 0; height: 2px; background: var(--gold);
     }
-    .mini-team {
-      display: flex; flex-direction: column; align-items: center;
-      min-width: 38px;
-    }
+    .mini-team { display: flex; flex-direction: column; align-items: center; min-width: 38px; }
     .mini-abbrev {
       font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700;
       color: rgba(255,255,255,0.75); letter-spacing: 1px; text-transform: uppercase;
@@ -578,103 +539,51 @@
       color: rgba(255,255,255,0.25); padding: 0 5px; margin-top: 8px;
     }
 
-    /* ════════════════════════════════════════
-       ── ROSTERS TAB ──
-    ════════════════════════════════════════ */
-
+    /* ── ROSTERS TAB ── */
     .roster-mode-bar {
-      background: var(--tan);
-      border-bottom: 2px solid var(--gold);
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+      background: var(--tan); border-bottom: 2px solid var(--gold);
+      padding: 10px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     }
     .roster-mode-toggle {
-      display: flex;
-      background: var(--cream);
-      border: 1.5px solid var(--gold);
-      border-radius: 6px;
-      overflow: hidden;
+      display: flex; background: var(--cream);
+      border: 1.5px solid var(--gold); border-radius: 6px; overflow: hidden;
     }
     .roster-mode-btn {
-      padding: 7px 18px;
-      font-family: 'Oswald', sans-serif;
-      font-size: 13px; font-weight: 700;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-      background: none; border: none;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      text-transform: uppercase;
-      white-space: nowrap;
+      padding: 7px 18px; font-family: 'Oswald', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+      color: var(--muted); background: none; border: none;
+      cursor: pointer; transition: background 0.15s, color 0.15s;
+      text-transform: uppercase; white-space: nowrap;
     }
-    .roster-mode-btn + .roster-mode-btn {
-      border-left: 1.5px solid var(--gold);
-    }
-    .roster-mode-btn.active {
-      background: var(--navy);
-      color: var(--gold);
-    }
-    .roster-mode-btn:hover:not(.active) {
-      background: rgba(212,160,23,0.1);
-      color: var(--dark-brown);
-    }
+    .roster-mode-btn + .roster-mode-btn { border-left: 1.5px solid var(--gold); }
+    .roster-mode-btn.active { background: var(--navy); color: var(--gold); }
+    .roster-mode-btn:hover:not(.active) { background: rgba(212,160,23,0.1); color: var(--dark-brown); }
 
-    .roster-pos-filters {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-      margin-left: auto;
-    }
+    .roster-pos-filters { display: flex; gap: 5px; flex-wrap: wrap; margin-left: auto; }
     .pos-pill {
-      font-family: 'Special Elite', cursive;
-      font-size: 11px; letter-spacing: 1px;
-      padding: 3px 9px;
-      border: 1.5px solid var(--brown);
-      border-radius: 20px;
-      background: var(--cream);
-      color: var(--muted);
-      cursor: pointer;
-      transition: background 0.12s, color 0.12s;
-      text-transform: uppercase;
+      font-family: 'Special Elite', cursive; font-size: 11px; letter-spacing: 1px;
+      padding: 3px 9px; border: 1.5px solid var(--brown); border-radius: 20px;
+      background: var(--cream); color: var(--muted); cursor: pointer;
+      transition: background 0.12s, color 0.12s; text-transform: uppercase;
     }
-    .pos-pill.active {
-      background: var(--navy);
-      color: var(--gold);
-      border-color: var(--navy);
-    }
-    .pos-pill:hover:not(.active) {
-      background: rgba(212,160,23,0.12);
-      color: var(--dark-brown);
-    }
+    .pos-pill.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
+    .pos-pill:hover:not(.active) { background: rgba(212,160,23,0.12); color: var(--dark-brown); }
 
     .all-rosters-grid {
       padding: 14px 16px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 14px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;
     }
 
     .roster-card {
-      background: #fff;
-      border: 1.5px solid var(--tan);
-      border-radius: 8px;
-      overflow: hidden;
-      position: relative;
-      transition: box-shadow 0.2s;
+      background: #fff; border: 1.5px solid var(--tan); border-radius: 8px;
+      overflow: hidden; position: relative; transition: box-shadow 0.2s;
     }
     .roster-card:hover { box-shadow: 0 4px 16px rgba(26,39,68,0.12); }
     .roster-card::before {
-      content: '';
-      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-      background: var(--navy);
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--navy);
     }
-
     .roster-card-header {
-      background: var(--navy);
-      padding: 8px 12px 8px 16px;
+      background: var(--navy); padding: 8px 12px 8px 16px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .roster-card-team-name {
@@ -689,18 +598,13 @@
 
     .roster-player-list { padding: 4px 0; }
     .roster-player-row {
-      display: grid;
-      grid-template-columns: 32px 1fr auto;
-      align-items: center;
-      padding: 5px 10px 5px 16px;
-      border-bottom: 1px solid rgba(139,105,20,0.08);
-      gap: 0 4px;
+      display: grid; grid-template-columns: 32px 1fr auto;
+      align-items: center; padding: 5px 10px 5px 16px;
+      border-bottom: 1px solid rgba(139,105,20,0.08); gap: 0 4px;
     }
     .roster-player-row:last-child { border-bottom: none; }
     .roster-player-row:hover { background: rgba(212,160,23,0.05); }
-    .roster-player-row.bench-row {
-      background: rgba(107,90,62,0.04);
-    }
+    .roster-player-row.bench-row { background: rgba(107,90,62,0.04); }
     .roster-player-row.bench-row .rp-pos { color: #bbb; }
 
     .rp-pos {
@@ -711,42 +615,28 @@
       font-weight: 700; font-size: 13px; color: var(--navy);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .rp-name.highlighted {
-      color: var(--dark-red);
-      background: rgba(192,57,43,0.07);
-      border-radius: 3px;
-      padding: 0 3px;
-    }
-    .rp-injury {
-      font-size: 10px; font-family: 'Special Elite', cursive;
-      color: var(--dark-red); letter-spacing: 0.5px; flex-shrink: 0;
-    }
+    .rp-name.highlighted { color: var(--dark-red); background: rgba(192,57,43,0.07); border-radius: 3px; padding: 0 3px; }
+    .rp-injury { font-size: 10px; font-family: 'Special Elite', cursive; color: var(--dark-red); letter-spacing: 0.5px; flex-shrink: 0; }
 
     .roster-section-divider {
-      background: var(--tan);
-      padding: 3px 10px 3px 16px;
+      background: var(--tan); padding: 3px 10px 3px 16px;
       font-family: 'Special Elite', cursive; font-size: 10px;
       color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
-      border-top: 1px solid rgba(139,105,20,0.15);
-      border-bottom: 1px solid rgba(139,105,20,0.15);
+      border-top: 1px solid rgba(139,105,20,0.15); border-bottom: 1px solid rgba(139,105,20,0.15);
+    }
+
+    /* ── ROSTER RETRY ── */
+    .roster-retry-banner {
+      grid-column: 1 / -1; text-align: center; padding: 32px;
+      font-family: 'Special Elite', cursive; color: var(--muted);
     }
 
     .compare-selectors {
-      display: flex;
-      gap: 12px;
-      padding: 12px 16px;
-      background: var(--cream);
-      border-bottom: 2px solid var(--gold);
-      flex-wrap: wrap;
-      align-items: center;
+      display: flex; gap: 12px; padding: 12px 16px;
+      background: var(--cream); border-bottom: 2px solid var(--gold);
+      flex-wrap: wrap; align-items: center;
     }
-    .compare-team-select-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      flex: 1;
-      min-width: 160px;
-    }
+    .compare-team-select-wrap { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 160px; }
     .compare-team-select-label {
       font-family: 'Special Elite', cursive; font-size: 10px;
       color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
@@ -754,14 +644,10 @@
     .compare-team-select {
       font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700;
       color: var(--navy); background: #fff;
-      border: 1.5px solid var(--gold); border-radius: 5px;
-      padding: 7px 10px;
-      cursor: pointer;
-      appearance: none;
+      border: 1.5px solid var(--gold); border-radius: 5px; padding: 7px 10px;
+      cursor: pointer; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238b6914'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      padding-right: 28px;
+      background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
     }
     .compare-team-select:focus { outline: 2px solid var(--gold); }
 
@@ -770,96 +656,46 @@
       color: var(--muted); align-self: flex-end; padding-bottom: 6px;
     }
 
-    .compare-two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border-top: 1px solid var(--tan);
-    }
-    .compare-col {
-      min-width: 0;
-    }
-    .compare-col + .compare-col {
-      border-left: 2px solid var(--gold);
-    }
-    .compare-col-header {
-      background: var(--navy);
-      padding: 8px 12px;
-      text-align: center;
-    }
-    .compare-col-team-name {
-      font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700;
-      color: #fff; letter-spacing: 0.5px;
-    }
-    .compare-col-record {
-      font-family: 'Special Elite', cursive; font-size: 12px; color: var(--gold);
-    }
-    .compare-col-pf {
-      font-family: 'DM Serif Display', serif; font-size: 13px;
-      color: rgba(255,255,255,0.5); margin-top: 2px;
-    }
+    .compare-two-col { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--tan); }
+    .compare-col { min-width: 0; }
+    .compare-col + .compare-col { border-left: 2px solid var(--gold); }
+    .compare-col-header { background: var(--navy); padding: 8px 12px; text-align: center; }
+    .compare-col-team-name { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+    .compare-col-record { font-family: 'Special Elite', cursive; font-size: 12px; color: var(--gold); }
+    .compare-col-pf { font-family: 'DM Serif Display', serif; font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
     .compare-player-row {
-      display: grid;
-      grid-template-columns: 30px 1fr auto;
-      align-items: center;
-      padding: 6px 10px 6px 12px;
-      border-bottom: 1px solid rgba(139,105,20,0.09);
-      gap: 0 4px;
+      display: grid; grid-template-columns: 30px 1fr auto;
+      align-items: center; padding: 6px 10px 6px 12px;
+      border-bottom: 1px solid rgba(139,105,20,0.09); gap: 0 4px;
     }
     .compare-player-row:last-child { border-bottom: none; }
     .compare-player-row:hover { background: rgba(212,160,23,0.05); }
     .compare-player-row.bench-row { background: rgba(107,90,62,0.04); }
 
-    .cp-pos {
-      font-family: 'Special Elite', cursive; font-size: 10px;
-      color: var(--muted); text-align: center;
-    }
-    .cp-name {
-      font-weight: 700; font-size: 12px; color: var(--navy);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .cp-injury {
-      font-size: 10px; font-family: 'Special Elite', cursive;
-      color: var(--dark-red); flex-shrink: 0;
-    }
+    .cp-pos { font-family: 'Special Elite', cursive; font-size: 10px; color: var(--muted); text-align: center; }
+    .cp-name { font-weight: 700; font-size: 12px; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cp-injury { font-size: 10px; font-family: 'Special Elite', cursive; color: var(--dark-red); flex-shrink: 0; }
 
-    .compare-slot-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
+    .compare-slot-row { display: grid; grid-template-columns: 1fr 1fr; }
     .compare-slot-left, .compare-slot-right {
-      padding: 5px 10px;
-      border-bottom: 1px solid rgba(139,105,20,0.09);
+      padding: 5px 10px; border-bottom: 1px solid rgba(139,105,20,0.09);
       display: flex; align-items: center; gap: 5px;
     }
     .compare-slot-right { border-left: 2px solid var(--gold); }
-    .compare-slot-pos {
-      font-family: 'Special Elite', cursive; font-size: 10px;
-      color: var(--muted); min-width: 26px; text-align: center;
-    }
-    .compare-slot-name {
-      font-weight: 700; font-size: 12px; color: var(--navy);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
+    .compare-slot-pos { font-family: 'Special Elite', cursive; font-size: 10px; color: var(--muted); min-width: 26px; text-align: center; }
+    .compare-slot-name { font-weight: 700; font-size: 12px; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .compare-slot-name.empty { color: var(--tan); font-style: italic; font-weight: 400; }
-    .compare-slot-injury {
-      font-size: 10px; font-family: 'Special Elite', cursive;
-      color: var(--dark-red); flex-shrink: 0;
-    }
+    .compare-slot-injury { font-size: 10px; font-family: 'Special Elite', cursive; color: var(--dark-red); flex-shrink: 0; }
     .compare-section-header {
-      background: var(--dark-brown);
-      padding: 4px 10px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      background: var(--dark-brown); padding: 4px 10px;
+      display: grid; grid-template-columns: 1fr 1fr;
     }
     .compare-section-label {
       font-family: 'Special Elite', cursive; font-size: 10px;
-      color: var(--gold); letter-spacing: 2px; text-transform: uppercase;
-      padding: 0 4px;
+      color: var(--gold); letter-spacing: 2px; text-transform: uppercase; padding: 0 4px;
     }
-    .compare-section-label + .compare-section-label {
-      border-left: 2px solid var(--gold);
-    }
+    .compare-section-label + .compare-section-label { border-left: 2px solid var(--gold); }
 
     .compare-no-selection {
       text-align: center; padding: 40px 24px;
@@ -868,6 +704,9 @@
     }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 1200px) {
+      #mlb-game-list { grid-template-columns: repeat(2, 1fr) !important; }
+    }
     @media (max-width: 1100px) {
       .mlb-live-layout { grid-template-columns: 1fr 320px; }
     }
@@ -879,7 +718,7 @@
     @media (max-width: 700px) {
       .mlb-live-layout { grid-template-columns: 1fr; }
       .mlb-live-right { border-left: none; border-top: 2px solid var(--gold); max-height: none; }
-      #mlb-game-list { grid-template-columns: repeat(2, 1fr) !important; }
+      #mlb-game-list { grid-template-columns: 1fr !important; }
       .compare-two-col { grid-template-columns: 1fr; }
       .compare-col + .compare-col { border-left: none; border-top: 2px solid var(--gold); }
       .compare-slot-row { grid-template-columns: 1fr; }
@@ -901,6 +740,11 @@
     <div class="masthead-title">Fantasy Baseball</div>
     <div class="masthead-sub" id="league-name">KTown Reloaded</div>
     <a href="https://fantasy.espn.com/baseball/league?leagueId=152693" class="masthead-league-btn" target="_blank">View League →</a>
+    <div class="last-updated" id="last-updated"></div>
+  </div>
+
+  <div id="auth-banner" style="display:none" class="auth-banner">
+    ⚠ ESPN cookies have expired — update <code>RAW_COOKIE</code> in espn_proxy.py and restart.
   </div>
 
   <div class="tab-bar" id="tab-bar" style="display:none">
@@ -912,7 +756,8 @@
   </div>
 
   <div class="status-panel" id="status-panel">
-    <div class="status-msg" id="status-msg">Connecting to proxy...</div>
+    <div><div class="spinner"></div></div>
+    <div class="status-msg" id="status-msg">Connecting to proxy…</div>
   </div>
 
   <div class="main-content" id="main-content">
@@ -937,8 +782,12 @@
           <thead>
             <tr>
               <th>#</th><th>Team</th>
-              <th class="sortable" data-sort="wins">W</th><th class="sortable" data-sort="losses">L</th><th class="sortable" data-sort="pct">PCT</th>
-              <th class="sortable" data-sort="pf">PF</th><th class="sortable" data-sort="pa">PA</th><th class="sortable" data-sort="diff">DIFF</th>
+              <th class="sortable" data-sort="wins">W</th>
+              <th class="sortable" data-sort="losses">L</th>
+              <th class="sortable" data-sort="pct">PCT</th>
+              <th class="sortable" data-sort="pf">PF</th>
+              <th class="sortable" data-sort="pa">PA</th>
+              <th class="sortable" data-sort="diff">DIFF</th>
             </tr>
           </thead>
           <tbody id="standings-body"></tbody>
@@ -963,18 +812,17 @@
       <div id="mini-matchup-strip" style="display:none"></div>
       <div class="mlb-live-layout">
         <div class="mlb-live-left">
-          <!-- 3 columns for active/preview games — wider cards for SP info -->
           <div id="mlb-game-list" style="padding:10px 12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:start"></div>
         </div>
         <div class="mlb-live-right">
           <div id="fantasy-matchup-panel">
-            <div class="fmatch-loading">Loading matchup&#8230;</div>
+            <div class="fmatch-loading">Loading matchup…</div>
           </div>
         </div>
       </div>
       <div id="final-games-section" style="display:none">
         <div class="final-games-header">
-          <span class="final-games-title">&#10003; Final</span>
+          <span class="final-games-title">✓ Final</span>
         </div>
         <div id="mlb-final-list"></div>
       </div>
@@ -982,14 +830,12 @@
 
     <!-- ── ROSTERS TAB ── -->
     <div id="tab-rosters" style="display:none">
-
       <div class="roster-mode-bar">
         <div class="roster-mode-toggle">
           <button class="roster-mode-btn active" id="roster-mode-all-btn"     onclick="setRosterMode('all')">👥 All Rosters</button>
           <button class="roster-mode-btn"        id="roster-mode-compare-btn" onclick="setRosterMode('compare')">⚖️ Compare</button>
         </div>
-        <div class="roster-pos-filters" id="roster-pos-filters">
-        </div>
+        <div class="roster-pos-filters" id="roster-pos-filters"></div>
       </div>
 
       <div id="rosters-all-view">
@@ -1002,14 +848,14 @@
         <div class="compare-selectors">
           <div class="compare-team-select-wrap">
             <div class="compare-team-select-label">Team A</div>
-            <select class="compare-team-select" id="compare-team-a" onchange="renderCompare()">
+            <select class="compare-team-select" id="compare-team-a" onchange="onCompareSelectChange()">
               <option value="">— Select Team —</option>
             </select>
           </div>
           <div class="compare-vs-badge">vs</div>
           <div class="compare-team-select-wrap">
             <div class="compare-team-select-label">Team B</div>
-            <select class="compare-team-select" id="compare-team-b" onchange="renderCompare()">
+            <select class="compare-team-select" id="compare-team-b" onchange="onCompareSelectChange()">
               <option value="">— Select Team —</option>
             </select>
           </div>
@@ -1018,7 +864,6 @@
           <div class="compare-no-selection">Select two teams above to compare their rosters.</div>
         </div>
       </div>
-
     </div><!-- /tab-rosters -->
 
   </div>
@@ -1043,21 +888,25 @@
   let rosterMap   = {};
   let currentWeek = 1;
   let liveWeek    = 1;
-  let maxWeek     = 1;
+  let maxWeek     = 1;   // = highest week with any schedule data
   let mlbTeamRecords = {};
-
-  // Probable pitchers keyed by gamePk → { away: 'Name', home: 'Name' }
   let mlbProbablePitchers = {};
-
   let fullRosterByTeam = {};
+
+  // Track which tabs have been rendered so we render lazily
+  const tabRendered = { scoreboard: false, standings: false, segments: false };
 
   const TAB_ORDER = ['scoreboard','standings','segments','mlblive','rosters'];
   let currentTabIndex = 0;
+  // Standings sort persists across tab switches
   let standingsSortColumn = null;
-  let standingsSortOrder = 'asc';
+  let standingsSortOrder  = 'asc';
+  // Cached sorted standings data (so sort is re-applied without re-querying)
+  let standingsData = [];
 
-  let rosterMode = 'all';
+  let rosterMode      = 'all';
   let rosterPosFilter = 'ALL';
+  let rosterLoaded    = false;
 
   // ── UTILS ──────────────────────────────────────────────────────
   function esc(s) {
@@ -1067,11 +916,18 @@
     const el = document.getElementById('status-msg');
     el.innerHTML = msg;
     el.className = 'status-msg' + (isErr ? ' error' : '');
+    // Hide spinner on error
+    const spinner = document.querySelector('.status-panel .spinner');
+    if (spinner) spinner.style.display = isErr ? 'none' : '';
   }
   function fmtPts(n) { return Math.round(Number(n)).toString(); }
   function pct(w, l) {
     const t = w + l;
     return t > 0 ? (w/t).toFixed(3).replace(/^0/,'') : '.000';
+  }
+  function stampUpdated() {
+    const el = document.getElementById('last-updated');
+    if (el) el.textContent = 'Updated ' + new Date().toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
   }
 
   // ── TABS ───────────────────────────────────────────────────────
@@ -1081,16 +937,35 @@
       document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
       document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t === tab);
     });
+
+    if (tab === 'standings' && !tabRendered.standings) {
+      renderStandings();
+      tabRendered.standings = true;
+    }
+    if (tab === 'segments' && !tabRendered.segments) {
+      renderSegments();
+      tabRendered.segments = true;
+    }
     if (tab === 'mlblive') {
       if (!mlbLoaded) {
         await loadMlb(true);
       }
       renderMiniMatchupStrip();
-      await loadFantasyMatchup();
+      // Only load fantasy matchup if not already showing data
+      const panel = document.getElementById('fantasy-matchup-panel');
+      if (panel && panel.querySelector('.fmatch-loading')) {
+        await loadFantasyMatchup();
+      }
     }
     if (tab === 'rosters') {
       renderRostersTab();
     }
+
+    // Debug button visibility
+    const btn = document.getElementById('debug-btn');
+    const dpanel = document.getElementById('debug-panel');
+    if (btn)    btn.style.display    = tab === 'mlblive' ? 'block' : 'none';
+    if (dpanel && tab !== 'mlblive') dpanel.style.display = 'none';
   }
 
   // ── WEEK NAV ───────────────────────────────────────────────────
@@ -1103,21 +978,34 @@
 
   // ── LOAD ───────────────────────────────────────────────────────
   async function loadAll() {
-    setStatus('Connecting to proxy...', false);
+    setStatus('Connecting to proxy…', false);
     try {
       const r = await fetch(
         `${PROXY}/api/league/${SEASON}?view=mMatchup&view=mMatchupScore&view=mTeam&view=mSettings&view=mStatus`
       );
-      if (!r.ok) throw new Error(`Proxy returned ${r.status}`);
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}));
+        if (data.auth_expired) {
+          document.getElementById('auth-banner').style.display = '';
+        }
+        throw new Error(data.error || `Proxy returned ${r.status}`);
+      }
       globalData = await r.json();
+      stampUpdated();
 
       const status   = globalData.status   || {};
       const teams    = globalData.teams    || [];
       const settings = globalData.settings || {};
+      const schedule = globalData.schedule || [];
 
       liveWeek    = status.currentMatchupPeriod ?? 1;
       currentWeek = liveWeek;
-      maxWeek     = liveWeek;
+
+      // FIX: derive maxWeek from actual schedule data, not just liveWeek
+      const allPeriods = schedule.map(m => m.matchupPeriodId).filter(Boolean);
+      maxWeek = allPeriods.length ? Math.max(...allPeriods) : liveWeek;
+      // But cap browsing at liveWeek for "future" protection — show completed + current
+      maxWeek = Math.max(maxWeek, liveWeek);
 
       document.getElementById('league-name').textContent = settings.name || 'Fantasy Baseball';
 
@@ -1131,63 +1019,71 @@
         };
       });
 
-      // Fetch rosters
-      try {
-        const rr = await fetch(`${PROXY}/api/league/${SEASON}?view=mRoster`);
-        if (rr.ok) {
-          const rosterData = await rr.json();
-          rosterMap = {};
-          window._fullRoster = {};
-          fullRosterByTeam = {};
-
-          (rosterData.teams || []).forEach(t => {
-            const label = teamMap[t.id]?.abbrev || `T${t.id}`;
-            const players = [];
-            (t.roster?.entries || []).forEach(e => {
-              const ppe    = e.playerPoolEntry || {};
-              const name   = ppe?.player?.fullName || ppe?.fullName || '';
-              const slotId = e.lineupSlotId ?? 16;
-              const injStatus = ppe?.player?.injuryStatus || ppe?.injuryStatus || '';
-              if (name) {
-                rosterMap[name.toLowerCase()] = label;
-                const playerObj = {
-                  name, abbrev: label, slotId, teamId: t.id,
-                  isBench: BENCH_SLOTS.has(slotId),
-                  injuryStatus: injStatus
-                };
-                window._fullRoster[name.toLowerCase()] = playerObj;
-                players.push(playerObj);
-              }
-            });
-
-            players.sort((a, b) => (SLOT_ORDER[a.slotId] ?? 98) - (SLOT_ORDER[b.slotId] ?? 98));
-            fullRosterByTeam[t.id] = players;
-          });
-
-          populateCompareSelects();
-        }
-      } catch(e) { console.warn('[Roster] failed:', e); }
+      // Fetch rosters (separate request, non-blocking)
+      loadRosters();
 
       document.getElementById('status-panel').style.display = 'none';
       document.getElementById('tab-bar').style.display      = '';
       document.getElementById('main-content').style.display = 'block';
 
+      // Only render the visible tab (scoreboard is default)
       renderScoreboard();
-      renderStandings();
-      renderSegments();
-      loadFantasyMatchup();
-      logScoringMap();
+      tabRendered.scoreboard = true;
 
     } catch(err) {
       let msg = err.message;
       if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
-        msg = `Proxy isn't running.<br><br><code>python espn_proxy.py</code><br><br>Then click Retry.`;
+        msg = `Proxy isn't running or is cold-starting (Render free tier can take ~30s).<br><br><code>python espn_proxy.py</code><br><br>Then click Retry.`;
       }
       setStatus(msg, true);
       const btn = document.createElement('button');
       btn.className = 'retry-btn'; btn.textContent = '↻ RETRY';
-      btn.onclick = () => { btn.remove(); loadAll(); };
+      btn.onclick = () => { btn.remove(); document.querySelector('.status-panel .spinner').style.display = ''; loadAll(); };
       document.getElementById('status-panel').appendChild(btn);
+    }
+  }
+
+  async function loadRosters() {
+    try {
+      const rr = await fetch(`${PROXY}/api/league/${SEASON}?view=mRoster`);
+      if (!rr.ok) throw new Error(`Roster fetch ${rr.status}`);
+      const rosterData = await rr.json();
+      rosterMap        = {};
+      window._fullRoster  = {};
+      fullRosterByTeam = {};
+
+      (rosterData.teams || []).forEach(t => {
+        const label   = teamMap[t.id]?.abbrev || `T${t.id}`;
+        const players = [];
+        (t.roster?.entries || []).forEach(e => {
+          const ppe       = e.playerPoolEntry || {};
+          const name      = ppe?.player?.fullName || ppe?.fullName || '';
+          const slotId    = e.lineupSlotId ?? 16;
+          const injStatus = ppe?.player?.injuryStatus || ppe?.injuryStatus || '';
+          if (name) {
+            rosterMap[name.toLowerCase()] = label;
+            const playerObj = {
+              name, abbrev: label, slotId, teamId: t.id,
+              isBench:      BENCH_SLOTS.has(slotId),
+              injuryStatus: injStatus
+            };
+            window._fullRoster[name.toLowerCase()] = playerObj;
+            players.push(playerObj);
+          }
+        });
+        players.sort((a, b) => (SLOT_ORDER[a.slotId] ?? 98) - (SLOT_ORDER[b.slotId] ?? 98));
+        fullRosterByTeam[t.id] = players;
+      });
+
+      rosterLoaded = true;
+      populateCompareSelects();
+
+      // If rosters tab is already visible, re-render it now
+      if (document.getElementById('tab-rosters').style.display !== 'none') {
+        renderRostersTab();
+      }
+    } catch(e) {
+      console.warn('[Roster] failed:', e);
     }
   }
 
@@ -1245,29 +1141,32 @@
         card.innerHTML = `
           <div class="matchup-inner">
             <div class="team-row">
-              <div><div class="team-name">${esc(hT.name)}</div><div class="team-record">${rec(hT)}</div></div>
+              <div><div class="team-name" title="${esc(hT.name)}">${esc(hT.name)}</div><div class="team-record">${rec(hT)}</div></div>
               <div class="team-score ${hWin?'winning':aWin?'losing':''}">${fmtPts(hPts)}</div>
             </div>
-            <div class="matchup-divider">
-              <span class="vs-badge">VS</span>
-              ${badgeHtml}
-            </div>
+            <div class="matchup-divider"><span class="vs-badge">VS</span>${badgeHtml}</div>
             <div class="team-row">
-              <div><div class="team-name">${esc(aT.name)}</div><div class="team-record">${rec(aT)}</div></div>
+              <div><div class="team-name" title="${esc(aT.name)}">${esc(aT.name)}</div><div class="team-record">${rec(aT)}</div></div>
               <div class="team-score ${aWin?'winning':hWin?'losing':''}">${fmtPts(aPts)}</div>
             </div>
           </div>`;
         list.appendChild(card);
       });
     }
-    renderStrip('bottom-strip', calcPointsForWeeks(Array.from({length: maxWeek}, (_,i) => i+1), true));
+
+    // Bottom strip: show week-specific PF when browsing past weeks, season total when on live week
+    const stripWeeks = isLive
+      ? Array.from({length: maxWeek}, (_,i) => i+1)
+      : [currentWeek];
+    renderStrip('bottom-strip', calcPointsForWeeks(stripWeeks, isLive),
+      isLive ? 'Season PF' : `Week ${currentWeek} PF`);
   }
 
   // ── STANDINGS ──────────────────────────────────────────────────
   function renderStandings() {
     const allWeeks = Array.from({length: maxWeek}, (_,i) => i+1);
     const totals   = calcPointsForWeeks(allWeeks, true);
-    const withId   = Object.entries(teamMap).map(([id, t]) => ({
+    standingsData  = Object.entries(teamMap).map(([id, t]) => ({
       id, ...t, pf: totals[id]?.pf ?? 0, pa: totals[id]?.pa ?? 0
     })).sort((a,b) => {
       if (b.wins !== a.wins) return b.wins - a.wins;
@@ -1276,52 +1175,48 @@
       return b.pf - a.pf;
     });
 
-    standingsSortColumn = null;
-    standingsSortOrder = 'asc';
-    sortStandings(withId);
-    renderStrip('bottom-strip-2', totals);
-
+    // Attach sort handlers once
     document.querySelectorAll('#standings-table th.sortable').forEach(th => {
-      th.onclick = (e) => {
+      th.onclick = () => {
         const col = th.getAttribute('data-sort');
         if (standingsSortColumn === col) {
           standingsSortOrder = standingsSortOrder === 'asc' ? 'desc' : 'asc';
         } else {
           standingsSortColumn = col;
-          standingsSortOrder = 'asc';
+          standingsSortOrder  = 'asc';
         }
-        sortStandings(withId);
+        sortAndRenderStandings();
       };
     });
+
+    sortAndRenderStandings();
+    renderStrip('bottom-strip-2', totals);
   }
 
-  function sortStandings(data) {
-    const body = document.getElementById('standings-body');
-    let sorted = [...data];
+  function sortAndRenderStandings() {
+    if (!standingsData.length) return;
+    const body   = document.getElementById('standings-body');
+    let sorted   = [...standingsData];
 
     if (standingsSortColumn) {
       sorted.sort((a, b) => {
         let aVal, bVal;
         switch(standingsSortColumn) {
-          case 'wins':   aVal = a.wins;  bVal = b.wins; break;
+          case 'wins':   aVal = a.wins;  bVal = b.wins;  break;
           case 'losses': aVal = a.losses; bVal = b.losses; break;
-          case 'pct':
-            aVal = a.wins/(a.wins+a.losses||1);
-            bVal = b.wins/(b.wins+b.losses||1);
-            break;
-          case 'pf':   aVal = a.pf; bVal = b.pf; break;
-          case 'pa':   aVal = a.pa; bVal = b.pa; break;
-          case 'diff': aVal = a.pf - a.pa; bVal = b.pf - b.pa; break;
+          case 'pct':    aVal = a.wins/(a.wins+a.losses||1); bVal = b.wins/(b.wins+b.losses||1); break;
+          case 'pf':     aVal = a.pf;   bVal = b.pf;   break;
+          case 'pa':     aVal = a.pa;   bVal = b.pa;   break;
+          case 'diff':   aVal = a.pf - a.pa; bVal = b.pf - b.pa; break;
           default: return 0;
         }
-        const result = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-        return standingsSortOrder === 'asc' ? result : -result;
+        const r = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+        return standingsSortOrder === 'asc' ? r : -r;
       });
     }
 
     const cutline = Math.ceil(sorted.length / 2);
     body.innerHTML = '';
-
     sorted.forEach((t, i) => {
       if (i === cutline) {
         const div = document.createElement('tr');
@@ -1331,7 +1226,7 @@
       }
       const diff    = t.pf - t.pa;
       const diffStr = diff >= 0 ? '+' + Math.round(diff) : Math.round(diff).toString();
-      const row = document.createElement('tr');
+      const row     = document.createElement('tr');
       row.innerHTML = `
         <td>${i+1}</td>
         <td>${esc(t.name)}</td>
@@ -1346,7 +1241,7 @@
 
     document.querySelectorAll('#standings-table th.sortable').forEach(th => {
       const col = th.getAttribute('data-sort');
-      th.classList.remove('sort-asc', 'sort-desc');
+      th.classList.remove('sort-asc','sort-desc');
       if (standingsSortColumn === col) {
         th.classList.add(standingsSortOrder === 'asc' ? 'sort-asc' : 'sort-desc');
       }
@@ -1370,17 +1265,17 @@
       const winner = isComplete && ranked.length ? ranked[0] : null;
 
       let statusLabel = '';
-      if (!hasAny)        statusLabel = 'UPCOMING';
-      else if (isCurrent) statusLabel = `WEEKS ${activeWeeks[0]}–${liveWeek} IN PROGRESS`;
-      else if (isComplete)statusLabel = `WEEKS ${seg.weeks[0]}–${seg.weeks[seg.weeks.length-1]} · COMPLETE`;
+      if (!hasAny)         statusLabel = 'UPCOMING';
+      else if (isCurrent)  statusLabel = `WEEKS ${activeWeeks[0]}–${liveWeek} IN PROGRESS`;
+      else if (isComplete) statusLabel = `WEEKS ${seg.weeks[0]}–${seg.weeks[seg.weeks.length-1]} · COMPLETE`;
 
       const block = document.createElement('div');
       block.className = 'segment-block';
       block.innerHTML = `
         <div class="segment-header">
-          <div><span class="segment-label">${esc(seg.label)}${seg.playoffs ? ' — Playoffs' : ''}</span></div>
+          <div><span class="segment-label">${esc(seg.label)}${seg.playoffs?' — Playoffs':''}</span></div>
           <div style="text-align:right">
-            ${winner ? `<div class="segment-winner-crown">★ ${esc(winner.name)}</div>` : ''}
+            ${winner?`<div class="segment-winner-crown">★ ${esc(winner.name)}</div>`:''}
             <div class="segment-weeks">${statusLabel}</div>
           </div>
         </div>`;
@@ -1437,7 +1332,7 @@
   }
 
   // ── BOTTOM STRIP ───────────────────────────────────────────────
-  function renderStrip(id, totals) {
+  function renderStrip(id, totals, label) {
     const ranked = Object.entries(teamMap).map(([tid, t]) => ({
       ...t, pf: totals[tid]?.pf ?? 0
     })).sort((a,b) => b.pf - a.pf);
@@ -1445,7 +1340,7 @@
       <div class="strip-item">
         <div class="strip-rank">${i+1}</div>
         <div class="strip-name">${esc(t.abbrev)}</div>
-        <div class="strip-record">${fmtPts(t.pf)} PF</div>
+        <div class="strip-record">${fmtPts(t.pf)}${label?' '+label:' PF'}</div>
       </div>`).join('');
   }
 
@@ -1454,10 +1349,10 @@
   // ══════════════════════════════════════════════════════════════
 
   const SLOT_LABEL = {
-    0:'C', 1:'1B', 2:'2B', 3:'3B', 4:'SS',
+    0:'C',  1:'1B', 2:'2B', 3:'3B', 4:'SS',
     5:'OF', 6:'OF', 7:'OF',
     8:'UTIL', 12:'UTIL',
-    9:'SP', 10:'SP', 11:'SP', 13:'SP', 14:'SP',
+    9:'SP',  10:'SP', 11:'SP', 13:'SP', 14:'SP',
     15:'RP',
     16:'BN', 17:'IL'
   };
@@ -1469,17 +1364,18 @@
     15:15,
     16:99, 17:100
   };
-  const BENCH_SLOTS = new Set([16, 17]);
+  const BENCH_SLOTS   = new Set([16, 17]);
   const PITCHER_SLOTS = new Set([9, 10, 11, 13, 14, 15]);
   const BATTER_SLOTS  = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 12]);
 
-  function posLabel(slotId) {
-    return SLOT_LABEL[slotId] ?? 'BN';
-  }
+  function posLabel(slotId) { return SLOT_LABEL[slotId] ?? 'BN'; }
 
   function injuryBadge(status) {
     if (!status || status === 'ACTIVE' || status === '') return '';
-    const map = { 'INJURY_RESERVE':'IL', 'OUT':'OUT', 'QUESTIONABLE':'Q', 'DAY_TO_DAY':'DTD', 'SUSPENSION':'SUS', 'SIXTY_DAY_DL':'60-DL', 'TEN_DAY_DL':'10-DL' };
+    const map = {
+      'INJURY_RESERVE':'IL','OUT':'OUT','QUESTIONABLE':'Q',
+      'DAY_TO_DAY':'DTD','SUSPENSION':'SUS','SIXTY_DAY_DL':'60-DL','TEN_DAY_DL':'10-DL'
+    };
     return map[status] || status.replace(/_/g,' ').substring(0,6);
   }
 
@@ -1496,13 +1392,13 @@
   function buildPosFilters() {
     const bar = document.getElementById('roster-pos-filters');
     const filters = [
-      { key: 'ALL', label: 'All' },
-      { key: 'BAT', label: '⚾ Batters' },
-      { key: 'PIT', label: '⚡ Pitchers' },
-      { key: 'BN',  label: '🪑 Bench' },
+      { key:'ALL', label:'All' },
+      { key:'BAT', label:'⚾ Batters' },
+      { key:'PIT', label:'⚡ Pitchers' },
+      { key:'BN',  label:'🪑 Bench' },
     ];
     bar.innerHTML = filters.map(f =>
-      `<button class="pos-pill ${rosterPosFilter === f.key ? 'active' : ''}" onclick="setPosFilter('${f.key}')">${esc(f.label)}</button>`
+      `<button class="pos-pill ${rosterPosFilter===f.key?'active':''}" onclick="setPosFilter('${f.key}')">${esc(f.label)}</button>`
     ).join('');
   }
 
@@ -1521,10 +1417,19 @@
   }
 
   function renderAllRosters() {
-    const grid = document.getElementById('all-rosters-grid');
+    const grid    = document.getElementById('all-rosters-grid');
     const teamIds = Object.keys(fullRosterByTeam);
+
+    if (!rosterLoaded) {
+      grid.innerHTML = `
+        <div class="roster-retry-banner">
+          <div>Roster data is still loading…</div>
+          <button class="retry-btn" style="margin-top:12px" onclick="loadRosters()">↻ Retry</button>
+        </div>`;
+      return;
+    }
     if (!teamIds.length) {
-      grid.innerHTML = `<div style="text-align:center;padding:32px;font-family:'Special Elite',cursive;color:var(--muted);grid-column:1/-1">Roster data not yet loaded.</div>`;
+      grid.innerHTML = `<div class="roster-retry-banner"><div>No roster data found.</div><button class="retry-btn" style="margin-top:12px" onclick="loadRosters()">↻ Retry</button></div>`;
       return;
     }
 
@@ -1538,41 +1443,41 @@
 
     grid.innerHTML = '';
     sortedIds.forEach(teamId => {
-      const team   = teamMap[teamId] || { name:`Team ${teamId}`, wins:0, losses:0 };
+      const team       = teamMap[teamId] || { name:`Team ${teamId}`, wins:0, losses:0 };
       const allPlayers = fullRosterByTeam[teamId] || [];
       const players    = filterPlayers(allPlayers);
 
-      const card = document.createElement('div');
+      const card     = document.createElement('div');
       card.className = 'roster-card';
 
       const starters = players.filter(p => !BENCH_SLOTS.has(p.slotId));
       const bench    = players.filter(p => BENCH_SLOTS.has(p.slotId));
 
-      let starterRows = starters.map(p => {
+      const starterRows = starters.map(p => {
         const inj = injuryBadge(p.injuryStatus);
         return `<div class="roster-player-row">
           <div class="rp-pos">${esc(posLabel(p.slotId))}</div>
           <div class="rp-name">${esc(p.name)}</div>
-          ${inj ? `<div class="rp-injury">${esc(inj)}</div>` : ''}
+          ${inj?`<div class="rp-injury">${esc(inj)}</div>`:''}
         </div>`;
       }).join('');
 
-      let benchRows = bench.map(p => {
+      const benchRows = bench.map(p => {
         const inj = injuryBadge(p.injuryStatus);
         return `<div class="roster-player-row bench-row">
           <div class="rp-pos">${esc(posLabel(p.slotId))}</div>
           <div class="rp-name">${esc(p.name)}</div>
-          ${inj ? `<div class="rp-injury">${esc(inj)}</div>` : ''}
+          ${inj?`<div class="rp-injury">${esc(inj)}</div>`:''}
         </div>`;
       }).join('');
 
       let bodyHtml = '';
       if (rosterPosFilter === 'ALL') {
         bodyHtml = `
-          ${starters.length ? `<div class="roster-section-divider">Active</div>` : ''}
+          ${starters.length?`<div class="roster-section-divider">Active</div>`:''}
           <div class="roster-player-list">${starterRows}</div>
-          ${bench.length ? `<div class="roster-section-divider">Bench / IL</div>` : ''}
-          ${bench.length ? `<div class="roster-player-list">${benchRows}</div>` : ''}`;
+          ${bench.length?`<div class="roster-section-divider">Bench / IL</div>`:''}
+          ${bench.length?`<div class="roster-player-list">${benchRows}</div>`:''}`;
       } else {
         bodyHtml = `<div class="roster-player-list">${starterRows || benchRows}</div>`;
       }
@@ -1588,52 +1493,62 @@
   }
 
   function populateCompareSelects() {
-    const sortedIds = Object.keys(teamMap).sort((a, b) => {
-      const ta = teamMap[a], tb = teamMap[b];
-      return ta.name.localeCompare(tb.name);
-    });
+    const sortedIds = Object.keys(teamMap).sort((a, b) =>
+      teamMap[a].name.localeCompare(teamMap[b].name)
+    );
 
-    ['compare-team-a', 'compare-team-b'].forEach((selId, idx) => {
-      const sel = document.getElementById(selId);
+    ['compare-team-a','compare-team-b'].forEach(selId => {
+      const sel  = document.getElementById(selId);
+      const prev = sel.value;
       sel.innerHTML = `<option value="">— Select Team —</option>`;
       sortedIds.forEach(id => {
-        const t = teamMap[id];
+        const t   = teamMap[id];
         const opt = document.createElement('option');
-        opt.value = id;
+        opt.value       = id;
         opt.textContent = `${t.name} (${t.wins}-${t.losses})`;
         sel.appendChild(opt);
       });
+      if (prev) sel.value = prev;  // restore previous selection
     });
   }
 
+  // FIX: sync the two selects so the same team can't be chosen twice
+  function onCompareSelectChange() {
+    const selA = document.getElementById('compare-team-a');
+    const selB = document.getElementById('compare-team-b');
+    const valA = selA.value, valB = selB.value;
+
+    // Disable chosen-by-A option in B and vice versa
+    [...selA.options].forEach(o => { o.disabled = o.value && o.value === valB; });
+    [...selB.options].forEach(o => { o.disabled = o.value && o.value === valA; });
+
+    renderCompare();
+  }
+
   function renderCompare() {
-    const selA = document.getElementById('compare-team-a')?.value;
-    const selB = document.getElementById('compare-team-b')?.value;
+    const selA    = document.getElementById('compare-team-a')?.value;
+    const selB    = document.getElementById('compare-team-b')?.value;
     const content = document.getElementById('compare-content');
 
     if (!selA || !selB) {
       content.innerHTML = `<div class="compare-no-selection">Select two teams above to compare their rosters.</div>`;
       return;
     }
-    if (selA === selB) {
-      content.innerHTML = `<div class="compare-no-selection">Please select two different teams.</div>`;
-      return;
-    }
 
-    const teamA = teamMap[selA] || { name:`Team ${selA}`, wins:0, losses:0 };
-    const teamB = teamMap[selB] || { name:`Team ${selB}`, wins:0, losses:0 };
+    const teamA    = teamMap[selA] || { name:`Team ${selA}`, wins:0, losses:0 };
+    const teamB    = teamMap[selB] || { name:`Team ${selB}`, wins:0, losses:0 };
     const allWeeks = Array.from({length: maxWeek}, (_,i) => i+1);
     const totals   = calcPointsForWeeks(allWeeks, true);
-    const pfA = fmtPts(totals[selA]?.pf || 0);
-    const pfB = fmtPts(totals[selB]?.pf || 0);
+    const pfA      = fmtPts(totals[selA]?.pf || 0);
+    const pfB      = fmtPts(totals[selB]?.pf || 0);
 
     const playersA = fullRosterByTeam[selA] || [];
     const playersB = fullRosterByTeam[selB] || [];
 
     const GROUPS = [
-      { label: 'Batters', slotIds: [0,1,2,3,4,5,6,7,8,12] },
-      { label: 'Pitchers', slotIds: [9,10,11,13,14,15] },
-      { label: 'Bench / IL', slotIds: [16,17] },
+      { label:'Batters',    slotIds:[0,1,2,3,4,5,6,7,8,12] },
+      { label:'Pitchers',   slotIds:[9,10,11,13,14,15] },
+      { label:'Bench / IL', slotIds:[16,17] },
     ];
 
     let html = `
@@ -1659,7 +1574,6 @@
       const bPlayers = playersB.filter(p => group.slotIds.includes(p.slotId));
       const maxLen   = Math.max(aPlayers.length, bPlayers.length);
       if (!maxLen) return;
-
       const isBench = group.label === 'Bench / IL';
 
       html += `
@@ -1669,21 +1583,19 @@
         </div>`;
 
       for (let i = 0; i < maxLen; i++) {
-        const pa = aPlayers[i];
-        const pb = bPlayers[i];
+        const pa = aPlayers[i], pb = bPlayers[i];
         const injA = pa ? injuryBadge(pa.injuryStatus) : '';
         const injB = pb ? injuryBadge(pb.injuryStatus) : '';
-
         html += `<div class="compare-slot-row">
           <div class="compare-slot-left ${isBench?'bench-row':''}">
-            <div class="compare-slot-pos">${pa ? esc(posLabel(pa.slotId)) : ''}</div>
-            <div class="compare-slot-name ${pa?'':'empty'}">${pa ? esc(pa.name) : '—'}</div>
-            ${injA ? `<div class="compare-slot-injury">${esc(injA)}</div>` : ''}
+            <div class="compare-slot-pos">${pa?esc(posLabel(pa.slotId)):''}</div>
+            <div class="compare-slot-name ${pa?'':'empty'}">${pa?esc(pa.name):'—'}</div>
+            ${injA?`<div class="compare-slot-injury">${esc(injA)}</div>`:''}
           </div>
           <div class="compare-slot-right ${isBench?'bench-row':''}">
-            <div class="compare-slot-pos">${pb ? esc(posLabel(pb.slotId)) : ''}</div>
-            <div class="compare-slot-name ${pb?'':'empty'}">${pb ? esc(pb.name) : '—'}</div>
-            ${injB ? `<div class="compare-slot-injury">${esc(injB)}</div>` : ''}
+            <div class="compare-slot-pos">${pb?esc(posLabel(pb.slotId)):''}</div>
+            <div class="compare-slot-name ${pb?'':'empty'}">${pb?esc(pb.name):'—'}</div>
+            ${injB?`<div class="compare-slot-injury">${esc(injB)}</div>`:''}
           </div>
         </div>`;
       }
@@ -1694,8 +1606,8 @@
 
   function renderRostersTab() {
     buildPosFilters();
-    renderAllRosters();
-    if (rosterMode === 'compare') renderCompare();
+    if (rosterMode === 'all') renderAllRosters();
+    else renderCompare();
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -1707,11 +1619,23 @@
   let mlbRefreshTm = null;
   const MLB_API    = 'https://statsapi.mlb.com';
 
-  const MY_TEAM_ID = 1;
-  let fMatchupData = null;
+  // FIX: auto-detect user's team from first matchup rather than hardcoding team ID 1
+  let activeMatchupTeamA = null;
+  let activeMatchupTeamB = null;
+  let cachedTodayStatsMap = null;
+
+  function detectMyMatchup() {
+    if (!globalData) return;
+    const schedule = globalData.schedule || [];
+    const matchup  = schedule.find(m => m.matchupPeriodId === liveWeek);
+    if (matchup && activeMatchupTeamA === null) {
+      activeMatchupTeamA = matchup.home?.teamId ?? null;
+      activeMatchupTeamB = matchup.away?.teamId ?? null;
+    }
+  }
 
   function buildScoringMap() {
-    const map = {};
+    const map   = {};
     const items = globalData?.settings?.scoringSettings?.scoringItems || [];
     items.forEach(item => {
       const val = item.pointsOverrides?.[0]?.points ?? item.points ?? 0;
@@ -1722,16 +1646,16 @@
 
   function logScoringMap() {
     const items = globalData?.settings?.scoringSettings?.scoringItems || [];
-    const map = buildScoringMap();
-    console.group('%c⚾ ESPN Scoring Map — All Stat IDs', 'color:#d4a017;font-weight:bold;font-size:14px');
-    console.log('Full map object:', map);
+    const map   = buildScoringMap();
+    console.group('%c⚾ ESPN Scoring Map', 'color:#d4a017;font-weight:bold');
+    console.log('Map:', map);
     items.forEach(item => {
       const val = item.pointsOverrides?.[0]?.points ?? item.points ?? 0;
       const effective = item.isReverseItem ? -val : val;
-      console.log(`  statId=${item.statId}  points=${effective}  isReverse=${item.isReverseItem}  raw:`, item);
+      console.log(`  statId=${item.statId}  points=${effective}  isReverse=${item.isReverseItem}`);
     });
     console.groupEnd();
-    window._scoringMap = map;
+    window._scoringMap   = map;
     window._scoringItems = items;
   }
 
@@ -1756,7 +1680,7 @@
       pts += (scoringMap[14] ?? 0) * sb;
       pts += (scoringMap[10] ?? 0) * tb;
     } else {
-      const ipRaw = String(mlbStats.inningsPitched ?? '0');
+      const ipRaw   = String(mlbStats.inningsPitched ?? '0');
       const ipParts = ipRaw.split('.');
       const ipWhole = parseInt(ipParts[0]) || 0;
       const ipFrac  = parseInt(ipParts[1] || '0');
@@ -1766,7 +1690,7 @@
       } else {
         totalOuts = ipWhole * 3 + ipFrac;
       }
-      const ip = totalOuts / 3;
+      const ip     = totalOuts / 3;
       const er     = mlbStats.earnedRuns   ?? 0;
       const k      = mlbStats.strikeOuts   ?? 0;
       const bb     = mlbStats.baseOnBalls  ?? 0;
@@ -1787,10 +1711,6 @@
     }
     return Math.round(pts * 10) / 10;
   }
-
-  let activeMatchupTeamA = MY_TEAM_ID;
-  let activeMatchupTeamB = null;
-  let cachedTodayStatsMap = null;
 
   function renderMiniMatchupStrip() {
     const strip = document.getElementById('mini-matchup-strip');
@@ -1813,7 +1733,7 @@
       const isActive = (activeMatchupTeamA === hId || activeMatchupTeamA === aId);
 
       const pill = document.createElement('div');
-      pill.className = `mini-matchup${isActive ? ' active' : ''}`;
+      pill.className = `mini-matchup${isActive?' active':''}`;
       pill.innerHTML = `
         <div class="mini-team">
           <div class="mini-abbrev">${esc(hT.abbrev)}</div>
@@ -1841,6 +1761,9 @@
     const panel = document.getElementById('fantasy-matchup-panel');
     if (!panel || !globalData) return;
 
+    // Auto-detect matchup if not yet set
+    detectMyMatchup();
+
     try {
       const schedule = globalData.schedule || [];
       let matchup, teamAId, teamBId;
@@ -1854,7 +1777,11 @@
         teamAId = overrideTeamA;
         teamBId = overrideTeamB;
       } else {
-        const useA = activeMatchupTeamA || MY_TEAM_ID;
+        const useA = activeMatchupTeamA;
+        if (!useA) {
+          panel.innerHTML = `<div class="fmatch-loading">No matchup found. Select one above.</div>`;
+          return;
+        }
         matchup = schedule.find(m =>
           m.matchupPeriodId === liveWeek &&
           (m.home?.teamId === useA || m.away?.teamId === useA)
@@ -1863,14 +1790,11 @@
         teamBId = matchup
           ? (matchup.home?.teamId === useA ? matchup.away?.teamId : matchup.home?.teamId)
           : null;
-        if (!activeMatchupTeamB) {
-          activeMatchupTeamA = teamAId;
-          activeMatchupTeamB = teamBId;
-        }
+        activeMatchupTeamB = teamBId;
       }
 
       if (!matchup) {
-        panel.innerHTML = `<div class="fmatch-loading">No matchup found.</div>`;
+        panel.innerHTML = `<div class="fmatch-loading">No matchup found. Select one above.</div>`;
         return;
       }
 
@@ -1892,7 +1816,7 @@
         return;
       }
 
-      panel.innerHTML = `<div class="fmatch-loading">Fetching today's stats&#8230;</div>`;
+      panel.innerHTML = `<div class="fmatch-loading">Fetching today's stats…</div>`;
 
       if (!cachedTodayStatsMap) {
         cachedTodayStatsMap = {};
@@ -1901,8 +1825,8 @@
           const state = game.gameData?.status?.abstractGameState;
           if (!pk || state === 'Preview') return;
           try {
-            const res   = await fetch(`${MLB_API}/api/v1/game/${pk}/boxscore`);
-            const data  = await res.json();
+            const res  = await fetch(`${MLB_API}/api/v1/game/${pk}/boxscore`);
+            const data = await res.json();
             const teams = data.teams || {};
             ['home','away'].forEach(side => {
               const batters  = teams[side]?.batters  || [];
@@ -1935,12 +1859,11 @@
 
       const aEnriched = enrichPlayers(aStarters);
       const bEnriched = enrichPlayers(bStarters);
-      fMatchupData = { aEnriched, bEnriched };
       renderMatchupPanel(teamA, teamB, aPts, bPts, aWin, bWin, aEnriched, bEnriched);
 
     } catch(err) {
       console.warn('[Fantasy Matchup]', err);
-      if (panel) panel.innerHTML = `<div class="fmatch-loading" style="color:var(--dark-red)">Could not load matchup: ${err.message}</div>`;
+      if (panel) panel.innerHTML = `<div class="fmatch-loading" style="color:var(--dark-red)">Could not load: ${err.message}</div>`;
     }
   }
 
@@ -1960,11 +1883,10 @@
         } else {
           ptsCls = 'zero'; ptsDisp = '—';
         }
-        const nameCls = hasGame ? 'playing' : '';
         return `
           <div class="fmatch-player-row-2col">
             <div class="fmatch-pos">${esc(p.pos)}</div>
-            <div class="fmatch-pname ${nameCls}">${esc(p.name)}</div>
+            <div class="fmatch-pname ${hasGame?'playing':''}">${esc(p.name)}</div>
             <div class="fmatch-ppts ${ptsCls}">${ptsDisp}</div>
           </div>`;
       }).join('');
@@ -2006,31 +1928,40 @@
       </div>`;
   }
 
-  function refreshMlb() { cachedTodayStatsMap = null; loadMlb(true); loadFantasyMatchup(); }
+  function refreshMlb() {
+    cachedTodayStatsMap = null;
+    loadMlb(true);
+    loadFantasyMatchup();
+  }
 
   async function loadMlb(showLoader = true) {
     const list = document.getElementById('mlb-game-list');
     if (showLoader) list.innerHTML = `<div class="mlb-no-games">Loading today's games…</div>`;
     cachedTodayStatsMap = null;
 
+    // FIX: cancel any existing refresh timer before starting a new polling cycle
+    if (mlbRefreshTm) { clearTimeout(mlbRefreshTm); mlbRefreshTm = null; }
+
     try {
-      const today   = new Date();
-      const bball   = new Date(today.getTime() - 3 * 60 * 60 * 1000);
-      const dateStr = `${bball.getFullYear()}-${String(bball.getMonth()+1).padStart(2,'0')}-${String(bball.getDate()).padStart(2,'0')}`;
+      // FIX: use UTC date with proper baseball day boundary (5am UTC = midnight ET roughly)
+      const now     = new Date();
+      const etMs    = now.getTime() - (now.getTimezoneOffset() + 300) * 60000; // offset to ET
+      const etDate  = new Date(etMs);
+      // Roll back if before 5am ET (late-night games still "today" in baseball context)
+      const etHour  = etDate.getUTCHours();
+      if (etHour < 5) etDate.setUTCDate(etDate.getUTCDate() - 1);
+      const dateStr = `${etDate.getUTCFullYear()}-${String(etDate.getUTCMonth()+1).padStart(2,'0')}-${String(etDate.getUTCDate()).padStart(2,'0')}`;
 
       document.getElementById('mlb-date-label').textContent =
-        today.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }) + ' Games';
+        now.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }) + ' Games';
 
-      // ── Fetch schedule with probable pitchers hydrated ──
       const schedRes  = await fetch(`${MLB_API}/api/v1/schedule?sportId=1&date=${dateStr}&hydrate=linescore,probablePitcher(note)&language=en`);
       const schedData = await schedRes.json();
       const games     = schedData.dates?.[0]?.games || [];
 
-      // Store probable pitchers keyed by gamePk
       mlbProbablePitchers = {};
       games.forEach(g => {
-        const pk = g.gamePk;
-        mlbProbablePitchers[pk] = {
+        mlbProbablePitchers[g.gamePk] = {
           away: g.teams?.away?.probablePitcher?.fullName || '',
           home: g.teams?.home?.probablePitcher?.fullName || '',
         };
@@ -2054,43 +1985,25 @@
             return data;
           } catch {}
         }
-        // For Preview games, build a minimal data object with record info
         return {
           gameData: {
-            game:   { pk: g.gamePk },
-            teams:  {
-              home: {
-                teamName: g.teams?.home?.team?.name || '?',
-                record: g.teams?.home?.leagueRecord || g.teams?.home?.team?.record,
-              },
-              away: {
-                teamName: g.teams?.away?.team?.name || '?',
-                record: g.teams?.away?.leagueRecord || g.teams?.away?.team?.record,
-              }
+            game:    { pk: g.gamePk },
+            teams:   {
+              home: { teamName: g.teams?.home?.team?.name || '?', record: g.teams?.home?.leagueRecord || g.teams?.home?.team?.record },
+              away: { teamName: g.teams?.away?.team?.name || '?', record: g.teams?.away?.leagueRecord || g.teams?.away?.team?.record }
             },
-            status: g.status,
+            status:   g.status,
             datetime: { dateTime: g.gameDate },
             officialDate: g.officialDate
           },
-          liveData: {
-            linescore: {
-              teams: {
-                home: { runs: '' },
-                away: { runs: '' }
-              },
-              currentInning: 0,
-              inningHalf: '',
-              outs: 0
-            },
-            plays: {}
-          }
+          liveData: { linescore: { teams: { home:{ runs:'' }, away:{ runs:'' } }, currentInning:0, inningHalf:'', outs:0 }, plays:{} }
         };
       }));
 
       mlbGames  = freshGames;
       mlbLoaded = true;
 
-      const order  = { 'Live': 0, 'Preview': 1, 'Final': 2 };
+      const order  = { 'Live':0, 'Preview':1, 'Final':2 };
       const sorted = [...mlbGames].sort((a,b) =>
         (order[a.gameData?.status?.abstractGameState]??3) - (order[b.gameData?.status?.abstractGameState]??3)
       );
@@ -2103,9 +2016,7 @@
       finalSection.style.display = finalGames.length ? '' : 'none';
 
       if (showLoader || list.children.length === 0) {
-        list.innerHTML = activeGames.length
-          ? ''
-          : `<div class="mlb-no-games">No live or upcoming games right now.</div>`;
+        list.innerHTML = activeGames.length ? '' : `<div class="mlb-no-games">No live or upcoming games right now.</div>`;
         activeGames.forEach(game => list.appendChild(buildMlbGameCard(game)));
         finalList.innerHTML = '';
         finalGames.forEach(game => finalList.appendChild(buildMlbGameCard(game)));
@@ -2114,7 +2025,7 @@
         const newActivePks = new Set(activeGames.map(g => String(g.gameData?.game?.pk)));
         existingPks.forEach(pk => { if (!newActivePks.has(pk)) document.getElementById(`mlb-card-${pk}`)?.remove(); });
         activeGames.forEach(game => {
-          const pk       = String(game.gameData?.game?.pk);
+          const pk = String(game.gameData?.game?.pk);
           const existing = document.getElementById(`mlb-card-${pk}`);
           const newCard  = buildMlbGameCard(game);
           if (!existing) {
@@ -2137,28 +2048,36 @@
         const newFinalPks = new Set(finalGames.map(g => String(g.gameData?.game?.pk)));
         existingFinalPks.forEach(pk => { if (!newFinalPks.has(pk)) document.getElementById(`mlb-card-${pk}`)?.remove(); });
         finalGames.forEach(game => {
-          const pk       = String(game.gameData?.game?.pk);
+          const pk = String(game.gameData?.game?.pk);
           const existing = document.getElementById(`mlb-card-${pk}`);
           const newCard  = buildMlbGameCard(game);
-          if (!existing) {
-            finalList.appendChild(newCard);
-          } else {
-            existing.className = newCard.className;
-            existing.innerHTML = newCard.innerHTML;
-          }
+          if (!existing) { finalList.appendChild(newCard); }
+          else { existing.className = newCard.className; existing.innerHTML = newCard.innerHTML; }
         });
       }
 
-      if (mlbRefreshTm) clearTimeout(mlbRefreshTm);
+      // FIX: only poll when tab is active; cancel on tab switch
       if (hasLive) {
-        mlbRefreshTm = setTimeout(() => { cachedTodayStatsMap = null; loadMlb(false); }, 15000);
-        setTimeout(() => { renderMiniMatchupStrip(); loadFantasyMatchup(activeMatchupTeamA, activeMatchupTeamB); }, 60000);
+        mlbRefreshTm = setTimeout(() => {
+          // Only continue polling if MLB Live tab is still visible
+          if (document.getElementById('tab-mlblive').style.display !== 'none') {
+            cachedTodayStatsMap = null;
+            loadMlb(false);
+          }
+        }, 15000);
+        setTimeout(() => {
+          if (document.getElementById('tab-mlblive').style.display !== 'none') {
+            renderMiniMatchupStrip();
+            loadFantasyMatchup(activeMatchupTeamA, activeMatchupTeamB);
+          }
+        }, 60000);
       }
 
     } catch(err) {
       if (showLoader) list.innerHTML = `<div class="mlb-no-games" style="color:var(--dark-red)">Error: ${esc(err.message)}</div>`;
-      if (mlbRefreshTm) clearTimeout(mlbRefreshTm);
-      mlbRefreshTm = setTimeout(() => loadMlb(false), 30000);
+      mlbRefreshTm = setTimeout(() => {
+        if (document.getElementById('tab-mlblive').style.display !== 'none') loadMlb(false);
+      }, 30000);
     }
   }
 
@@ -2173,45 +2092,34 @@
     try {
       const d = new Date(isoDate);
       if (isNaN(d.getTime())) return '';
-      return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      return d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
     } catch(e) { return ''; }
   }
 
   function getTeamRecord(teamRecord) {
     if (!teamRecord) return '';
-    const wins   = teamRecord.wins   ?? 0;
-    const losses = teamRecord.losses ?? 0;
-    return `${wins}-${losses}`;
+    return `${teamRecord.wins??0}-${teamRecord.losses??0}`;
   }
 
   function buildMlbGameCard(game) {
-    const gd     = game.gameData || {};
-    const ld     = game.liveData || {};
-    const state  = gd.status?.abstractGameState || 'Preview';
-    const detail = gd.status?.detailedState     || 'Scheduled';
-    const pk     = gd.game?.pk;
-    const isLive = state === 'Live';
-    const isFinal= state === 'Final';
+    const gd      = game.gameData || {};
+    const ld      = game.liveData || {};
+    const state   = gd.status?.abstractGameState || 'Preview';
+    const detail  = gd.status?.detailedState     || 'Scheduled';
+    const pk      = gd.game?.pk;
+    const isLive  = state === 'Live';
+    const isFinal = state === 'Final';
     const isPreview = state === 'Preview';
 
     const homeTeam = gd.teams?.home?.teamName || gd.teams?.home?.team?.name || '?';
     const awayTeam = gd.teams?.away?.teamName || gd.teams?.away?.team?.name || '?';
 
-    // Records: prefer liveData boxscore teams, fall back to gameData teams record
-    const homeRecord = getTeamRecord(
-      ld.boxscore?.teams?.home?.team?.record ||
-      gd.teams?.home?.record ||
-      gd.teams?.home?.leagueRecord
-    );
-    const awayRecord = getTeamRecord(
-      ld.boxscore?.teams?.away?.team?.record ||
-      gd.teams?.away?.record ||
-      gd.teams?.away?.leagueRecord
-    );
+    const homeRecord = getTeamRecord(ld.boxscore?.teams?.home?.team?.record || gd.teams?.home?.record || gd.teams?.home?.leagueRecord);
+    const awayRecord = getTeamRecord(ld.boxscore?.teams?.away?.team?.record || gd.teams?.away?.record || gd.teams?.away?.leagueRecord);
 
-    const ls    = ld.linescore || {};
-    const homeR = ls.teams?.home?.runs ?? (isFinal||isLive ? 0 : '');
-    const awayR = ls.teams?.away?.runs ?? (isFinal||isLive ? 0 : '');
+    const ls          = ld.linescore || {};
+    const homeR       = ls.teams?.home?.runs ?? (isFinal||isLive ? 0 : '');
+    const awayR       = ls.teams?.away?.runs ?? (isFinal||isLive ? 0 : '');
     const inning      = ls.currentInning || 0;
     const inningHalf  = ls.inningHalf    || '';
     const inningArrow = inningHalf === 'Top' ? '▲' : '▼';
@@ -2237,49 +2145,26 @@
     let inningStr = '';
     if (isLive && inning > 0) inningStr = `${inningArrow} ${inning}${inningOrdinal(inning)}`;
     else if (isFinal)         inningStr = inning > 9 ? `F/${inning}` : 'Final';
-    else {
-      inningStr = formatStartTime(gd.datetime?.dateTime) || detail;
-    }
+    else                      inningStr = formatStartTime(gd.datetime?.dateTime) || detail;
 
     const cardClass = isLive ? 'mlb-game-card live-game' : isFinal ? 'mlb-game-card final-game' : 'mlb-game-card';
     const expanded  = mlbExpanded[pk] || false;
 
-    // ── Probable pitchers for preview games ──
-    const probable = mlbProbablePitchers[pk] || {};
+    const probable   = mlbProbablePitchers[pk] || {};
     const awaySpName = probable.away || '';
     const homeSpName = probable.home || '';
 
-    // Build preview info strip (start time + SPs)
     let previewStripHtml = '';
     if (isPreview) {
       const gameTime = formatStartTime(gd.datetime?.dateTime);
-      const hasAnySP = awaySpName || homeSpName;
       previewStripHtml = `<div class="mlb-preview-strip">`;
-      if (gameTime) {
-        previewStripHtml += `<div class="mlb-preview-row">
-          <span class="mlb-preview-label">TIME</span>
-          <span class="mlb-preview-value"><span class="mlb-game-time-badge">${esc(gameTime)}</span></span>
-        </div>`;
-      }
-      if (awaySpName) {
-        previewStripHtml += `<div class="mlb-preview-row">
-          <span class="mlb-preview-label">SP</span>
-          <span class="mlb-preview-value sp-name">${esc(awaySpName)}</span>${fantasyTag(awaySpName)}
-        </div>`;
-      }
-      if (homeSpName) {
-        previewStripHtml += `<div class="mlb-preview-row">
-          <span class="mlb-preview-label">SP</span>
-          <span class="mlb-preview-value sp-name">${esc(homeSpName)}</span>${fantasyTag(homeSpName)}
-        </div>`;
-      }
-      if (!gameTime && !hasAnySP) {
-        previewStripHtml += `<div class="mlb-preview-row"><span class="mlb-preview-label" style="color:var(--muted)">TBD</span></div>`;
-      }
+      if (gameTime) previewStripHtml += `<div class="mlb-preview-row"><span class="mlb-preview-label">TIME</span><span class="mlb-preview-value"><span class="mlb-game-time-badge">${esc(gameTime)}</span></span></div>`;
+      if (awaySpName) previewStripHtml += `<div class="mlb-preview-row"><span class="mlb-preview-label">SP</span><span class="mlb-preview-value sp-name">${esc(awaySpName)}</span>${fantasyTag(awaySpName)}</div>`;
+      if (homeSpName) previewStripHtml += `<div class="mlb-preview-row"><span class="mlb-preview-label">SP</span><span class="mlb-preview-value sp-name">${esc(homeSpName)}</span>${fantasyTag(homeSpName)}</div>`;
+      if (!gameTime && !awaySpName && !homeSpName) previewStripHtml += `<div class="mlb-preview-row"><span class="mlb-preview-label" style="color:var(--muted)">TBD</span></div>`;
       previewStripHtml += `</div>`;
     }
 
-    // Build decisions strip for final games
     let decisionHtml = '';
     if (isFinal) {
       const decisions = ld.decisions || {};
@@ -2294,9 +2179,7 @@
           const found = Object.values(players).find(p => p.person?.fullName === name);
           if (found) {
             const s = found.stats?.pitching || found.gameStats?.pitching || {};
-            const ip = s.inningsPitched ?? '';
-            const er = s.earnedRuns     ?? '';
-            const k  = s.strikeOuts     ?? '';
+            const ip = s.inningsPitched ?? '', er = s.earnedRuns ?? '', k = s.strikeOuts ?? '';
             if (ip !== '') return `${ip} IP, ${er} ER, ${k} K`;
           }
         }
@@ -2336,16 +2219,8 @@
       ${previewStripHtml}
       ${isLive&&(pitcher||batter) ? `
         <div class="mlb-atbat-strip">
-          <div class="mlb-atbat-row">
-            <span class="mlb-player-label">P</span>
-            <span class="mlb-player-name">${esc(pitcher||'—')}</span>
-            ${fantasyTag(pitcher)}
-          </div>
-          <div class="mlb-atbat-row">
-            <span class="mlb-player-label">AB</span>
-            <span class="mlb-player-name">${esc(batter||'—')}</span>
-            ${fantasyTag(batter)}
-          </div>
+          <div class="mlb-atbat-row"><span class="mlb-player-label">P</span><span class="mlb-player-name">${esc(pitcher||'—')}</span>${fantasyTag(pitcher)}</div>
+          <div class="mlb-atbat-row"><span class="mlb-player-label">AB</span><span class="mlb-player-name">${esc(batter||'—')}</span>${fantasyTag(batter)}</div>
         </div>` : ''}
       ${decisionHtml}
       ${isLive ? `<div class="mlb-expand-hint" id="hint-${pk}" onclick="toggleMlbExpand('${pk}')">${expanded?'▴ CLOSE':'▾ PITCHES'}</div>` : ''}
@@ -2366,9 +2241,7 @@
     if (hint) hint.textContent = mlbExpanded[pk] ? '▴ CLOSE' : '▾ PITCHES';
   }
 
-  function inningOrdinal(n) {
-    return n===1?'st':n===2?'nd':n===3?'rd':'th';
-  }
+  function inningOrdinal(n) { return n===1?'st':n===2?'nd':n===3?'rd':'th'; }
 
   function buildDiamond(first, second, third) {
     const f=first?'#d4a017':'none', s=second?'#d4a017':'none', t=third?'#d4a017':'none', stroke='#8b6914';
@@ -2428,53 +2301,43 @@
 <script>
 function showPitcherDebug() {
   document.getElementById('debug-panel').style.display = 'block';
-  document.getElementById('debug-btn').style.display = 'none';
-  const statsMap = cachedTodayStatsMap || {};
+  document.getElementById('debug-btn').style.display   = 'none';
+  const statsMap   = cachedTodayStatsMap || {};
   const scoringMap = buildScoringMap();
-
-  const pitchers = Object.entries(statsMap)
-    .filter(([, v]) => v.ispitcher)
-    .map(([name]) => name);
+  const pitchers   = Object.entries(statsMap).filter(([,v]) => v.ispitcher).map(([name]) => name);
 
   if (!pitchers.length) {
     document.getElementById('debug-content').innerHTML =
-      '<div style="color:#aaa">No pitcher stats cached yet — visit MLB Live tab first and wait for games to load.</div>';
+      '<div style="color:#aaa">No pitcher stats cached yet — visit MLB Live tab first.</div>';
     return;
   }
 
-  const items = globalData?.settings?.scoringSettings?.scoringItems || [];
-  const nonZero = Object.entries(scoringMap).filter(([,v]) => v !== 0);
-
+  const items    = globalData?.settings?.scoringSettings?.scoringItems || [];
+  const nonZero  = Object.entries(scoringMap).filter(([,v]) => v !== 0);
   const KNOWN_IDS = {
     1:'H',2:'AB',3:'TB',4:'AVG',5:'R',6:'RBI',7:'2B',8:'K(pit)',9:'HR',10:'H(pit)',
     11:'BB(bat)',12:'HBP(pit)',13:'SB+CS',14:'SB',15:'CS',16:'K(bat)',17:'K(bat)',
-    19:'IP',20:'IP/Out',21:'SV',22:'BB(pit)',23:'SB',24:'ER',
-    25:'W',26:'L',27:'SV',28:'HLD',29:'BS',30:'ERA',31:'WHIP',
-    32:'CG',33:'SHO',34:'NH',37:'BB(pit)',39:'?',41:'QS',42:'?',
-    45:'ER',48:'HLD',53:'QS',57:'PA',63:'W',72:'OBP',73:'SLG',74:'OPS'
+    19:'IP',20:'IP/Out',21:'SV',22:'BB(pit)',23:'SB',24:'ER',25:'W',26:'L',
+    27:'SV',28:'HLD',29:'BS',30:'ERA',31:'WHIP',32:'CG',33:'SHO',34:'NH',
+    37:'BB(pit)',39:'?',41:'QS',42:'?',45:'ER',48:'HLD',53:'QS',57:'PA',
+    63:'W',72:'OBP',73:'SLG',74:'OPS'
   };
 
   let html = `<div style="margin-bottom:10px;background:#111;border:1px solid #333;border-radius:4px;overflow:hidden">
-    <div style="padding:5px 8px;background:#1a1a1a;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center">
-      <span style="color:#d4a017;font-size:11px;font-weight:bold">ALL SCORING STAT IDs FROM ESPN (${nonZero.length} active)</span>
-      <span style="color:#555;font-size:10px">${items.length} total items</span>
+    <div style="padding:5px 8px;background:#1a1a1a;border-bottom:1px solid #333">
+      <span style="color:#d4a017;font-size:11px;font-weight:bold">SCORING STAT IDs (${nonZero.length} active)</span>
     </div>
     <div style="padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px">`;
 
-  nonZero.sort((a,b) => Number(a[0])-Number(b[0])).forEach(([id, val]) => {
-    const name = KNOWN_IDS[id] || '?';
+  nonZero.sort((a,b)=>Number(a[0])-Number(b[0])).forEach(([id,val]) => {
+    const name  = KNOWN_IDS[id] || '?';
     const color = val > 0 ? '#69db7c' : '#ff6b6b';
     html += `<span style="background:#1e1e1e;border:1px solid #333;border-radius:3px;padding:2px 5px;font-size:10px;white-space:nowrap">
       <span style="color:#555">[${id}]</span>
       <span style="color:#aaa">${name}</span>
-      <span style="color:${color};margin-left:2px">${val > 0 ? '+' : ''}${val}</span>
+      <span style="color:${color};margin-left:2px">${val>0?'+':''}${val}</span>
     </span>`;
   });
-
-  if (!nonZero.length) {
-    html += `<span style="color:#ff6b6b;font-size:11px">No scoring items found — ESPN data may not have loaded yet</span>`;
-  }
-
   html += `</div></div>`;
 
   let foundRostered = false;
@@ -2484,27 +2347,22 @@ function showPitcherDebug() {
     if (!fantasyTeam) return;
     foundRostered = true;
 
-    const ipRaw = String(stats.inningsPitched ?? '0');
+    const ipRaw   = String(stats.inningsPitched ?? '0');
     const ipParts = ipRaw.split('.');
     const ipWhole = parseInt(ipParts[0]) || 0;
     const ipFrac  = parseInt(ipParts[1] || '0');
     let totalOuts;
-    if (ipFrac > 2) {
-      totalOuts = Math.round(parseFloat(ipRaw) * 3);
-    } else {
-      totalOuts = ipWhole * 3 + ipFrac;
-    }
-    const ip = totalOuts / 3;
-
-    const er  = stats.earnedRuns    ?? null;
-    const k   = stats.strikeOuts    ?? 0;
-    const bb  = stats.baseOnBalls   ?? 0;
-    const w   = stats.wins          ?? 0;
-    const sv  = stats.saves         ?? 0;
+    if (ipFrac > 2) { totalOuts = Math.round(parseFloat(ipRaw) * 3); }
+    else            { totalOuts = ipWhole * 3 + ipFrac; }
+    const ip  = totalOuts / 3;
+    const er  = stats.earnedRuns   ?? null;
+    const k   = stats.strikeOuts   ?? 0;
+    const bb  = stats.baseOnBalls  ?? 0;
+    const w   = stats.wins         ?? 0;
+    const sv  = stats.saves        ?? 0;
     const erVal = er ?? 0;
     const qs  = (ip >= 6 && erVal <= 3) ? 1 : 0;
-
-    const hAllowed   = stats.hits ?? 0;
+    const hAllowed   = stats.hits      ?? 0;
     const hbpAllowed = stats.hitBatsmen ?? stats.hitByPitch ?? 0;
     const outs = ip * 3;
     const ipOrOutMult = scoringMap[20] ?? 0;
@@ -2514,74 +2372,47 @@ function showPitcherDebug() {
       : `${ip.toFixed(2)} IP = ${outs.toFixed(1)} outs × ${ipOrOutMult}`;
 
     const lines = [
-      { sid:20,  label:'IP/Out',  raw:ipOrOutRaw,    val:ip,         pts:ipOrOutPts },
-      { sid:8,   label:'K',       raw:k,             val:k,          pts:(scoringMap[8]??0)*k },
-      { sid:37,  label:'BB',      raw:bb,            val:bb,         pts:(scoringMap[37]??0)*bb },
-      { sid:10,  label:'H(pit)',  raw:hAllowed,      val:hAllowed,   pts:(scoringMap[10]??0)*hAllowed },
-      { sid:12,  label:'HBP(pit)',raw:hbpAllowed,    val:hbpAllowed, pts:(scoringMap[12]??0)*hbpAllowed },
-      { sid:45,  label:'ER',      raw:er===null?'NULL (using 0)':er, val:erVal, pts:(scoringMap[45]??0)*erVal },
-      { sid:63,  label:'W',       raw:w,             val:w,          pts:(scoringMap[63]??0)*w },
-      { sid:21,  label:'SV',      raw:sv,            val:sv,         pts:(scoringMap[21]??0)*sv },
-      { sid:53,  label:'QS',      raw:`ip=${ip.toFixed(2)}, er=${er===null?'NULL':er} → ${qs}`, val:qs, pts:(scoringMap[53]??0)*qs },
+      { sid:20,  label:'IP/Out',   raw:ipOrOutRaw,    val:ip,         pts:ipOrOutPts },
+      { sid:8,   label:'K',        raw:k,             val:k,          pts:(scoringMap[8]??0)*k },
+      { sid:37,  label:'BB',       raw:bb,            val:bb,         pts:(scoringMap[37]??0)*bb },
+      { sid:10,  label:'H(pit)',   raw:hAllowed,      val:hAllowed,   pts:(scoringMap[10]??0)*hAllowed },
+      { sid:12,  label:'HBP(pit)', raw:hbpAllowed,    val:hbpAllowed, pts:(scoringMap[12]??0)*hbpAllowed },
+      { sid:45,  label:'ER',       raw:er===null?'NULL (using 0)':er, val:erVal, pts:(scoringMap[45]??0)*erVal },
+      { sid:63,  label:'W',        raw:w,             val:w,          pts:(scoringMap[63]??0)*w },
+      { sid:21,  label:'SV',       raw:sv,            val:sv,         pts:(scoringMap[21]??0)*sv },
+      { sid:53,  label:'QS',       raw:`ip=${ip.toFixed(2)}, er=${er===null?'NULL':er} → ${qs}`, val:qs, pts:(scoringMap[53]??0)*qs },
     ];
-
-    const total = lines.reduce((s, ln) => s + ln.pts, 0);
-
-    const knownKeys = ['inningsPitched','strikeOuts','baseOnBalls','earnedRuns','wins','losses','saves','holds','blownSaves','completeGames','shutouts'];
-    const extraStats = Object.entries(stats)
-      .filter(([k]) => !knownKeys.includes(k) && stats[k] !== 0 && stats[k] !== null && stats[k] !== undefined)
-      .map(([k,v]) => `${k}:${v}`)
-      .join('  ');
+    const total = lines.reduce((s,ln) => s+ln.pts, 0);
 
     html += `<div style="margin-bottom:14px;border-bottom:1px solid #333;padding-bottom:12px">`;
     html += `<div style="color:#d4a017;margin-bottom:6px;font-weight:bold">${playerKey.toUpperCase()} <span style="color:#888;font-size:11px">[${fantasyTeam}]</span></div>`;
-
     html += `<div style="display:grid;grid-template-columns:28px 40px 1fr 70px 50px;gap:2px 6px;padding:2px 0;color:#555;font-size:10px;border-bottom:1px solid #333;margin-bottom:3px">
       <span>SID</span><span>STAT</span><span>RAW VALUE</span><span style="text-align:right">× MULT</span><span style="text-align:right">PTS</span>
     </div>`;
 
     lines.forEach(line => {
-      if (line.val === 0 && line.pts === 0 && line.label !== 'ER' && line.label !== 'QS') return;
-      const hasMap = scoringMap[line.sid] !== undefined;
-      const color = !hasMap ? '#ff6b6b' : line.pts > 0 ? '#69db7c' : line.pts < 0 ? '#ff6b6b' : '#666';
-      const multDisp = !hasMap ? '<span style="color:#ff6b6b">MISSING</span>' : (scoringMap[line.sid] >= 0 ? '+' : '') + scoringMap[line.sid];
-      html += `<div style="display:grid;grid-template-columns:28px 40px 1fr 70px 50px;gap:2px 6px;padding:3px 0;color:${color};border-bottom:1px dashed #222">`;
-      html += `<span style="color:#444">[${line.sid}]</span>`;
-      html += `<span>${line.label}</span>`;
-      html += `<span style="color:#999;font-size:11px">${line.raw}</span>`;
-      html += `<span style="text-align:right;font-size:11px">${multDisp}</span>`;
-      html += `<span style="text-align:right">${line.pts >= 0 ? '+' : ''}${line.pts.toFixed(1)}</span>`;
-      html += `</div>`;
+      if (line.val===0 && line.pts===0 && line.label!=='ER' && line.label!=='QS') return;
+      const hasMap  = scoringMap[line.sid] !== undefined;
+      const color   = !hasMap?'#ff6b6b':line.pts>0?'#69db7c':line.pts<0?'#ff6b6b':'#666';
+      const multDisp = !hasMap?'<span style="color:#ff6b6b">MISSING</span>':(scoringMap[line.sid]>=0?'+':'')+scoringMap[line.sid];
+      html += `<div style="display:grid;grid-template-columns:28px 40px 1fr 70px 50px;gap:2px 6px;padding:3px 0;color:${color};border-bottom:1px dashed #222">
+        <span style="color:#444">[${line.sid}]</span>
+        <span>${line.label}</span>
+        <span style="color:#999;font-size:11px">${line.raw}</span>
+        <span style="text-align:right;font-size:11px">${multDisp}</span>
+        <span style="text-align:right">${line.pts>=0?'+':''}${line.pts.toFixed(1)}</span>
+      </div>`;
     });
 
-    html += `<div style="margin-top:7px;padding-top:6px;border-top:1px solid #444;display:flex;justify-content:space-between;font-size:13px">`;
-    html += `<span style="color:#888">Calculated total</span>`;
-    html += `<span style="color:#d4a017;font-weight:bold">${total >= 0 ? '+' : ''}${total.toFixed(1)} pts</span>`;
-    html += `</div>`;
-
-    if (extraStats) {
-      html += `<div style="margin-top:5px;font-size:10px;color:#555;line-height:1.6"><span style="color:#666">Other raw stats: </span>${extraStats}</div>`;
-    }
-
-    html += `</div>`;
+    html += `<div style="margin-top:7px;padding-top:6px;border-top:1px solid #444;display:flex;justify-content:space-between;font-size:13px">
+      <span style="color:#888">Calculated total</span>
+      <span style="color:#d4a017;font-weight:bold">${total>=0?'+':''}${total.toFixed(1)} pts</span>
+    </div></div>`;
   });
 
-  if (!foundRostered) {
-    html += '<div style="color:#aaa">No rostered pitchers found in today\'s cached stats.</div>';
-  }
-
+  if (!foundRostered) html += '<div style="color:#aaa">No rostered pitchers in today\'s cached stats.</div>';
   document.getElementById('debug-content').innerHTML = html;
 }
-
-const _origSwitchTab = switchTab;
-window.switchTab = async function(tab) {
-  await _origSwitchTab(tab);
-  const btn = document.getElementById('debug-btn');
-  const panel = document.getElementById('debug-panel');
-  if (btn) btn.style.display = tab === 'mlblive' ? 'block' : 'none';
-  if (panel && tab !== 'mlblive') panel.style.display = 'none';
-};
 </script>
-
 </body>
 </html>
