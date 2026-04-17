@@ -1164,6 +1164,7 @@
       renderStandings();
       renderSegments();
       loadFantasyMatchup();
+      logScoringMap();
 
     } catch(err) {
       let msg = err.message;
@@ -1710,6 +1711,24 @@
     return map;
   }
 
+  function logScoringMap() {
+    const items = globalData?.settings?.scoringSettings?.scoringItems || [];
+    const map = buildScoringMap();
+    console.group('%c⚾ ESPN Scoring Map — All Stat IDs', 'color:#d4a017;font-weight:bold;font-size:14px');
+    console.log('Full map object:', map);
+    console.log('\nAll scoringItems raw:');
+    items.forEach(item => {
+      const val = item.pointsOverrides?.[0]?.points ?? item.points ?? 0;
+      const effective = item.isReverseItem ? -val : val;
+      console.log(`  statId=${item.statId}  points=${effective}  isReverse=${item.isReverseItem}  raw:`, item);
+    });
+    console.groupEnd();
+    // Also store on window for easy inspection
+    window._scoringMap = map;
+    window._scoringItems = items;
+    console.log('%cTip: window._scoringMap and window._scoringItems are available in console', 'color:#888');
+  }
+
   function calcFantasyPts(mlbStats, ispitcher, scoringMap) {
     if (!mlbStats || !scoringMap) return 0;
     let pts = 0;
@@ -1752,18 +1771,25 @@
       const cg  = mlbStats.completeGames?? 0;
       const sho = mlbStats.shutouts     ?? 0;
       const qs  = (ip >= 6 && er <= 3)  ? 1 : 0;
-      pts += (scoringMap[19] ?? 0) * ip;
-      pts += (scoringMap[23] ?? 0) * k;
-      pts += (scoringMap[22] ?? 0) * bb;
-      pts += (scoringMap[24] ?? 0) * er;
-      pts += (scoringMap[25] ?? 0) * w;
-      pts += (scoringMap[26] ?? 0) * l;
-      pts += (scoringMap[27] ?? 0) * sv;
-      pts += (scoringMap[28] ?? 0) * hld;
-      pts += (scoringMap[29] ?? 0) * bs;
+      // Confirmed stat IDs for this league:
+      // [8]=K +1, [10]=H allowed -1, [12]=HBP allowed -1
+      // [20]=IP(+3) or Outs(+1), [21]=SV +5, [37]=BB -1
+      // [45]=ER -3, [48]=HLD +1, [53]=QS +5, [63]=W +5
+      // No L or BS scoring in this league
+      const outs = ip * 3;
+      const ipOrOutVal = scoringMap[20] ?? 0;
+      pts += ipOrOutVal === 3 ? ipOrOutVal * ip : ipOrOutVal * outs;
+      pts += (scoringMap[8]  ?? 0) * k;
+      pts += (scoringMap[37] ?? 0) * bb;
+      pts += (scoringMap[10] ?? 0) * (mlbStats.hits ?? 0);
+      pts += (scoringMap[12] ?? 0) * (mlbStats.hitBatsmen ?? mlbStats.hitByPitch ?? 0);
+      pts += (scoringMap[45] ?? 0) * er;
+      pts += (scoringMap[63] ?? 0) * w;
+      pts += (scoringMap[21] ?? 0) * sv;
+      pts += (scoringMap[48] ?? 0) * hld;
+      pts += (scoringMap[53] ?? 0) * qs;
       pts += (scoringMap[32] ?? 0) * cg;
       pts += (scoringMap[33] ?? 0) * sho;
-      pts += (scoringMap[41] ?? 0) * qs;
     }
     return Math.round(pts * 10) / 10;
   }
@@ -2261,7 +2287,7 @@
           </div>
         </div>` : ''}
       ${decisionHtml}
-      ${isLive ? `<div class="mlb-expand-hint" id="hint-${pk}">${expanded?'▴ CLOSE':'▾ PITCHES'}</div>` : ''}
+      ${isLive ? `<div class="mlb-expand-hint" id="hint-${pk}" onclick="toggleMlbExpand('${pk}')">${expanded?'▴ CLOSE':'▾ PITCHES'}</div>` : ''}
       ${isLive ? `<div class="mlb-pitch-log-wrap ${expanded?'open':''}" id="pitchlog-${pk}">
         <div class="mlb-pitch-log">
           <div class="mlb-pitch-log-title">${esc(awayTeam)} @ ${esc(homeTeam)}</div>
@@ -2327,5 +2353,180 @@
 
   loadAll();
 </script>
+
+<!-- ── PITCHER DEBUG PANEL ── -->
+<div id="debug-panel" style="display:none;position:fixed;bottom:16px;right:16px;width:480px;max-height:70vh;overflow-y:auto;background:#1c1c1c;color:#e0e0e0;font-family:monospace;font-size:12px;border:1px solid #d4a017;border-radius:8px;z-index:9999;padding:14px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.5)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <span style="color:#d4a017;font-weight:bold;letter-spacing:1px">&#9918; PITCHER SCORE DEBUG</span>
+    <button onclick="document.getElementById('debug-panel').style.display='none'" style="background:none;border:none;color:#888;font-size:16px;cursor:pointer">&#x2715;</button>
+  </div>
+  <div id="debug-content"></div>
+</div>
+<button onclick="showPitcherDebug()" id="debug-btn" style="display:none;position:fixed;bottom:16px;right:16px;background:#1a2744;color:#d4a017;border:1px solid #d4a017;font-family:Oswald,sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;padding:8px 14px;border-radius:4px;cursor:pointer;z-index:9998">&#9918; DEBUG SCORING</button>
+
+<script>
+function showPitcherDebug() {
+  document.getElementById('debug-panel').style.display = 'block';
+  document.getElementById('debug-btn').style.display = 'none';
+  const statsMap = cachedTodayStatsMap || {};
+  const scoringMap = buildScoringMap();
+
+  const pitchers = Object.entries(statsMap)
+    .filter(([, v]) => v.ispitcher)
+    .map(([name]) => name);
+
+  if (!pitchers.length) {
+    document.getElementById('debug-content').innerHTML =
+      '<div style="color:#aaa">No pitcher stats cached yet — visit MLB Live tab first and wait for games to load.</div>';
+    return;
+  }
+
+  const items = globalData?.settings?.scoringSettings?.scoringItems || [];
+  const nonZero = Object.entries(scoringMap).filter(([,v]) => v !== 0);
+
+  // Known stat ID names for reference
+  const KNOWN_IDS = {
+    1:'H',2:'AB',3:'TB',4:'AVG',5:'R',6:'RBI',7:'2B',8:'K(pit)',9:'HR',10:'H(pit)',
+    11:'BB(bat)',12:'HBP(pit)',13:'SB+CS',14:'SB',15:'CS',16:'K(bat)',17:'K(bat)',
+    19:'IP',20:'IP/Out',21:'SV',22:'BB(pit)',23:'SB',24:'ER',
+    25:'W',26:'L',27:'SV',28:'HLD',29:'BS',30:'ERA',31:'WHIP',
+    32:'CG',33:'SHO',34:'NH',37:'BB(pit)',39:'?',41:'QS',42:'?',
+    45:'ER',48:'HLD',53:'QS',57:'PA',63:'W',72:'OBP',73:'SLG',74:'OPS'
+  };
+
+  let html = `<div style="margin-bottom:10px;background:#111;border:1px solid #333;border-radius:4px;overflow:hidden">
+    <div style="padding:5px 8px;background:#1a1a1a;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center">
+      <span style="color:#d4a017;font-size:11px;font-weight:bold">ALL SCORING STAT IDs FROM ESPN (${nonZero.length} active)</span>
+      <span style="color:#555;font-size:10px">${items.length} total items</span>
+    </div>
+    <div style="padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px">`;
+
+  nonZero.sort((a,b) => Number(a[0])-Number(b[0])).forEach(([id, val]) => {
+    const name = KNOWN_IDS[id] || '?';
+    const color = val > 0 ? '#69db7c' : '#ff6b6b';
+    html += `<span style="background:#1e1e1e;border:1px solid #333;border-radius:3px;padding:2px 5px;font-size:10px;white-space:nowrap">
+      <span style="color:#555">[${id}]</span>
+      <span style="color:#aaa">${name}</span>
+      <span style="color:${color};margin-left:2px">${val > 0 ? '+' : ''}${val}</span>
+    </span>`;
+  });
+
+  if (!nonZero.length) {
+    html += `<span style="color:#ff6b6b;font-size:11px">No scoring items found — ESPN data may not have loaded yet</span>`;
+  }
+
+  html += `</div></div>`;
+
+  let foundRostered = false;
+  pitchers.forEach(playerKey => {
+    const { stats } = statsMap[playerKey];
+    const fantasyTeam = rosterMap[playerKey] || null;
+    if (!fantasyTeam) return; // only show rostered pitchers
+    foundRostered = true;
+
+    const ipRaw   = String(stats.inningsPitched ?? '0').split('.');
+    const ipWhole = parseInt(ipRaw[0]) || 0;
+    const ipFrac  = parseInt(ipRaw[1]) || 0;
+    // Detect if ESPN sent a true decimal like 6.333 vs baseball 6.1
+    const ipIsDecimal = ipFrac > 2;
+    const ip = ipIsDecimal
+      ? parseFloat(stats.inningsPitched)
+      : ipWhole + ipFrac / 3;
+
+    const er  = stats.earnedRuns    ?? null;
+    const k   = stats.strikeOuts    ?? 0;
+    const bb  = stats.baseOnBalls   ?? 0;
+    const w   = stats.wins          ?? 0;
+    const l   = stats.losses        ?? 0;
+    const sv  = stats.saves         ?? 0;
+    const hld = stats.holds         ?? 0;
+    const bs  = stats.blownSaves    ?? 0;
+    const cg  = stats.completeGames ?? 0;
+    const sho = stats.shutouts      ?? 0;
+    const erVal = er ?? 0;
+    const qs  = (ip >= 6 && erVal <= 3) ? 1 : 0;
+
+    const hAllowed   = stats.hits ?? 0;
+    const hbpAllowed = stats.hitBatsmen ?? stats.hitByPitch ?? 0;
+    const outs = ip * 3;
+    const ipOrOutMult = scoringMap[20] ?? 0;
+    const ipOrOutPts  = ipOrOutMult === 3 ? ipOrOutMult * ip : ipOrOutMult * outs;
+    const ipOrOutRaw  = ipOrOutMult === 3
+      ? `${ip.toFixed(2)} IP × +3`
+      : `${ip.toFixed(2)} IP = ${outs.toFixed(1)} outs × ${ipOrOutMult}`;
+
+    const lines = [
+      { sid:20,  label:'IP/Out',  raw:ipOrOutRaw,    val:ip,         pts:ipOrOutPts },
+      { sid:8,   label:'K',       raw:k,             val:k,          pts:(scoringMap[8]??0)*k },
+      { sid:37,  label:'BB',      raw:bb,            val:bb,         pts:(scoringMap[37]??0)*bb },
+      { sid:10,  label:'H(pit)',  raw:hAllowed,      val:hAllowed,   pts:(scoringMap[10]??0)*hAllowed },
+      { sid:12,  label:'HBP(pit)',raw:hbpAllowed,    val:hbpAllowed, pts:(scoringMap[12]??0)*hbpAllowed },
+      { sid:45,  label:'ER',      raw:er===null?'NULL (using 0)':er, val:erVal, pts:(scoringMap[45]??0)*erVal },
+      { sid:63,  label:'W',       raw:w,             val:w,          pts:(scoringMap[63]??0)*w },
+      { sid:21,  label:'SV',      raw:sv,            val:sv,         pts:(scoringMap[21]??0)*sv },
+      { sid:48,  label:'HLD',     raw:hld,           val:hld,        pts:(scoringMap[48]??0)*hld },
+      { sid:53,  label:'QS',      raw:`ip=${ip.toFixed(2)}, er=${er===null?'NULL':er} → ${qs}`, val:qs, pts:(scoringMap[53]??0)*qs },
+    ];
+
+    const total = lines.reduce((s, ln) => s + ln.pts, 0);
+
+    // Raw stats dump for anything not in our known list
+    const knownKeys = ['inningsPitched','strikeOuts','baseOnBalls','earnedRuns','wins','losses','saves','holds','blownSaves','completeGames','shutouts'];
+    const extraStats = Object.entries(stats)
+      .filter(([k]) => !knownKeys.includes(k) && stats[k] !== 0 && stats[k] !== null && stats[k] !== undefined)
+      .map(([k,v]) => `${k}:${v}`)
+      .join('  ');
+
+    html += `<div style="margin-bottom:14px;border-bottom:1px solid #333;padding-bottom:12px">`;
+    html += `<div style="color:#d4a017;margin-bottom:6px;font-weight:bold">${playerKey.toUpperCase()} <span style="color:#888;font-size:11px">[${fantasyTeam}]</span></div>`;
+
+    html += `<div style="display:grid;grid-template-columns:28px 40px 1fr 70px 50px;gap:2px 6px;padding:2px 0;color:#555;font-size:10px;border-bottom:1px solid #333;margin-bottom:3px">
+      <span>SID</span><span>STAT</span><span>RAW VALUE</span><span style="text-align:right">× MULT</span><span style="text-align:right">PTS</span>
+    </div>`;
+
+    lines.forEach(line => {
+      if (line.val === 0 && line.pts === 0 && line.label !== 'ER' && line.label !== 'QS') return;
+      const hasMap = scoringMap[line.sid] !== undefined;
+      const color = !hasMap ? '#ff6b6b' : line.pts > 0 ? '#69db7c' : line.pts < 0 ? '#ff6b6b' : '#666';
+      const multDisp = !hasMap ? '<span style="color:#ff6b6b">MISSING</span>' : (scoringMap[line.sid] >= 0 ? '+' : '') + scoringMap[line.sid];
+      html += `<div style="display:grid;grid-template-columns:28px 40px 1fr 70px 50px;gap:2px 6px;padding:3px 0;color:${color};border-bottom:1px dashed #222">`;
+      html += `<span style="color:#444">[${line.sid}]</span>`;
+      html += `<span>${line.label}</span>`;
+      html += `<span style="color:#999;font-size:11px">${line.raw}</span>`;
+      html += `<span style="text-align:right;font-size:11px">${multDisp}</span>`;
+      html += `<span style="text-align:right">${line.pts >= 0 ? '+' : ''}${line.pts.toFixed(1)}</span>`;
+      html += `</div>`;
+    });
+
+    html += `<div style="margin-top:7px;padding-top:6px;border-top:1px solid #444;display:flex;justify-content:space-between;font-size:13px">`;
+    html += `<span style="color:#888">Calculated total</span>`;
+    html += `<span style="color:#d4a017;font-weight:bold">${total >= 0 ? '+' : ''}${total.toFixed(1)} pts</span>`;
+    html += `</div>`;
+
+    if (extraStats) {
+      html += `<div style="margin-top:5px;font-size:10px;color:#555;line-height:1.6"><span style="color:#666">Other raw stats: </span>${extraStats}</div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  if (!foundRostered) {
+    html += '<div style="color:#aaa">No rostered pitchers found in today\'s cached stats.<br><br>Possible reasons:<br>• rosterMap not populated (rosters not loaded)<br>• Player name mismatch between MLB API and ESPN</div>';
+  }
+
+  document.getElementById('debug-content').innerHTML = html;
+}
+
+// Show the debug button whenever MLB Live tab is active
+const _origSwitchTab = switchTab;
+window.switchTab = async function(tab) {
+  await _origSwitchTab(tab);
+  const btn = document.getElementById('debug-btn');
+  const panel = document.getElementById('debug-panel');
+  if (btn) btn.style.display = tab === 'mlblive' ? 'block' : 'none';
+  if (panel && tab !== 'mlblive') panel.style.display = 'none';
+};
+</script>
+
 </body>
 </html>
