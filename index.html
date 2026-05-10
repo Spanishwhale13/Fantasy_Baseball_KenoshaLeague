@@ -1906,6 +1906,9 @@
   ];
 
   const BATTER_COL_DEFS = [
+    { id:'ab',  label:'AB'  },
+    { id:'h',   label:'H'   },
+    { id:'hr',  label:'HR'  },
     { id:'r',   label:'R'   },
     { id:'tb',  label:'TB'  },
     { id:'rbi', label:'RBI' },
@@ -1953,6 +1956,11 @@
   const BENCH_SLOTS   = new Set([16, 17]);
   const PITCHER_SLOTS = new Set([9, 10, 11, 13, 14, 15]);
   const BATTER_SLOTS  = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 12]);
+  const MLB_POS_TO_SLOT = {
+    'C':0, '1B':1, '2B':2, '3B':3, 'SS':4,
+    'LF':5, 'CF':5, 'RF':5, 'OF':5, 'DH':8, 'UTIL':12,
+    'SP':9, 'P':9, 'RP':11,
+  };
 
   function posLabel(slotId) { return SLOT_LABEL[slotId] ?? 'BN'; }
 
@@ -3263,13 +3271,17 @@ function showPitcherDebug() {
             if (!p?.person?.fullName) return;
             const key = normName(p.person.fullName);
             if (!statsMap[key]) statsMap[key] = {};
-            statsMap[key].battingStats = p.gameStats?.batting || p.stats?.batting || {};
+            statsMap[key].displayName   = p.person.fullName;
+            statsMap[key].mlbPosition   = p.position?.abbreviation || '';
+            statsMap[key].battingStats  = p.gameStats?.batting || p.stats?.batting || {};
           });
           (teams.pitchers || []).forEach(id => {
             const p = players[`ID${id}`];
             if (!p?.person?.fullName) return;
             const key = normName(p.person.fullName);
             if (!statsMap[key]) statsMap[key] = {};
+            statsMap[key].displayName   = p.person.fullName;
+            statsMap[key].mlbPosition   = p.position?.abbreviation || '';
             statsMap[key].pitchingStats = p.gameStats?.pitching || p.stats?.pitching || {};
           });
         });
@@ -3282,40 +3294,57 @@ function showPitcherDebug() {
 
     Object.entries(statsMap).forEach(([nameLower, entry]) => {
       const fp = roster[nameLower];
-      if (!fp) return;
-      const slotId = fp.slotId ?? 16;
-      let isPitcher;
-      let stats;
-      if (PITCHER_SLOTS.has(slotId)) {
-        isPitcher = true;
-        stats = entry.pitchingStats || {};
-        if (!entry.pitchingStats) return;
-      } else if (BATTER_SLOTS.has(slotId)) {
-        isPitcher = false;
-        stats = entry.battingStats || {};
-        if (!entry.battingStats) return;
-      } else {
-        // Bench / IL — infer from available stats
-        if (entry.pitchingStats && !entry.battingStats) {
+      let isPitcher, stats, slotId, posStr;
+
+      if (fp) {
+        slotId = fp.slotId ?? 16;
+        posStr = SLOT_LABEL[slotId] ?? '?';
+        if (PITCHER_SLOTS.has(slotId)) {
           isPitcher = true;
-          stats = entry.pitchingStats;
-        } else {
+          stats = entry.pitchingStats || {};
+          if (!entry.pitchingStats) return;
+        } else if (BATTER_SLOTS.has(slotId)) {
           isPitcher = false;
           stats = entry.battingStats || {};
           if (!entry.battingStats) return;
+        } else {
+          // Bench / IL — infer from available stats
+          if (entry.pitchingStats && !entry.battingStats) {
+            isPitcher = true;
+            stats = entry.pitchingStats;
+          } else {
+            isPitcher = false;
+            stats = entry.battingStats || {};
+            if (!entry.battingStats) return;
+          }
         }
+      } else {
+        // Free agent — infer role from stats
+        if (entry.pitchingStats && !entry.battingStats) {
+          isPitcher = true;
+          stats = entry.pitchingStats;
+        } else if (entry.battingStats) {
+          isPitcher = false;
+          stats = entry.battingStats;
+        } else {
+          return;
+        }
+        const mlbPos = entry.mlbPosition || '';
+        slotId = MLB_POS_TO_SLOT[mlbPos] ?? (isPitcher ? 9 : 8);
+        posStr = mlbPos || (isPitcher ? 'P' : '?');
       }
+
       const totalPts = calcFantasyPts(stats, isPitcher, scoringMap);
       results.push({
-        name:        fp.name,
-        fantasyTeam: fp.abbrev,
-        teamId:      fp.teamId,
+        name:         fp ? fp.name : (entry.displayName || nameLower),
+        fantasyTeam:  fp ? fp.abbrev : 'FA',
+        teamId:       fp ? fp.teamId : 0,
         slotId,
-        posStr:      SLOT_LABEL[slotId] ?? '?',
+        posStr,
         isPitcher,
         stats,
         totalPts,
-        injuryStatus: fp.injuryStatus || '',
+        injuryStatus: fp ? (fp.injuryStatus || '') : '',
       });
     });
 
@@ -3325,6 +3354,8 @@ function showPitcherDebug() {
   function getStatValue(stats, colId) {
     if (!stats) return null;
     switch(colId) {
+      case 'ab':  return stats.atBats       ?? 0;
+      case 'hr':  return stats.homeRuns    ?? 0;
       case 'r':   return stats.runs        ?? 0;
       case 'tb': {
         const h = stats.hits ?? 0, d = stats.doubles ?? 0,
@@ -3378,7 +3409,7 @@ function showPitcherDebug() {
     if (titleEl) titleEl.textContent = `${posName === 'All' ? 'All' : posName}${dateDisp} — ${players.length} players`;
 
     if (!players.length) {
-      wrap.innerHTML = `<div style="text-align:center;padding:32px;font-family:'Special Elite',cursive;color:var(--muted)">No rostered players with stats on this date.</div>`;
+      wrap.innerHTML = `<div style="text-align:center;padding:32px;font-family:'Special Elite',cursive;color:var(--muted)">No players with stats on this date.</div>`;
       return;
     }
 
