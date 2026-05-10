@@ -958,6 +958,103 @@
       color: var(--gold); padding: 3px 8px; border-radius: 4px;
       cursor: pointer; outline: none; color-scheme: dark;
     }
+
+    /* ── PLAYER MODAL ── */
+    #player-modal {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.72);
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    #player-modal-card {
+      background: var(--cream); border: 3px solid var(--gold);
+      border-radius: 10px; max-width: 560px; width: 100%;
+      max-height: 88vh; overflow-y: auto; position: relative;
+    }
+    .pmodal-close {
+      position: absolute; top: 10px; right: 12px;
+      background: none; border: none; cursor: pointer;
+      font-size: 22px; color: rgba(255,255,255,0.6);
+      font-family: 'Oswald', sans-serif; line-height: 1; z-index: 1;
+    }
+    .pmodal-close:hover { color: #fff; }
+    .pmodal-header {
+      background: var(--navy); padding: 16px 18px 13px;
+      border-radius: 7px 7px 0 0;
+    }
+    .pmodal-name {
+      font-family: 'DM Serif Display', serif; font-size: 22px;
+      color: #fff; line-height: 1.15; padding-right: 28px;
+    }
+    .pmodal-meta {
+      font-family: 'Special Elite', cursive; font-size: 11px;
+      color: var(--gold); letter-spacing: 2px; margin-top: 4px;
+    }
+    .pmodal-body { padding: 14px 16px 16px; }
+    .pmodal-section-title {
+      font-family: 'Special Elite', cursive; font-size: 10px;
+      letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
+      border-bottom: 1px solid var(--tan); padding-bottom: 4px; margin-bottom: 10px;
+    }
+    .pmodal-stat-grid {
+      display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px;
+    }
+    .pmodal-stat-box {
+      background: var(--tan); border-radius: 6px;
+      padding: 6px 10px; text-align: center; min-width: 52px;
+    }
+    .pmodal-stat-val {
+      font-family: 'Oswald', sans-serif; font-size: 17px;
+      font-weight: 700; color: var(--navy);
+    }
+    .pmodal-stat-lbl {
+      font-family: 'Special Elite', cursive; font-size: 10px;
+      color: var(--muted); letter-spacing: 1px;
+    }
+    .pmodal-game-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 16px;
+    }
+    .pmodal-game-table th {
+      font-family: 'Special Elite', cursive; font-size: 10px; letter-spacing: 1px;
+      color: var(--muted); border-bottom: 2px solid var(--tan);
+      padding: 3px 6px; text-align: right; white-space: nowrap;
+    }
+    .pmodal-game-table th:first-child,
+    .pmodal-game-table th:nth-child(2) { text-align: left; }
+    .pmodal-game-table td {
+      padding: 4px 6px; text-align: right;
+      border-bottom: 1px solid var(--tan);
+      font-family: 'Oswald', sans-serif; font-size: 13px; white-space: nowrap;
+    }
+    .pmodal-game-table td:first-child,
+    .pmodal-game-table td:nth-child(2) { text-align: left; }
+    .pmodal-game-table tr:hover td { background: rgba(212,160,23,0.08); }
+    .pmodal-pts-pos { color: var(--green); font-weight: 700; }
+    .pmodal-pts-neg { color: var(--red); font-weight: 700; }
+    .pmodal-pts-zero { color: var(--muted); font-weight: 700; }
+    .pmodal-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .pmodal-link-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 8px 14px; border-radius: 5px;
+      font-family: 'Oswald', sans-serif; font-size: 13px;
+      font-weight: 700; letter-spacing: 1px;
+      text-decoration: none; transition: opacity 0.15s;
+    }
+    .pmodal-link-btn:hover { opacity: 0.82; }
+    .pmodal-link-bbref { background: #1b2a4a; color: #fff; }
+    .pmodal-link-mlb   { background: #002D72; color: #fff; }
+    .pmodal-link-espn  { background: #cc0000; color: #fff; }
+    .pmodal-loading {
+      text-align: center; padding: 32px;
+      font-family: 'Special Elite', cursive; color: var(--muted); font-size: 14px;
+    }
+    .pmodal-no-data {
+      font-family: 'Special Elite', cursive; color: var(--muted);
+      font-size: 12px; margin-bottom: 12px;
+    }
+    .player-clickable { cursor: pointer; }
+    .player-clickable:hover { text-decoration: underline; text-decoration-color: var(--navy); }
+    .rp-name.player-clickable:hover { text-decoration-color: var(--muted); }
+    .fmatch-pname.player-clickable:hover { text-decoration-color: currentColor; }
   </style>
 </head>
 <body>
@@ -2049,18 +2146,20 @@
 
       const starterRows = starters.map(p => {
         const inj = injuryBadge(p.injuryStatus);
+        const pit = PITCHER_SLOTS.has(p.slotId) ? '1' : '0';
         return `<div class="roster-player-row">
           <div class="rp-pos">${esc(posLabel(p.slotId))}</div>
-          <div class="rp-name">${esc(p.name)}</div>
+          <div class="rp-name player-clickable" data-pname="${esc(p.name)}" data-pitcher="${pit}">${esc(p.name)}</div>
           ${inj?`<div class="rp-injury">${esc(inj)}</div>`:''}
         </div>`;
       }).join('');
 
       const benchRows = bench.map(p => {
         const inj = injuryBadge(p.injuryStatus);
+        const pit = PITCHER_SLOTS.has(p.slotId) ? '1' : '0';
         return `<div class="roster-player-row bench-row">
           <div class="rp-pos">${esc(posLabel(p.slotId))}</div>
-          <div class="rp-name">${esc(p.name)}</div>
+          <div class="rp-name player-clickable" data-pname="${esc(p.name)}" data-pitcher="${pit}">${esc(p.name)}</div>
           ${inj?`<div class="rp-injury">${esc(inj)}</div>`:''}
         </div>`;
       }).join('');
@@ -2473,10 +2572,11 @@
         } else {
           ptsCls = 'zero'; ptsDisp = '—';
         }
+        const pit = p.isPitcher ? '1' : '0';
         return `
           <div class="fmatch-player-row-2col">
             <div class="fmatch-pos">${esc(p.pos)}</div>
-            <div class="fmatch-pname ${hasGame?'playing':''}">${esc(p.name)}</div>
+            <div class="fmatch-pname ${hasGame?'playing':''} player-clickable" data-pname="${esc(p.name)}" data-pitcher="${pit}">${esc(p.name)}</div>
             <div class="fmatch-ppts ${ptsCls}">${ptsDisp}</div>
           </div>`;
       }).join('');
@@ -3441,7 +3541,7 @@ function showPitcherDebug() {
       }).join('');
       return `<tr>
         <td>${i+1}</td>
-        <td><span style="font-weight:700;color:var(--navy)">${esc(p.name)}</span>${injHtml}</td>
+        <td><span class="player-clickable" data-pname="${esc(p.name)}" data-pitcher="${p.isPitcher?'1':'0'}" style="font-weight:700;color:var(--navy)">${esc(p.name)}</span>${injHtml}</td>
         <td class="players-ft">${esc(p.fantasyTeam)}</td>
         <td class="players-ptag">${esc(p.posStr)}</td>
         ${statCells}
@@ -3463,6 +3563,186 @@ function showPitcherDebug() {
     }
     renderPlayersTable();
   }
+
+  // ── PLAYER MODAL ──────────────────────────────────────────────
+  document.addEventListener('click', function(e) {
+    const el = e.target.closest('.player-clickable[data-pname]');
+    if (el) openPlayerModal(el.dataset.pname, el.dataset.pitcher === '1');
+  });
+
+  function closePlayerModal() {
+    document.getElementById('player-modal').style.display = 'none';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePlayerModal();
+  });
+
+  async function openPlayerModal(name, isPitcher) {
+    const modal   = document.getElementById('player-modal');
+    const content = document.getElementById('player-modal-content');
+    modal.style.display = 'flex';
+    content.innerHTML = `<div class="pmodal-loading">Loading ${esc(name)}…</div>`;
+
+    try {
+      const searchRes  = await fetch(`${MLB_API}/api/v1/people/search?names=${encodeURIComponent(name)}&limit=5&sportId=1`);
+      const searchData = await searchRes.json();
+      const person     = searchData.people?.[0];
+
+      if (!person) {
+        content.innerHTML = renderPlayerModalHtml(name, isPitcher, null, null, []);
+        return;
+      }
+
+      const pid   = person.id;
+      const grp   = isPitcher ? 'pitching' : 'hitting';
+      const yr    = SEASON;
+
+      const [seasonRes, gameLogRes] = await Promise.all([
+        fetch(`${MLB_API}/api/v1/people/${pid}/stats?stats=season&season=${yr}&group=${grp}&gameType=R`),
+        fetch(`${MLB_API}/api/v1/people/${pid}/stats?stats=gameLog&season=${yr}&group=${grp}&gameType=R`)
+      ]);
+
+      const seasonData  = await seasonRes.json();
+      const gameLogData = await gameLogRes.json();
+
+      const seasonStats = seasonData.stats?.[0]?.splits?.[0]?.stat || null;
+      const splits      = gameLogData.stats?.[0]?.splits || [];
+      const gameLog     = splits.slice(-7).reverse();
+
+      const teamAbbr = person.currentTeam?.abbreviation || person.currentTeam?.name || '';
+      const posAbbr  = person.primaryPosition?.abbreviation || (isPitcher ? 'P' : '');
+      const meta     = [posAbbr, teamAbbr].filter(Boolean).join(' · ');
+
+      content.innerHTML = renderPlayerModalHtml(name, isPitcher, meta, seasonStats, gameLog, pid);
+    } catch(err) {
+      content.innerHTML = renderPlayerModalHtml(name, isPitcher, null, null, []);
+    }
+  }
+
+  function renderPlayerModalHtml(name, isPitcher, meta, seasonStats, gameLog, mlbId) {
+    const scoringMap = buildScoringMap();
+
+    function statBox(val, lbl) {
+      return `<div class="pmodal-stat-box"><div class="pmodal-stat-val">${val ?? '—'}</div><div class="pmodal-stat-lbl">${lbl}</div></div>`;
+    }
+
+    let seasonHtml = '';
+    if (seasonStats) {
+      if (!isPitcher) {
+        const tb = (seasonStats.hits??0) + (seasonStats.doubles??0) + 2*(seasonStats.triples??0) + 3*(seasonStats.homeRuns??0);
+        seasonHtml = `
+          <div class="pmodal-section-title">2026 Season</div>
+          <div class="pmodal-stat-grid">
+            ${statBox(seasonStats.avg, 'AVG')}
+            ${statBox(seasonStats.ops, 'OPS')}
+            ${statBox(seasonStats.homeRuns, 'HR')}
+            ${statBox(seasonStats.rbi, 'RBI')}
+            ${statBox(seasonStats.runs, 'R')}
+            ${statBox(seasonStats.stolenBases, 'SB')}
+            ${statBox(seasonStats.hits, 'H')}
+            ${statBox(seasonStats.atBats, 'AB')}
+            ${statBox(seasonStats.baseOnBalls, 'BB')}
+            ${statBox(tb, 'TB')}
+          </div>`;
+      } else {
+        const wl = `${seasonStats.wins??0}-${seasonStats.losses??0}`;
+        seasonHtml = `
+          <div class="pmodal-section-title">2026 Season</div>
+          <div class="pmodal-stat-grid">
+            ${statBox(seasonStats.era, 'ERA')}
+            ${statBox(seasonStats.whip, 'WHIP')}
+            ${statBox(wl, 'W-L')}
+            ${statBox(seasonStats.saves, 'SV')}
+            ${statBox(seasonStats.inningsPitched, 'IP')}
+            ${statBox(seasonStats.strikeOuts, 'K')}
+            ${statBox(seasonStats.baseOnBalls, 'BB')}
+            ${statBox(seasonStats.hits, 'H')}
+            ${statBox(seasonStats.earnedRuns, 'ER')}
+          </div>`;
+      }
+    } else {
+      seasonHtml = `<div class="pmodal-section-title">2026 Season</div><p class="pmodal-no-data">No season stats found.</p>`;
+    }
+
+    let gameLogHtml = '';
+    if (gameLog.length) {
+      const rows = gameLog.map(split => {
+        const s    = split.stat || {};
+        const date = split.date ? split.date.slice(5) : '—';
+        const opp  = (split.isHome ? 'vs ' : '@ ') + (split.opponent?.abbreviation || '');
+        const pts  = calcFantasyPts(s, isPitcher, scoringMap);
+        const ptsCls = pts > 0 ? 'pmodal-pts-pos' : pts < 0 ? 'pmodal-pts-neg' : 'pmodal-pts-zero';
+
+        if (!isPitcher) {
+          const tb = (s.hits??0)+(s.doubles??0)+2*(s.triples??0)+3*(s.homeRuns??0);
+          return `<tr>
+            <td>${date}</td><td>${esc(opp)}</td>
+            <td>${s.atBats??'—'}</td><td>${s.hits??'—'}</td>
+            <td>${s.homeRuns??'—'}</td><td>${s.runs??'—'}</td>
+            <td>${s.rbi??'—'}</td><td>${s.stolenBases??'—'}</td>
+            <td>${s.baseOnBalls??'—'}</td><td>${tb||'—'}</td>
+            <td class="${ptsCls}">${pts >= 0 ? '+' : ''}${pts}</td>
+          </tr>`;
+        } else {
+          const ip  = s.inningsPitched ?? '—';
+          const qs  = (s.inningsPitched && parseFloat(s.inningsPitched) >= 6 && (s.earnedRuns??99) <= 3) ? 'Y' : '';
+          return `<tr>
+            <td>${date}</td><td>${esc(opp)}</td>
+            <td>${ip}</td><td>${s.hits??'—'}</td>
+            <td>${s.earnedRuns??'—'}</td><td>${s.baseOnBalls??'—'}</td>
+            <td>${s.strikeOuts??'—'}</td><td>${s.wins??'—'}</td>
+            <td>${s.saves??'—'}</td><td>${qs||'—'}</td>
+            <td class="${ptsCls}">${pts >= 0 ? '+' : ''}${pts}</td>
+          </tr>`;
+        }
+      }).join('');
+
+      const headers = !isPitcher
+        ? '<th>Date</th><th>Opp</th><th>AB</th><th>H</th><th>HR</th><th>R</th><th>RBI</th><th>SB</th><th>BB</th><th>TB</th><th>Pts</th>'
+        : '<th>Date</th><th>Opp</th><th>IP</th><th>H</th><th>ER</th><th>BB</th><th>K</th><th>W</th><th>SV</th><th>QS</th><th>Pts</th>';
+
+      gameLogHtml = `
+        <div class="pmodal-section-title">Last ${gameLog.length} Games</div>
+        <table class="pmodal-game-table">
+          <thead><tr>${headers}</tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    } else {
+      gameLogHtml = `<div class="pmodal-section-title">Recent Games</div><p class="pmodal-no-data">No recent game data found.</p>`;
+    }
+
+    const q = encodeURIComponent(name);
+    const bbrefUrl = `https://www.baseball-reference.com/search/search.fcgi?results=name&search=${q}`;
+    const mlbUrl   = mlbId ? `https://www.mlb.com/player/${mlbId}` : `https://www.mlb.com/search#q=${q}&t=player`;
+    const espnUrl  = `https://www.espn.com/search/results?q=${q}&type=player&sport=baseball`;
+
+    return `
+      <div class="pmodal-header">
+        <button class="pmodal-close" onclick="closePlayerModal()">✕</button>
+        <div class="pmodal-name">${esc(name)}</div>
+        ${meta ? `<div class="pmodal-meta">${esc(meta)}</div>` : ''}
+      </div>
+      <div class="pmodal-body">
+        ${seasonHtml}
+        ${gameLogHtml}
+        <div class="pmodal-section-title">External Links</div>
+        <div class="pmodal-links">
+          <a class="pmodal-link-btn pmodal-link-bbref" href="${bbrefUrl}" target="_blank" rel="noopener">Baseball Reference</a>
+          <a class="pmodal-link-btn pmodal-link-mlb"   href="${mlbUrl}"   target="_blank" rel="noopener">MLB.com</a>
+          <a class="pmodal-link-btn pmodal-link-espn"  href="${espnUrl}"  target="_blank" rel="noopener">ESPN</a>
+        </div>
+      </div>`;
+  }
 </script>
+
+<div id="player-modal" onclick="if(event.target===this)closePlayerModal()">
+  <div id="player-modal-card">
+    <div id="player-modal-content">
+      <div class="pmodal-loading">Loading…</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
