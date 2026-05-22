@@ -1564,11 +1564,6 @@
     if (tab === 'players') {
       switchToPlayersTab();
     }
-
-    const btn = document.getElementById('debug-btn');
-    const dpanel = document.getElementById('debug-panel');
-    if (btn)    btn.style.display    = tab === 'mlblive' ? 'block' : 'none';
-    if (dpanel && tab !== 'mlblive') dpanel.style.display = 'none';
   }
 
   // ── WEEK NAV ───────────────────────────────────────────────────
@@ -3109,127 +3104,6 @@
   }
 
   loadAll();
-</script>
-
-<!-- ── PITCHER DEBUG PANEL ── -->
-<div id="debug-panel" style="display:none;position:fixed;bottom:16px;right:16px;width:480px;max-height:70vh;overflow-y:auto;background:#1c1c1c;color:#e0e0e0;font-family:monospace;font-size:12px;border:1px solid #d4a017;border-radius:8px;z-index:9999;padding:14px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.5)">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-    <span style="color:#d4a017;font-weight:bold;letter-spacing:1px">&#9918; PITCHER SCORE DEBUG</span>
-    <button onclick="document.getElementById('debug-panel').style.display='none'" style="background:none;border:none;color:#888;font-size:16px;cursor:pointer">&#x2715;</button>
-  </div>
-  <div id="debug-content"></div>
-</div>
-<button onclick="showPitcherDebug()" id="debug-btn" style="display:none;position:fixed;bottom:16px;right:16px;background:#1a2744;color:#d4a017;border:1px solid #d4a017;font-family:Oswald,sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;padding:8px 14px;border-radius:4px;cursor:pointer;z-index:9998">&#9918; DEBUG SCORING</button>
-
-<script>
-function showPitcherDebug() {
-  document.getElementById('debug-panel').style.display = 'block';
-  document.getElementById('debug-btn').style.display   = 'none';
-  const statsMap   = cachedTodayStatsMap || {};
-  const scoringMap = buildScoringMap();
-  const pitchers   = Object.entries(statsMap).filter(([,v]) => v.ispitcher).map(([name]) => name);
-
-  if (!pitchers.length) {
-    document.getElementById('debug-content').innerHTML =
-      '<div style="color:#aaa">No pitcher stats cached yet — visit MLB Live tab first.</div>';
-    return;
-  }
-
-  const items    = globalData?.settings?.scoringSettings?.scoringItems || [];
-  const nonZero  = Object.entries(scoringMap).filter(([,v]) => v !== 0);
-  const KNOWN_IDS = {
-    1:'H',2:'AB',3:'TB',4:'AVG',5:'R',6:'RBI',7:'2B',8:'K(pit)',9:'HR',10:'H(pit)',
-    11:'BB(bat)',12:'HBP(pit)',13:'SB+CS',14:'SB',15:'CS',16:'K(bat)',17:'K(bat)',
-    19:'IP',20:'IP/Out',21:'SV',22:'BB(pit)',23:'SB',24:'ER',25:'W',26:'L',
-    27:'SV',28:'HLD',29:'BS',30:'ERA',31:'WHIP',32:'CG',33:'SHO',34:'NH',
-    37:'BB(pit)',39:'?',41:'QS',42:'?',45:'ER',48:'HLD',53:'QS',57:'PA',
-    63:'W',72:'OBP',73:'SLG',74:'OPS'
-  };
-
-  let html = `<div style="margin-bottom:10px;background:#111;border:1px solid #333;border-radius:4px;overflow:hidden">
-    <div style="padding:5px 8px;background:#1a1a1a;border-bottom:1px solid #333">
-      <span style="color:#d4a017;font-size:11px;font-weight:bold">SCORING STAT IDs (${nonZero.length} active)</span>
-    </div>
-    <div style="padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px">`;
-
-  nonZero.sort((a,b)=>Number(a[0])-Number(b[0])).forEach(([id,val]) => {
-    const name  = KNOWN_IDS[id] || '?';
-    const color = val > 0 ? '#69db7c' : '#ff6b6b';
-    html += `<span style="background:#1e1e1e;border:1px solid #333;border-radius:3px;padding:2px 5px;font-size:10px;white-space:nowrap">
-      <span style="color:#555">[${id}]</span>
-      <span style="color:#aaa">${name}</span>
-      <span style="color:${color};margin-left:2px">${val>0?'+':''}${val}</span>
-    </span>`;
-  });
-  html += `</div></div>`;
-
-  let foundRostered = false;
-  pitchers.forEach(playerKey => {
-    const { stats } = statsMap[playerKey];
-    const fantasyTeam = rosterMap[playerKey] || null;
-    if (!fantasyTeam) return;
-    foundRostered = true;
-
-    const ipRaw   = String(stats.inningsPitched ?? '0');
-    const ipParts = ipRaw.split('.');
-    const ipWhole = parseInt(ipParts[0]) || 0;
-    const ipFrac  = parseInt(ipParts[1] || '0');
-    let totalOuts;
-    if (ipFrac > 2) { totalOuts = Math.round(parseFloat(ipRaw) * 3); }
-    else            { totalOuts = ipWhole * 3 + ipFrac; }
-    const ip  = totalOuts / 3;
-    const er  = stats.earnedRuns   ?? null;
-    const k   = stats.strikeOuts   ?? 0;
-    const bb  = stats.baseOnBalls  ?? 0;
-    const w   = stats.wins         ?? 0;
-    const sv  = stats.saves        ?? 0;
-    const erVal = er ?? 0;
-    const qs  = (ip >= 6 && erVal <= 3) ? 1 : 0;
-    const hAllowed   = stats.hits      ?? 0;
-    const hbpAllowed = stats.hitBatsmen ?? stats.hitByPitch ?? 0;
-    const outs = ip * 3;
-    const lines = [
-      { sid:20,  label:'IP',       raw:`${ip.toFixed(2)} IP × +3`,    val:ip,         pts: 3*ip },
-      { sid:8,   label:'K',        raw:k,             val:k,          pts: 1*k },
-      { sid:37,  label:'BB',       raw:bb,            val:bb,         pts:-1*bb },
-      { sid:10,  label:'H(pit)',   raw:hAllowed,      val:hAllowed,   pts:-1*hAllowed },
-      { sid:12,  label:'HBP(pit)', raw:hbpAllowed,    val:hbpAllowed, pts:-1*hbpAllowed },
-      { sid:45,  label:'ER',       raw:er===null?'NULL (using 0)':er, val:erVal, pts:-3*erVal },
-      { sid:63,  label:'W',        raw:w,             val:w,          pts: 5*w },
-      { sid:21,  label:'SV',       raw:sv,            val:sv,         pts: 5*sv },
-      { sid:53,  label:'QS',       raw:`ip=${ip.toFixed(2)}, er=${er===null?'NULL':er} → ${qs}`, val:qs, pts:5*qs },
-    ];
-    const total = lines.reduce((s,ln) => s+ln.pts, 0);
-
-    html += `<div style="margin-bottom:14px;border-bottom:1px solid #333;padding-bottom:12px">`;
-    html += `<div style="color:#d4a017;margin-bottom:6px;font-weight:bold">${playerKey.toUpperCase()} <span style="color:#888;font-size:11px">[${fantasyTeam}]</span></div>`;
-    html += `<div style="display:grid;grid-template-columns:28px 40px 1fr 70px 50px;gap:2px 6px;padding:2px 0;color:#555;font-size:10px;border-bottom:1px solid #333;margin-bottom:3px">
-      <span>SID</span><span>STAT</span><span>RAW VALUE</span><span style="text-align:right">× MULT</span><span style="text-align:right">PTS</span>
-    </div>`;
-
-    lines.forEach(line => {
-      if (line.val===0 && line.pts===0 && line.label!=='ER' && line.label!=='QS') return;
-      const hasMap  = scoringMap[line.sid] !== undefined;
-      const color   = !hasMap?'#ff6b6b':line.pts>0?'#69db7c':line.pts<0?'#ff6b6b':'#666';
-      const multDisp = !hasMap?'<span style="color:#ff6b6b">MISSING</span>':(scoringMap[line.sid]>=0?'+':'')+scoringMap[line.sid];
-      html += `<div style="display:grid;grid-template-columns:28px 40px 1fr 70px 50px;gap:2px 6px;padding:3px 0;color:${color};border-bottom:1px dashed #222">
-        <span style="color:#444">[${line.sid}]</span>
-        <span>${line.label}</span>
-        <span style="color:#999;font-size:11px">${line.raw}</span>
-        <span style="text-align:right;font-size:11px">${multDisp}</span>
-        <span style="text-align:right">${line.pts>=0?'+':''}${line.pts.toFixed(1)}</span>
-      </div>`;
-    });
-
-    html += `<div style="margin-top:7px;padding-top:6px;border-top:1px solid #444;display:flex;justify-content:space-between;font-size:13px">
-      <span style="color:#888">Calculated total</span>
-      <span style="color:#d4a017;font-weight:bold">${total>=0?'+':''}${total.toFixed(1)} pts</span>
-    </div></div>`;
-  });
-
-  if (!foundRostered) html += '<div style="color:#aaa">No rostered pitchers in today\'s cached stats.</div>';
-  document.getElementById('debug-content').innerHTML = html;
-}
 
   // ── PLAYERS TAB ────────────────────────────────────────────────
   function getPlayersColDefs() {
