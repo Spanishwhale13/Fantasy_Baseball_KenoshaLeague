@@ -1298,13 +1298,13 @@
   let rosterLoaded    = false;
 
   // ── DAILY LEADERS STATE ────────────────────────────────────────
-  let playersPosFil  = 'ALL';
-  let playersSortCol = 'pts';
-  let playersSortDir = 'desc';
-  let playersAllData = [];
-  let playersSearch  = '';
-  let dailyDate      = '';       // 'YYYY-MM-DD'
-  const dailyCache   = {};       // date → player array
+  let playersPosFil       = 'ALL';
+  let playersSortCol      = 'pts';
+  let playersSortDir      = 'desc';
+  let playersAllData      = [];
+  let playersSearch       = '';
+  let dailyDate           = '';   // 'YYYY-MM-DD'
+  const dailyCache        = {};   // date → player array
 
   // ── UTILS ──────────────────────────────────────────────────────
   function esc(s) {
@@ -2342,6 +2342,19 @@
     window._scoringItems = items;
   }
 
+  function hasRealPitchingStats(ps) {
+    if (!ps) return false;
+    const s = String(ps.inningsPitched ?? '0');
+    return s !== '0' && s !== '0.0' && s !== '0.00';
+  }
+
+  function playerHasStats(p) {
+    const s = p.stats;
+    if (!s) return false;
+    if (p.isPitcher) return hasRealPitchingStats(s);
+    return (s.atBats ?? 0) > 0 || (s.baseOnBalls ?? 0) > 0 || (s.hitByPitch ?? 0) > 0;
+  }
+
   function calcFantasyPts(mlbStats, ispitcher, scoringMap) {
     if (!mlbStats || !scoringMap) return 0;
     let pts = 0;
@@ -3297,20 +3310,31 @@
             return;
           }
         } else if (BATTER_SLOTS.has(slotId)) {
-          if (entry.battingStats) {
+          // Prefer real pitching stats over batting stats (handles two-way players like Ohtani)
+          if (hasRealPitchingStats(entry.pitchingStats)) {
+            isPitcher = true;
+            stats = entry.pitchingStats;
+            slotId = 9; posStr = 'SP';
+          } else if (entry.battingStats) {
             isPitcher = false;
             stats = entry.battingStats;
           } else if (entry.pitchingStats) {
             isPitcher = true;
             stats = entry.pitchingStats;
+            slotId = 9; posStr = 'SP';
           } else {
             return;
           }
         } else {
-          // Bench / IL — infer from available stats
-          if (entry.pitchingStats && !entry.battingStats) {
+          // Bench / IL — prefer real pitching stats, fall back to batting
+          if (hasRealPitchingStats(entry.pitchingStats)) {
             isPitcher = true;
             stats = entry.pitchingStats;
+            slotId = 9; posStr = 'SP';
+          } else if (entry.pitchingStats && !entry.battingStats) {
+            isPitcher = true;
+            stats = entry.pitchingStats;
+            slotId = 9; posStr = 'SP';
           } else if (entry.battingStats) {
             isPitcher = false;
             stats = entry.battingStats;
@@ -3319,8 +3343,11 @@
           }
         }
       } else {
-        // Free agent — infer role from stats
-        if (entry.pitchingStats && !entry.battingStats) {
+        // Free agent — prefer real pitching stats, fall back to batting
+        if (hasRealPitchingStats(entry.pitchingStats)) {
+          isPitcher = true;
+          stats = entry.pitchingStats;
+        } else if (entry.pitchingStats && !entry.battingStats) {
           isPitcher = true;
           stats = entry.pitchingStats;
         } else if (entry.battingStats) {
@@ -3392,6 +3419,7 @@
 
     let players = playersAllData.filter(p => {
       if (!playerMatchesPos(p, playersPosFil)) return false;
+      if (!playerHasStats(p)) return false;
       if (playersSearch.trim() && !p.name.toLowerCase().includes(playersSearch.trim().toLowerCase())) return false;
       return true;
     });
