@@ -3273,23 +3273,37 @@
       if (fp) {
         slotId = fp.slotId ?? 16;
         posStr = SLOT_LABEL[slotId] ?? '?';
+        // Prefer stats matching their slot position, but use available stats if primary role has none
         if (PITCHER_SLOTS.has(slotId)) {
-          isPitcher = true;
-          stats = entry.pitchingStats || {};
-          if (!entry.pitchingStats) return;
+          if (entry.pitchingStats) {
+            isPitcher = true;
+            stats = entry.pitchingStats;
+          } else if (entry.battingStats) {
+            isPitcher = false;
+            stats = entry.battingStats;
+          } else {
+            return;
+          }
         } else if (BATTER_SLOTS.has(slotId)) {
-          isPitcher = false;
-          stats = entry.battingStats || {};
-          if (!entry.battingStats) return;
+          if (entry.battingStats) {
+            isPitcher = false;
+            stats = entry.battingStats;
+          } else if (entry.pitchingStats) {
+            isPitcher = true;
+            stats = entry.pitchingStats;
+          } else {
+            return;
+          }
         } else {
           // Bench / IL — infer from available stats
           if (entry.pitchingStats && !entry.battingStats) {
             isPitcher = true;
             stats = entry.pitchingStats;
-          } else {
+          } else if (entry.battingStats) {
             isPitcher = false;
-            stats = entry.battingStats || {};
-            if (!entry.battingStats) return;
+            stats = entry.battingStats;
+          } else {
+            return;
           }
         }
       } else {
